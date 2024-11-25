@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Årsredovisning - Resultaträkning</title>
+    <link rel="stylesheet" href="arsredovisningstyle.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Fyll i årsredovisning</h1>
+        <form id="arsredovisningForm">
+            <label for="rakenskapsar">Räkenskapsår:</label>
+            <input type="text" id="rakenskapsar" required>
+
+            <label for="intakter">Intäkter:</label>
+            <input type="number" id="intakter" required>
+
+            <label for="kostnader">Kostnader:</label>
+            <input type="number" id="kostnader" required>
+
+            <button type="submit">Skapa årsredovisning</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
