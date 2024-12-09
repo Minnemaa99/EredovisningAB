@@ -26,12 +26,25 @@
 
         <!-- Main Content Area -->
         <main id="main-content">
-            <!-- Default content -->
             <h1>Välkommen till Årsredovisning</h1>
-            <p>Välj en sektion från menyn för att börja fylla i din årsredovisning.</p>
+            <p>Välj ett alternativ för att börja.</p>
+
+            <!-- Options to choose between file upload or manual entry -->
+            <input type="file" id="sie-file-pdf" accept=".sie, .se" />
+            <button onclick="processFile()">Läs och generera PDF</button>
+
+            <input type="file" id="sie-file-sru" accept=".sie, .se" />
+            <button onclick="processFilesru()">Läs och generera SRU fil</button>
+
+            
         </main>
     </div>
 
     <script src="arsredovisning.js"></script>
+    <!-- <script src="arsredovisningSIE.js"></script> -->
+    <script src="DeklarationSRU.js"></script>
+    <script src="test.js"></script>
+
+
 </body>
 </html>

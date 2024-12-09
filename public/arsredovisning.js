@@ -81,42 +81,116 @@ function loadPage(page) {
             break;
     
     
-
         case 'resultatrakning':
-            window.history.pushState({}, '', '/arsredovisning/ny/resultatrakning');
-            mainContent.innerHTML = `
-                <h1>Resultaträkning</h1>
-                <form id="resultatrakningForm">
-                    <label for="intakter">Intäkter:</label>
-                    <input type="number" id="intakter" required>
-
-                    <label for="kostnader">Kostnader:</label>
-                    <input type="number" id="kostnader" required>
-
-                    <button type="submit">Spara och gå vidare</button>
-                    <p id="result"></p>
-                </form>`;
-
-            const resultatrakningForm = document.getElementById('resultatrakningForm');
-            resultatrakningForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                submitResultatrakningForm();
-            });
-
-            function submitResultatrakningForm() {
-                const intakter = document.getElementById('intakter').value;
-                const kostnader = document.getElementById('kostnader').value;
-                const resultat = intakter - kostnader;
-
-                resultatrakningData = { intakter, kostnader, resultat };
-                console.log('Sparade data för resultaträkning:', resultatrakningData);
-
-                document.getElementById('result').innerText = 'Resultaträkning sparad!';
-
-                // Gå vidare till nästa del
-                loadPage('balansrakning');
-            }
-            break;
+                window.history.pushState({}, '', '/arsredovisning/ny/resultatrakning');
+                mainContent.innerHTML = `
+                    <h1>Resultaträkning</h1>
+                    <form id="resultatrakningForm">
+                        <h2>Period: 2023-01-01 - 2023-12-31</h2>
+                        
+                        <h3>Rörelseintäkter, lagerförändringar m.m.</h3>
+                        <label for="nettoomsättning">Nettoomsättning:</label>
+                        <input type="number" id="nettoomsättning" required>
+                        
+                        <label for="forandring_lager">Förändring av lager:</label>
+                        <input type="number" id="forandring_lager" required>
+                        
+                        <label for="ovriga_intakter">Övriga rörelseintäkter:</label>
+                        <input type="number" id="ovriga_intakter" required>
+                        
+                        <h3>Rörelsekostnader</h3>
+                        <label for="ravaror">Råvaror och förnödenheter:</label>
+                        <input type="number" id="ravaror" required>
+                        
+                        <label for="handelsvaror">Handelsvaror:</label>
+                        <input type="number" id="handelsvaror" required>
+                        
+                        <label for="externa_kostnader">Övriga externa kostnader:</label>
+                        <input type="number" id="externa_kostnader" required>
+                        
+                        <label for="personalkostnader">Personalkostnader:</label>
+                        <input type="number" id="personalkostnader" required>
+                        
+                        <label for="avskrivningar">Av- och nedskrivningar:</label>
+                        <input type="number" id="avskrivningar" required>
+                        
+                        <label for="ovriga_kostnader">Övriga rörelsekostnader:</label>
+                        <input type="number" id="ovriga_kostnader" required>
+                        
+                        <h3>Finansiella poster</h3>
+                        <label for="ovriga_ranteintakter">Övriga ränteintäkter:</label>
+                        <input type="number" id="ovriga_ranteintakter" required>
+                        
+                        <label for="rantekostnader">Räntekostnader:</label>
+                        <input type="number" id="rantekostnader" required>
+                        
+                        <h3>Bokslutsdispositioner</h3>
+                        <label for="periodiseringsfonder">Förändring av periodiseringsfonder:</label>
+                        <input type="number" id="periodiseringsfonder" required>
+                        
+                        <label for="overavskrivningar">Förändring av överavskrivningar:</label>
+                        <input type="number" id="overavskrivningar" required>
+                        
+                        <label for="ovriga_dispositioner">Övriga bokslutsdispositioner:</label>
+                        <input type="number" id="ovriga_dispositioner" required>
+                        
+                        <h3>Resultat</h3>
+                        <label for="skatt_resultat">Skatt på årets resultat:</label>
+                        <input type="number" id="skatt_resultat" required>
+                        
+                        <button type="submit">Spara och gå vidare</button>
+                        <p id="result"></p>
+                    </form>`;
+            
+                const resultatrakningForm = document.getElementById('resultatrakningForm');
+                resultatrakningForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    submitResultatrakningForm();
+                });
+            
+                function submitResultatrakningForm() {
+                    // Läs in data från formuläret
+                    const data = {
+                        nettoomsättning: parseFloat(document.getElementById('nettoomsättning').value) || 0,
+                        forandring_lager: parseFloat(document.getElementById('forandring_lager').value) || 0,
+                        ovriga_intakter: parseFloat(document.getElementById('ovriga_intakter').value) || 0,
+                        ravaror: parseFloat(document.getElementById('ravaror').value) || 0,
+                        handelsvaror: parseFloat(document.getElementById('handelsvaror').value) || 0,
+                        externa_kostnader: parseFloat(document.getElementById('externa_kostnader').value) || 0,
+                        personalkostnader: parseFloat(document.getElementById('personalkostnader').value) || 0,
+                        avskrivningar: parseFloat(document.getElementById('avskrivningar').value) || 0,
+                        ovriga_kostnader: parseFloat(document.getElementById('ovriga_kostnader').value) || 0,
+                        ovriga_ranteintakter: parseFloat(document.getElementById('ovriga_ranteintakter').value) || 0,
+                        rantekostnader: parseFloat(document.getElementById('rantekostnader').value) || 0,
+                        periodiseringsfonder: parseFloat(document.getElementById('periodiseringsfonder').value) || 0,
+                        overavskrivningar: parseFloat(document.getElementById('overavskrivningar').value) || 0,
+                        ovriga_dispositioner: parseFloat(document.getElementById('ovriga_dispositioner').value) || 0,
+                        skatt_resultat: parseFloat(document.getElementById('skatt_resultat').value) || 0,
+                    };
+            
+                    // Beräkningar
+                    const rörelseresultat = data.nettoomsättning + data.forandring_lager + data.ovriga_intakter -
+                        (data.ravaror + data.handelsvaror + data.externa_kostnader +
+                            data.personalkostnader + data.avskrivningar + data.ovriga_kostnader);
+            
+                    const resultat_efter_finansiella_poster = rörelseresultat + data.ovriga_ranteintakter - data.rantekostnader;
+                    const resultat_fore_skatt = resultat_efter_finansiella_poster - (data.periodiseringsfonder + data.overavskrivningar + data.ovriga_dispositioner);
+                    const årets_resultat = resultat_fore_skatt - data.skatt_resultat;
+            
+                    // Spara beräknade data i en variabel
+                    const resultatrakningData = { ...data, rörelseresultat, resultat_efter_finansiella_poster, resultat_fore_skatt, årets_resultat };
+            
+                    console.log('Sparade data för resultaträkning:', resultatrakningData);
+            
+                    // Visa meddelande
+                    document.getElementById('result').innerText = 'Resultaträkning sparad! Rörelseresultat: ' + rörelseresultat + ', Årets resultat: ' + årets_resultat;
+            
+                    // Gå vidare till nästa del
+                    loadPage('balansrakning');
+                }
+                break;
+            
+            
 
         case 'balansrakning':
             window.history.pushState({}, '', '/arsredovisning/ny/balansrakning');
@@ -202,7 +276,7 @@ function loadPage(page) {
     }
 }
 
-    function generatePdf() {
+    function generatePdf(resultatrakningData) {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF();
 
@@ -254,18 +328,59 @@ function loadPage(page) {
         pdf.text(dateRange, xDate, 180); // Använd den beräknade x-koordinaten
 
         // Ny sida för resterande data
-        pdf.addPage();
+        //Resultaträkningens 
+        pdf.addPage(); // Lägg till en ny sida för Förvaltningsberättelse
 
-        // Lägg till övrig data i PDF-filen
+        // Rubrik för Förvaltningsberättelsen
+        pdf.setFontSize(16);
+        pdf.text('Förvaltningsberättelse', 10, 10);
+        
+        // Sektion: Verksamheten
+        let startY = 20;
+        pdf.setFontSize(14);
+        pdf.text('Verksamheten', 10, startY);
         pdf.setFontSize(12);
-        pdf.text('Detaljer:', 10, 10);
-        pdf.text(`Intäkter: ${resultatrakningData.intakter || ''}`, 10, 20);
-        pdf.text(`Kostnader: ${resultatrakningData.kostnader || ''}`, 10, 30);
-        pdf.text(`Resultat: ${resultatrakningData.resultat || ''}`, 10, 40);
-        pdf.text(`Tillgångar: ${balansrakningData.tillgangar || ''}`, 10, 50);
-        pdf.text(`Skulder: ${balansrakningData.skulder || ''}`, 10, 60);
-        pdf.text(`Noter: ${noterData.note || ''}`, 10, 70);
+        startY += 10;
+        pdf.text('Allmänt om verksamheten:', 10, startY);
+        startY += 10;
+        pdf.text(
+          'Företaget bedriver verksamhet inom bokföring, rådgivning och andra ekonomiska tjänster. Här är en översikt av verksamhetsåret 2023.',
+          10,
+          startY,
+          { maxWidth: 180 } // Begränsar textens bredd för att skapa en snyggare layout
+        );
+        
+        // Flerårsöversikt
+        startY += 30;
+        pdf.setFontSize(14);
+        pdf.text('Flerårsöversikt (tkr)', 10, startY);
+        pdf.setFontSize(12);
+        startY += 10;
+        
+        // Lägg till tabell eller lista för Flerårsöversikt
+        pdf.text('År', 10, startY);
+        pdf.text(`Nettoomsättning`, 60, startY);
+        pdf.text('Resultat efter finansiella poster', 140, startY);
+        
+        startY += 10;
+        pdf.text('2023', 10, startY);
+      
 
+        
+        // Avslutande kommentar
+        startY += 20;
+        pdf.text(
+          'Denna flerårsöversikt ger en sammanfattning av företagets finansiella utveckling och är baserad på tillgängliga uppgifter.',
+          10,
+          startY,
+          { maxWidth: 180 }
+        );
+        
+        // Lägg till ytterligare sektioner vid behov
+        
+        // Skapa PDF-filen
+        pdf.save('Resultatrakning_och_Forvaltningsberattelse.pdf');
+        
         // Öppna PDF-filen i en ny flik
         pdf.output('dataurlnewwindow');
     }
