@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+# Using sqlite for dev, but keeping this for production reference
+# psycopg2-binary
+weasyprint
+jinja2
+stripe
+python-multipart
