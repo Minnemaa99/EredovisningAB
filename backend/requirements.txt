@@ -1,8 +1,0 @@
-fastapi
-uvicorn[standard]
-sqlalchemy
-alembic
-python-multipart
-weasyprint
-jinja2
-stripe
