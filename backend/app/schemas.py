@@ -1,52 +1,16 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional, List, Any
 
-from datetime import date
-
-# --- Transaction Schemas ---
-class TransactionBase(BaseModel):
-    account: str
-    description: Optional[str] = None
-    debit: float = 0.0
-    credit: float = 0.0
-    transaction_date: Optional[date] = None
-
-class TransactionCreate(TransactionBase):
-    pass
-
-class Transaction(TransactionBase):
-    id: int
-    file_id: int
-
-    class Config:
-        orm_mode = True
-
-# --- AccountingFile Schemas ---
-class AccountingFileBase(BaseModel):
-    filename: str
-    status: str = "uploaded"
-    upload_date: date
-
-class AccountingFileCreate(AccountingFileBase):
-    pass
-
-class AccountingFile(AccountingFileBase):
-    id: int
-    company_id: int
-    transactions: List[Transaction] = []
-
-    class Config:
-        orm_mode = True
-
-# --- DeclarationYear Schemas ---
-class DeclarationYearBase(BaseModel):
+# --- AnnualReport Schemas ---
+class AnnualReportBase(BaseModel):
     year: int
-    status: str
+    status: str = "new"
+    report_data: Optional[dict] = None
 
-class DeclarationYearCreate(DeclarationYearBase):
-    pass
+class AnnualReportCreate(AnnualReportBase):
+    company_id: int
 
-class DeclarationYear(DeclarationYearBase):
+class AnnualReport(AnnualReportBase):
     id: int
     company_id: int
 
@@ -57,16 +21,28 @@ class DeclarationYear(DeclarationYearBase):
 class CompanyBase(BaseModel):
     orgnummer: str
     name: str
-    address_info: Optional[str] = None
 
 class CompanyCreate(CompanyBase):
-    pass
+    owner_id: int
 
-# Schema for reading a company, includes relations
 class Company(CompanyBase):
     id: int
-    declaration_years: List[DeclarationYear] = []
-    accounting_files: List[AccountingFile] = []
+    owner_id: int
+    annual_reports: List[AnnualReport] = []
+
+    class Config:
+        orm_mode = True
+
+# --- User Schemas ---
+class UserBase(BaseModel):
+    email: str
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+    companies: List[Company] = []
 
     class Config:
         orm_mode = True

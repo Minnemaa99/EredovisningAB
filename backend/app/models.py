@@ -1,6 +1,15 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, Date
 from sqlalchemy.orm import relationship
 from .database import Base
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+
+    companies = relationship("Company", back_populates="owner")
 
 class Company(Base):
     __tablename__ = "companies"
@@ -8,47 +17,22 @@ class Company(Base):
     id = Column(Integer, primary_key=True, index=True)
     orgnummer = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=False)
-    address_info = Column(String) # Simple string for now, can be expanded to a separate model
 
-    declaration_years = relationship("DeclarationYear", back_populates="company")
-    accounting_files = relationship("AccountingFile", back_populates="company")
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates="companies")
 
+    annual_reports = relationship("AnnualReport", back_populates="company")
 
-class DeclarationYear(Base):
-    __tablename__ = "declaration_years"
+class AnnualReport(Base):
+    __tablename__ = "annual_reports"
 
     id = Column(Integer, primary_key=True, index=True)
     year = Column(Integer, nullable=False)
-    status = Column(String, default="new") # e.g., new, in_progress, submitted
-    submission_date = Column(Date)
+    status = Column(String, default="new") # e.g., new, processing, completed, paid
+
+    # Using JSON to store the report data flexibly.
+    # This can hold imported SIE data, manual entries, etc.
+    report_data = Column(JSON)
 
     company_id = Column(Integer, ForeignKey("companies.id"))
-    company = relationship("Company", back_populates="declaration_years")
-
-
-class AccountingFile(Base):
-    __tablename__ = "accounting_files"
-
-    id = Column(Integer, primary_key=True, index=True)
-    filename = Column(String, nullable=False)
-    status = Column(String, default="uploaded") # uploaded, processing, imported, failed
-    upload_date = Column(Date, nullable=False)
-
-    company_id = Column(Integer, ForeignKey("companies.id"))
-    company = relationship("Company", back_populates="accounting_files")
-
-    transactions = relationship("Transaction", back_populates="file")
-
-
-class Transaction(Base):
-    __tablename__ = "transactions"
-
-    id = Column(Integer, primary_key=True, index=True)
-    account = Column(String, index=True, nullable=False)
-    description = Column(String)
-    debit = Column(Float, default=0.0)
-    credit = Column(Float, default=0.0)
-    transaction_date = Column(Date)
-
-    file_id = Column(Integer, ForeignKey("accounting_files.id"))
-    file = relationship("AccountingFile", back_populates="transactions")
+    company = relationship("Company", back_populates="annual_reports")
