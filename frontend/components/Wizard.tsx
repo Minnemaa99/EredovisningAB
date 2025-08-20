@@ -4,11 +4,14 @@ import Step2_DataImport from './wizard/Step2_DataImport';
 import Step3_Validation from './wizard/Step3_Validation';
 import Step4_Preview from './wizard/Step4_Preview';
 import Step5_Payment from './wizard/Step5_Payment';
+import Step2_ManualEntry from './wizard/Step2_ManualEntry';
+import Step2_FileUpload from './wizard/Step2_FileUpload';
 
 import axios from 'axios';
 
 export default function Wizard() {
   const [step, setStep] = useState(1);
+  const [dataImportMethod, setDataImportMethod] = useState(null); // 'import' or 'manual'
   const [formData, setFormData] = useState({
     companyName: '',
     orgnummer: '',
@@ -61,7 +64,16 @@ export default function Wizard() {
           />
         );
       case 2:
-        return <Step2_DataImport nextStep={nextStep} prevStep={prevStep} reportId={formData.reportId} />;
+        if (!dataImportMethod) {
+          return <Step2_DataImport setImportMethod={setDataImportMethod} prevStep={prevStep} />;
+        }
+        if (dataImportMethod === 'manual') {
+          return <Step2_ManualEntry onSave={(data) => console.log(data)} onBack={() => setDataImportMethod(null)} />;
+        }
+        if (dataImportMethod === 'import') {
+          return <Step2_FileUpload nextStep={nextStep} onBack={() => setDataImportMethod(null)} reportId={formData.reportId} />;
+        }
+        return null; // Should not happen
       case 3:
         return <Step3_Validation nextStep={nextStep} prevStep={prevStep} reportId={formData.reportId} />;
       case 4:

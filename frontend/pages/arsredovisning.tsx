@@ -12,7 +12,7 @@ export default function ArsredovisningPage() {
         <div className="text-center">
           <h1 className="text-4xl font-bold">Årsredovisning enkelt online</h1>
           <p className="mt-4 text-lg text-gray-600">Direkt till Bolagsverket</p>
-          <Link href="#" className="mt-6 inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-full hover:bg-blue-700">
+          <Link href="/arsredovisning/ny" className="mt-6 inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-full hover:bg-blue-700">
             Gör min årsredovisning nu!
           </Link>
         </div>
