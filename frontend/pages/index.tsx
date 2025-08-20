@@ -18,7 +18,7 @@ export default function Home() {
             Direkt i webbläsaren, kopplat med Bolagsverket och Fortnox.
           </p>
           <div className="mt-8">
-            <Link href="/arsredovisning" className="bg-white text-blue-600 font-bold py-3 px-6 rounded-full hover:bg-gray-200">
+            <Link href="/arsredovisning/ny" className="bg-white text-blue-600 font-bold py-3 px-6 rounded-full hover:bg-gray-200">
               Skapa årsredovisning
             </Link>
             <Link href="#" className="ml-4 bg-transparent border border-white font-bold py-3 px-6 rounded-full hover:bg-blue-500">
