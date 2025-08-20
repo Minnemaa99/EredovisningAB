@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from . import models, schemas
 
 # User CRUD
@@ -28,7 +28,7 @@ def create_company(db: Session, company: schemas.CompanyCreate):
 
 # AnnualReport CRUD
 def get_annual_report(db: Session, report_id: int):
-    return db.query(models.AnnualReport).filter(models.AnnualReport.id == report_id).first()
+    return db.query(models.AnnualReport).options(joinedload(models.AnnualReport.company)).filter(models.AnnualReport.id == report_id).first()
 
 def create_annual_report(db: Session, report: schemas.AnnualReportCreate):
     db_report = models.AnnualReport(
