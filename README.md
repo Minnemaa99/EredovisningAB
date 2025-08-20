@@ -1,18 +1,58 @@
-# Eredovisning (Clone Project)
+# K2 Calculation Engine API
 
-This project is a full-stack clone of the Swedish financial reporting website `edeklarera.se`. The goal is to replicate the core functionality, allowing users to create and download annual reports (`Årsredovisning`) and tax declaration files (`SRU`).
+This project is a FastAPI backend service that provides an API for calculating a K2-compliant annual report from a list of account balances. It was created to fulfill a user request for a "pure and correct calculation engine".
 
-## Key Features to be Implemented
-- A multi-step wizard for data entry.
-- Data import via SIE files.
-- Manual data entry for income statements and balance sheets.
-- K2-compliant calculations.
-- PDF generation with watermarked previews.
-- Placeholder payment and download flow.
+## Features
+-   Accepts a JSON object containing account numbers and their balances.
+-   Maps accounts to the standard K2 report categories (e.g., Materiella anläggningstillgångar, Nettoomsättning).
+-   Calculates derived results (e.g., Rörelseresultat, Årets resultat).
+-   Performs a validation check to ensure the balance sheet balances.
+-   Returns a structured JSON object with the complete, calculated report.
+-   Saves each calculation request and its result to a database.
 
-## Tech Stack
-- **Frontend:** Next.js (React) with TypeScript & Tailwind CSS
-- **Backend:** FastAPI (Python)
-- **Database:** SQLite (dev) / PostgreSQL (prod)
-- **Migrations:** Alembic
-- **PDF Generation:** WeasyPrint + Jinja2
+## API Endpoint
+
+### `POST /api/calculate`
+-   **Request Body:**
+    ```json
+    {
+      "account_balances": {
+        "1200": 369350.0,
+        "1400": 420333.0,
+        "1510": 871666.0,
+        "1930": 1059044.0,
+        "2091": -315603.0
+      }
+    }
+    ```
+-   **Success Response (200 OK):**
+    A JSON object containing the ID of the calculation, the input data, and the structured output data.
+
+## How to Run the Server
+
+### 1. Prerequisites
+-   Python 3.10+
+
+### 2. Installation
+Navigate to the `backend` directory and install the required packages:
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### 3. Database Migration
+Before running the server for the first time, you need to create the database schema:
+```bash
+# Make sure you are in the 'backend' directory
+alembic upgrade head
+```
+This will create a `calculator.db` file in the `backend` directory.
+
+### 4. Run the Server
+Use `uvicorn` to run the FastAPI application:
+```bash
+# Make sure you are in the 'backend' directory
+uvicorn app.main:app --reload
+```
+
+The server will start on `http://localhost:8000`. You can access the interactive API documentation (Swagger UI) at `http://localhost:8000/docs` to test the endpoint.
