@@ -164,6 +164,8 @@ from fastapi.responses import StreamingResponse
 import io
 from . import pdf_generator
 
+from .pdf_generator import PDFGenerationError
+
 @app.get("/api/annual-reports/{report_id}/preview", response_class=StreamingResponse)
 async def get_report_preview(report_id: int, db: Session = Depends(get_db)):
     report = crud.get_annual_report(db, report_id)
@@ -173,8 +175,13 @@ async def get_report_preview(report_id: int, db: Session = Depends(get_db)):
     try:
         pdf_bytes = pdf_generator.generate_annual_report_pdf(report)
         return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")
+    except PDFGenerationError as e:
+        # Return a specific error message based on the stage of failure
+        error_detail = f"PDF Generation Failed at Stage: {e.stage}. Original Error: {str(e.original_exception)}"
+        raise HTTPException(status_code=500, detail=error_detail)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate PDF preview: {e}")
+        # Catch any other unexpected errors
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {e}")
 
 
 import zipfile
