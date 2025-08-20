@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../../config';
 
 const Step2_FileUpload = ({ nextStep, onBack, reportId }) => {
 
@@ -10,7 +11,7 @@ const Step2_FileUpload = ({ nextStep, onBack, reportId }) => {
       formData.append('file', file);
 
       try {
-        await axios.post(`/api/annual-reports/${reportId}/import-sie`, formData, {
+        await axios.post(`${API_BASE_URL}/api/annual-reports/${reportId}/import-sie`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

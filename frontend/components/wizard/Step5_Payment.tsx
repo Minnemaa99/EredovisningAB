@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../../config';
 
 const Step5_Payment = ({ prevStep, reportId }) => {
   const [isPaid, setIsPaid] = useState(false);
@@ -13,7 +14,7 @@ const Step5_Payment = ({ prevStep, reportId }) => {
 
     try {
       // This endpoint simulates the payment process
-      await axios.post(`/api/annual-reports/${reportId}/pay`);
+      await axios.post(`${API_BASE_URL}/api/annual-reports/${reportId}/pay`);
       setIsPaid(true);
     } catch (err) {
       setError('Betalningen misslyckades. Försök igen.');
@@ -25,7 +26,7 @@ const Step5_Payment = ({ prevStep, reportId }) => {
 
   const handleDownload = (type: 'pdf' | 'sru') => {
     // In a real app, you'd trigger a download from the backend
-    window.open(`/api/annual-reports/${reportId}/download-${type}`, '_blank');
+    window.open(`${API_BASE_URL}/api/annual-reports/${reportId}/download-${type}`, '_blank');
   };
 
   return (

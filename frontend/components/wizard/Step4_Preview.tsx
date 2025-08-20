@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../../config';
 
 const Step4_Preview = ({ nextStep, prevStep, reportId }) => {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -13,7 +14,7 @@ const Step4_Preview = ({ nextStep, prevStep, reportId }) => {
     setPdfUrl(null);
 
     try {
-      const response = await axios.get(`/api/annual-reports/${reportId}/preview`, {
+      const response = await axios.get(`${API_BASE_URL}/api/annual-reports/${reportId}/preview`, {
         responseType: 'blob', // Important to handle the binary PDF data
       });
       const file = new Blob([response.data], { type: 'application/pdf' });
