@@ -11,7 +11,7 @@ const Step1_CompanyInfo = ({ nextStep, handleChange, values }) => {
     <form onSubmit={continueStep}>
       <h3 className="text-lg font-medium mb-4">Företagsuppgifter</h3>
       <div className="mb-4">
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
           Företagsnamn
         </label>
         <input
