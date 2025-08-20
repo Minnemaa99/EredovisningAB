@@ -1,16 +1,49 @@
 import { useState } from 'react';
 import Step1_CompanyInfo from './wizard/Step1_CompanyInfo';
 import Step2_DataImport from './wizard/Step2_DataImport';
+import Step3_Validation from './wizard/Step3_Validation';
+import Step4_Preview from './wizard/Step4_Preview';
+import Step5_Payment from './wizard/Step5_Payment';
+
+import axios from 'axios';
 
 export default function Wizard() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     companyName: '',
     orgnummer: '',
-    // ... other fields will be added here
+    // This will be populated after step 1
+    companyId: null,
+    reportId: null,
   });
 
-  const nextStep = () => setStep(prev => prev + 1);
+  const nextStep = async () => {
+    // When moving from step 1 to 2, create the company and report
+    if (step === 1) {
+      try {
+        // This is a simplified flow. A real app would have user accounts.
+        // We'll create a placeholder user and company.
+        // In a real app, you would likely select an existing company.
+
+        // For now, let's assume a company and user exist and we just create the report.
+        // This part needs a more robust implementation in a real app.
+        // We'll mock the company creation and assume companyId is 1.
+
+        const reportResponse = await axios.post('/api/annual-reports/', {
+          year: new Date().getFullYear(),
+          company_id: 1, // Mock company ID
+        });
+
+        setFormData({ ...formData, reportId: reportResponse.data.id });
+
+      } catch (error) {
+        console.error("Failed to create annual report", error);
+        // Don't proceed if the backend call fails
+        return;
+      }
+    }
+    setStep(prev => prev + 1);
+  };
   const prevStep = () => setStep(prev => prev - 1);
 
   const handleChange = (input) => (e) => {
@@ -28,9 +61,17 @@ export default function Wizard() {
           />
         );
       case 2:
-        return <Step2_DataImport nextStep={nextStep} prevStep={prevStep} />;
+        return <Step2_DataImport nextStep={nextStep} prevStep={prevStep} reportId={formData.reportId} />;
+      case 3:
+        return <Step3_Validation nextStep={nextStep} prevStep={prevStep} reportId={formData.reportId} />;
+      case 4:
+        return <Step4_Preview nextStep={nextStep} prevStep={prevStep} reportId={formData.reportId} />;
+      case 5:
+        return <Step5_Payment prevStep={prevStep} reportId={formData.reportId} />;
+      case 5:
+        return <Step5_Payment prevStep={prevStep} reportId={formData.reportId} />;
       default:
-        return <div>Steg {step}</div>;
+        return <div>Färdig!</div>;
     }
   };
 

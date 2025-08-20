@@ -1,15 +1,27 @@
 import React from 'react';
 
-const Step2_DataImport = ({ nextStep, prevStep }) => {
+import axios from 'axios';
 
-  const handleFileChange = (e) => {
+const Step2_DataImport = ({ nextStep, prevStep, reportId }) => {
+
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log("SIE file selected:", file.name);
-      // Here you would typically trigger the file upload to the backend
-      // and then proceed to the next step upon success.
-      alert("Filuppladdning är inte implementerad än. Går vidare till nästa steg för demonstration.");
-      nextStep();
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        await axios.post(`/api/annual-reports/${reportId}/import-sie`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        // On success, move to the next step
+        nextStep();
+      } catch (error) {
+        console.error("Failed to upload SIE file", error);
+        alert("Kunde inte ladda upp filen. Försök igen.");
+      }
     }
   };
 

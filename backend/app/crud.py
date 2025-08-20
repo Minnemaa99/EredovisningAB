@@ -27,6 +27,9 @@ def create_company(db: Session, company: schemas.CompanyCreate):
     return db_company
 
 # AnnualReport CRUD
+def get_annual_report(db: Session, report_id: int):
+    return db.query(models.AnnualReport).filter(models.AnnualReport.id == report_id).first()
+
 def create_annual_report(db: Session, report: schemas.AnnualReportCreate):
     db_report = models.AnnualReport(
         year=report.year,
@@ -37,4 +40,21 @@ def create_annual_report(db: Session, report: schemas.AnnualReportCreate):
     db.add(db_report)
     db.commit()
     db.refresh(db_report)
+    return db_report
+
+def update_annual_report_data(db: Session, report_id: int, data: dict, status: str):
+    db_report = get_annual_report(db, report_id)
+    if db_report:
+        db_report.report_data = data
+        db_report.status = status
+        db.commit()
+        db.refresh(db_report)
+    return db_report
+
+def update_report_status(db: Session, report_id: int, status: str):
+    db_report = get_annual_report(db, report_id)
+    if db_report:
+        db_report.status = status
+        db.commit()
+        db.refresh(db_report)
     return db_report
