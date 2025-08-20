@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_BASE_URL from '../../config';
 
 const Step3_Validation = ({ nextStep, prevStep, reportId }) => {
   const [reportData, setReportData] = useState(null);
@@ -11,7 +12,7 @@ const Step3_Validation = ({ nextStep, prevStep, reportId }) => {
       if (!reportId) return;
       setIsLoading(true);
       try {
-        const response = await axios.post(`/api/annual-reports/${reportId}/validate`);
+        const response = await axios.post(`${API_BASE_URL}/api/annual-reports/${reportId}/validate`);
         setValidationResult(response.data);
       } catch (error) {
         console.error("Failed to fetch or validate data", error);

@@ -8,6 +8,7 @@ import Step2_ManualEntry from './wizard/Step2_ManualEntry';
 import Step2_FileUpload from './wizard/Step2_FileUpload';
 
 import axios from 'axios';
+import API_BASE_URL from '../config';
 
 export default function Wizard() {
   const [step, setStep] = useState(1);
@@ -32,7 +33,7 @@ export default function Wizard() {
         // This part needs a more robust implementation in a real app.
         // We'll mock the company creation and assume companyId is 1.
 
-        const reportResponse = await axios.post('/api/annual-reports/', {
+        const reportResponse = await axios.post(`${API_BASE_URL}/api/annual-reports/`, {
           year: new Date().getFullYear(),
           company_id: 1, // Mock company ID
         });
