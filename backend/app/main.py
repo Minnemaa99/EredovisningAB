@@ -135,8 +135,8 @@ def validate_report_data(report_id: int, db: Session = Depends(get_db)):
     for i, ver in enumerate(verifications):
         verification_total = 0
         for trans in ver.get("transactions", []):
-            amount = float(trans.get("belopp", 0) or trans.get("debit", 0)) - float(trans.get("credit", 0))
-            account_summary[trans.get("kontonr")] += amount
+            amount = float(trans.get("belopp") or trans.get("debit") or 0.0) - float(trans.get("credit") or 0.0)
+            account_summary[trans.get("kontonr", trans.get("account"))] += amount
             verification_total += amount
 
         # Use a small tolerance for float comparison

@@ -23,7 +23,7 @@ def generate_annual_report_pdf(report: models.AnnualReport) -> bytes:
             try:
                 account_num = int(account_num_str)
                 # Handle both SIE 'belopp' and manual 'debit'/'credit'
-                amount = float(t.get("belopp", 0.0) or t.get("debit", 0.0)) - float(t.get("credit", 0.0))
+                amount = float(t.get("belopp") or t.get("debit") or 0.0) - float(t.get("credit") or 0.0)
 
                 # Income statement accounts (3000-8999)
                 if 3000 <= account_num <= 8999:
