@@ -41,7 +41,7 @@ const Step2_FileUpload = ({ onUploadSuccess, onBack }) => {
           type="file"
           className="sr-only"
           onChange={handleFileChange}
-          accept=".se,.si"
+          accept=".se,.sie"
           disabled={isLoading}
         />
         <p className="text-sm text-gray-500 mt-2">Filen kommer att analyseras för att automatiskt fylla i din rapport.</p>
