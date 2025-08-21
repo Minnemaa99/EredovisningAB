@@ -33,6 +33,33 @@ def get_db():
 
 # --- API Endpoints ---
 
+from fastapi import File, UploadFile
+from .sie_parser.sie_parse import SieParser
+
+@app.post("/api/import/parse-sie")
+async def parse_sie_file(file: UploadFile = File(...)):
+    try:
+        content_bytes = await file.read()
+        # Handle multiple possible encodings for SIE files
+        try:
+            content = content_bytes.decode('cp437')
+        except UnicodeDecodeError:
+            content = content_bytes.decode('utf-8')
+
+        lines = content.splitlines()
+
+        parser = SieParser(file_contents=lines)
+        parser.parse()
+
+        # Calculate the structured report from the parsed data
+        calculated_report = k2_calculator.calculate_from_sie_data(parser.result)
+
+        return calculated_report
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to parse SIE file: {str(e)}")
+
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Eredovisning API"}
