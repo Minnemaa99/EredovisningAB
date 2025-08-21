@@ -1,7 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 from . import models
-from .k2_calculator import calculate_k2_report
+from .k2_calculator import calculate_from_balances
 
 def generate_pdf(report: models.AnnualReport, is_preview: bool) -> bytes:
     """
@@ -17,7 +17,7 @@ def generate_pdf(report: models.AnnualReport, is_preview: bool) -> bytes:
     # 2. Use the K2 calculator to process the data
     # We need to format the input for the calculator
     input_balances = {line.account_number: line.balance_current_year for line in account_lines}
-    calculated_data = calculate_k2_report(input_balances)
+    calculated_data = calculate_from_balances(input_balances)
 
     # Calculate totals for the template
     bs = calculated_data["balance_sheet"]
