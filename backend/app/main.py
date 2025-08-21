@@ -29,6 +29,7 @@ def _seed_database():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Runs on startup
+    Base.metadata.create_all(bind=engine)
     _seed_database()
     yield
     # Runs on shutdown
