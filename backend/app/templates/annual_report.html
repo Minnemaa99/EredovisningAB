@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Årsredovisning för {{ company.name }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+            @bottom-center {
+                content: "Sida " counter(page) " av " counter(pages);
+                font-size: 10px;
+            }
+        }
+        body { font-family: 'Times New Roman', Times, serif; font-size: 12px; }
+        h1, h2, h3 { font-family: 'Arial', sans-serif; color: #333; }
+        h1 { font-size: 24px; text-align: center; margin-bottom: 40px; }
+        h2 { font-size: 18px; border-bottom: 1px solid #000; padding-bottom: 5px; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 5px; text-align: left; }
+        th { font-weight: bold; }
+        .report-table td:nth-child(2) { text-align: right; }
+        .report-table td:nth-child(3) { text-align: right; }
+        .total-row { font-weight: bold; border-top: 1px solid #000; }
+        .watermark {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(255, 0, 0, 0.15);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    {% if is_preview %}
+    <div class="watermark">UTKAST</div>
+    {% endif %}
+
+    <h1>Årsredovisning</h1>
+    <h2>{{ company.name }} {% if not is_preview %}({{ company.orgnummer }}){% endif %}</h2>
+    <p>För räkenskapsåret {{ report.start_date }} - {{ report.end_date }}</p>
+
+    <!-- Förvaltningsberättelse (Placeholder) -->
+    <h2>Förvaltningsberättelse</h2>
+    <p>Här skulle förvaltningsberättelsen infogas...</p>
+
+    <!-- Resultaträkning -->
+    <h2>Resultaträkning</h2>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>{{ report.end_date.year }}</th>
+                <th>(Föregående år)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Nettoomsättning</td>
+                <td>{{ calculated.income_statement.Nettoomsattning | round(0) | int }}</td>
+                <td>...</td>
+            </tr>
+            <!-- Add other income statement rows here -->
+            <tr class="total-row">
+                <td>Årets resultat</td>
+                <td>{{ calculated.income_statement['Arets resultat'] | round(0) | int }}</td>
+                <td>...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Balansräkning -->
+    <h2>Balansräkning</h2>
+    <table class="report-table">
+         <thead>
+            <tr>
+                <th>TILLGÅNGAR</th>
+                <th>{{ report.end_date.year }}</th>
+                <th>(Föregående år)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Materiella anläggningstillgångar</td><td>{{ calculated.balance_sheet['Materiella anlaggningstillgangar'] | round(0) | int }}</td><td>...</td></tr>
+            <!-- Add other asset rows here -->
+            <tr class="total-row">
+                <td>SUMMA TILLGÅNGAR</td>
+                <td>{{ calculated.totals.assets | round(0) | int }}</td>
+                <td>...</td>
+            </tr>
+        </tbody>
+        <thead>
+            <tr>
+                <th>EGET KAPITAL OCH SKULDER</th>
+                <th>{{ report.end_date.year }}</th>
+                <th>(Föregående år)</th>
+            </tr>
+        </thead>
+        <tbody>
+             <tr><td>Bundet eget kapital</td><td>{{ calculated.balance_sheet['Bundet eget kapital'] | round(0) | int }}</td><td>...</td></tr>
+             <!-- Add other equity/liability rows here -->
+            <tr class="total-row">
+                <td>SUMMA EGET KAPITAL OCH SKULDER</td>
+                <td>{{ calculated.totals.equity_and_liabilities | round(0) | int }}</td>
+                <td>...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Underskrifter (Placeholder) -->
+    <h2>Underskrifter</h2>
+    <p>Ort: __________ Datum: __________</p>
+    <br><br>
+    <p>_________________________</p>
+    <p>Namn, Styrelseledamot</p>
+
+</body>
+</html>

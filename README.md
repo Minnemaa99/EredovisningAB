@@ -1,58 +1,58 @@
-# K2 Calculation Engine API
+# Eredovisning - Full Application Clone
 
-This project is a FastAPI backend service that provides an API for calculating a K2-compliant annual report from a list of account balances. It was created to fulfill a user request for a "pure and correct calculation engine".
+This project is a full-stack clone of the Swedish financial reporting website `edeklarera.se`. The goal is to replicate the core functionality, allowing users to create and download annual reports (`Årsredovisning`) and tax declaration files (`SRU`).
 
-## Features
--   Accepts a JSON object containing account numbers and their balances.
--   Maps accounts to the standard K2 report categories (e.g., Materiella anläggningstillgångar, Nettoomsättning).
--   Calculates derived results (e.g., Rörelseresultat, Årets resultat).
--   Performs a validation check to ensure the balance sheet balances.
--   Returns a structured JSON object with the complete, calculated report.
--   Saves each calculation request and its result to a database.
+## Core Features
+- A multi-step wizard for manually entering financial data for an annual report.
+- A detailed data model for storing company information, report data, and settings.
+- A K2-compliant calculation engine for processing financial data.
+- PDF generation with watermarked previews for drafts and clean final versions.
+- Placeholder API endpoints for SIE import and payment processing.
 
-## API Endpoint
+## Tech Stack
+- **Frontend:** Next.js (React) with TypeScript & Tailwind CSS
+- **Backend:** FastAPI (Python)
+- **Database:** SQLite (for development), with code compatible with PostgreSQL.
+- **PDF Generation:** WeasyPrint + Jinja2
+- **Calculations:** Custom K2 calculation module.
 
-### `POST /api/calculate`
--   **Request Body:**
-    ```json
-    {
-      "account_balances": {
-        "1200": 369350.0,
-        "1400": 420333.0,
-        "1510": 871666.0,
-        "1930": 1059044.0,
-        "2091": -315603.0
-      }
-    }
-    ```
--   **Success Response (200 OK):**
-    A JSON object containing the ID of the calculation, the input data, and the structured output data.
-
-## How to Run the Server
+## How to Run the Application
 
 ### 1. Prerequisites
--   Python 3.10+
+- Python 3.10+
+- Node.js 18+
 
-### 2. Installation
-Navigate to the `backend` directory and install the required packages:
-```bash
-cd backend
-pip install -r requirements.txt
-```
+### 2. Backend Setup
+1.  **Navigate to the backend directory:**
+    ```bash
+    cd backend
+    ```
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  **Run the Server:**
+    The application is configured to automatically create the necessary SQLite database (`eredovisning.db`) and its tables on startup.
+    ```bash
+    uvicorn app.main:app --reload
+    ```
+    The API will be available at `http://localhost:8000`.
 
-### 3. Database Migration
-Before running the server for the first time, you need to create the database schema:
-```bash
-# Make sure you are in the 'backend' directory
-alembic upgrade head
-```
-This will create a `calculator.db` file in the `backend` directory.
+### 3. Frontend Setup
+1.  **Navigate to the frontend directory (in a new terminal):**
+    ```bash
+    cd frontend
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Run the frontend development server:**
+    The Next.js app is configured to proxy API requests to the backend.
+    ```bash
+    npm run dev
+    ```
+    The web application will be available at `http://localhost:3000`. To start the annual report creation process, navigate to `http://localhost:3000/arsredovisning/ny`.
 
-### 4. Run the Server
-Use `uvicorn` to run the FastAPI application:
-```bash
-# Make sure you are in the 'backend' directory
-uvicorn app.main:app --reload
-```
-
-The server will start on `http://localhost:8000`. You can access the interactive API documentation (Swagger UI) at `http://localhost:8000/docs` to test the endpoint.
+## Legal Disclaimer
+This project is a technical clone for demonstration purposes. It is **not** a legally compliant tool for financial reporting. The generated documents do not guarantee compliance with K2 regulations or Skatteverket's requirements. A full legal and accounting review would be necessary before using this application for real financial submissions.
