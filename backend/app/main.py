@@ -54,19 +54,26 @@ SIE_ACCOUNT_MAPPING = {
 def _map_sie_data_to_schema(sie_data: SieData) -> schemas.AnnualReportCreate:
     """Maps parsed SIE data to the AnnualReportCreate schema."""
 
-    # 1. Extract dates from #RAR
+    # 1. Extract dates from #RAR, with robust checking
     rar_data = sie_data.get_data("#RAR")
-    if not rar_data or len(rar_data[0].data) < 3:
-        raise HTTPException(status_code=400, detail="SIE file is missing fiscal year (#RAR) information.")
+    if not rar_data:
+        raise HTTPException(status_code=400, detail="Could not find fiscal year (#RAR tag) in the SIE file.")
 
-    start_date_str = rar_data[0].data[1]
-    end_date_str = rar_data[0].data[2]
+    rar_line = rar_data[0]
+    if not hasattr(rar_line, 'data') or len(rar_line.data) < 3:
+        raise HTTPException(status_code=400, detail="The #RAR tag in the SIE file is malformed.")
+
+    start_date_str = rar_line.data[1]
+    end_date_str = rar_line.data[2]
 
     # 2. Initialize schema with dates and zeroed data
-    report_data = {
-        "start_date": date.fromisoformat(f"{start_date_str[:4]}-{start_date_str[4:6]}-{start_date_str[6:]}"),
-        "end_date": date.fromisoformat(f"{end_date_str[:4]}-{end_date_str[4:6]}-{end_date_str[6:]}")
-    }
+    try:
+        report_data = {
+            "start_date": date.fromisoformat(f"{start_date_str[:4]}-{start_date_str[4:6]}-{start_date_str[6:]}"),
+            "end_date": date.fromisoformat(f"{end_date_str[:4]}-{end_date_str[4:6]}-{end_date_str[6:]}")
+        }
+    except (ValueError, IndexError):
+        raise HTTPException(status_code=400, detail="Could not parse dates from the #RAR tag. Ensure they are in YYYYMMDD format.")
     for field in schemas.AnnualReportBase.__annotations__:
         report_data[field] = 0.0
 
