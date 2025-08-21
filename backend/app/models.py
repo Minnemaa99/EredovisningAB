@@ -7,61 +7,59 @@ class Company(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     orgnummer = Column(String, unique=True, index=True, nullable=False)
-    postadress = Column(String)
-    postnummer = Column(String)
-    postort = Column(String)
+    # ... other company fields
 
-    # Relationships
     annual_reports = relationship("AnnualReport", back_populates="company")
-    settings = relationship("Setting", back_populates="company")
 
 class AnnualReport(Base):
     __tablename__ = "annual_reports"
     id = Column(Integer, primary_key=True, index=True)
     company_id = Column(Integer, ForeignKey("companies.id"))
-    start_date = Column(Date, nullable=False)
-    end_date = Column(Date, nullable=False)
+    start_date = Column(Date)
+    end_date = Column(Date)
+
+    # --- Balance Sheet (Balansräkning) ---
+    # Anläggningstillgångar
+    bs_materiella_anlaggningstillgangar = Column(Float, default=0.0)
+    bs_finansiella_anlaggningstillgangar = Column(Float, default=0.0)
+
+    # Omsättningstillgångar
+    bs_varulager = Column(Float, default=0.0)
+    bs_kundfordringar = Column(Float, default=0.0)
+    bs_ovriga_fordringar = Column(Float, default=0.0)
+    bs_forutbetalda_kostnader = Column(Float, default=0.0)
+    bs_kassa_bank = Column(Float, default=0.0)
+
+    # Eget kapital och skulder
+    bs_bundet_eget_kapital = Column(Float, default=0.0)
+    bs_fritt_eget_kapital = Column(Float, default=0.0)
+    bs_arets_resultat_ek = Column(Float, default=0.0) # From income statement
+
+    bs_obeskattade_reserver = Column(Float, default=0.0)
+    bs_langfristiga_skulder = Column(Float, default=0.0)
+    bs_kortfristiga_skulder = Column(Float, default=0.0)
+
+    # --- Income Statement (Resultaträkning) ---
+    is_nettoomsattning = Column(Float, default=0.0)
+    is_forandring_lager = Column(Float, default=0.0)
+    is_ovriga_rorelseintakter = Column(Float, default=0.0)
+    is_kostnad_ravaror = Column(Float, default=0.0)
+    is_kostnad_externa = Column(Float, default=0.0)
+    is_kostnad_personal = Column(Float, default=0.0)
+    is_avskrivningar = Column(Float, default=0.0)
+    is_finansiella_intakter = Column(Float, default=0.0)
+    is_finansiella_kostnader = Column(Float, default=0.0)
+    is_bokslutsdispositioner = Column(Float, default=0.0)
+    is_skatt = Column(Float, default=0.0)
 
     # Relationships
     company = relationship("Company", back_populates="annual_reports")
-    account_lines = relationship("AccountLine", back_populates="report")
     notes = relationship("Note", back_populates="report")
-
-class AccountLine(Base):
-    __tablename__ = "account_lines"
-    id = Column(Integer, primary_key=True, index=True)
-    report_id = Column(Integer, ForeignKey("annual_reports.id"))
-    account_number = Column(String, nullable=False)
-    balance_current_year = Column(Float, nullable=False)
-    balance_prev_year_1 = Column(Float)
-    balance_prev_year_2 = Column(Float)
-    balance_prev_year_3 = Column(Float)
-
-    # Relationship
-    report = relationship("AnnualReport", back_populates="account_lines")
 
 class Note(Base):
     __tablename__ = "notes"
     id = Column(Integer, primary_key=True, index=True)
     report_id = Column(Integer, ForeignKey("annual_reports.id"))
-    note_type = Column(String) # e.g., "Redovisningsprinciper"
+    note_type = Column(String)
     content = Column(Text)
-
-    # Relationship
     report = relationship("AnnualReport", back_populates="notes")
-
-class Setting(Base):
-    __tablename__ = "settings"
-    id = Column(Integer, primary_key=True, index=True)
-    company_id = Column(Integer, ForeignKey("companies.id"))
-    depreciation_period_assets = Column(Integer, default=5)
-    average_employees = Column(Integer)
-    signature_place = Column(String, default="Helsingborg")
-    signature_date = Column(Date)
-
-    # Store signatories as a JSON list of dicts for flexibility
-    # e.g., [{"name": "Anna Andersson", "ssn": "YYYYMMDD-XXXX", "role": "Styrelseledamot"}]
-    signatories = Column(Text)
-
-    # Relationship
-    company = relationship("Company", back_populates="settings")

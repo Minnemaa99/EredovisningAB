@@ -1,20 +1,19 @@
-# Eredovisning - Full Application Clone
+# Eredovisning - Detailed K2 Application
 
-This project is a full-stack clone of the Swedish financial reporting website `edeklarera.se`. The goal is to replicate the core functionality, allowing users to create and download annual reports (`Årsredovisning`) and tax declaration files (`SRU`).
+This project is a full-stack application for creating Swedish K2-compliant annual reports. It is a detailed implementation based on user specifications to clone the functionality of a financial reporting service.
 
 ## Core Features
-- A multi-step wizard for manually entering financial data for an annual report.
-- A detailed data model for storing company information, report data, and settings.
-- A K2-compliant calculation engine for processing financial data.
-- PDF generation with watermarked previews for drafts and clean final versions.
-- Placeholder API endpoints for SIE import and payment processing.
+- A multi-step frontend wizard for manually entering detailed data for an annual report (income statement, balance sheet, etc.).
+- A detailed backend data model where each line item in the financial reports corresponds to a specific field in the database.
+- A K2 calculation engine that computes derived values (e.g., various results, totals).
+- A PDF generation service that creates watermarked previews and final, clean reports from the structured data.
+- A robust API to support the entire creation and generation flow.
 
 ## Tech Stack
 - **Frontend:** Next.js (React) with TypeScript & Tailwind CSS
 - **Backend:** FastAPI (Python)
-- **Database:** SQLite (for development), with code compatible with PostgreSQL.
+- **Database:** SQLite (dev), with automatic table creation on startup.
 - **PDF Generation:** WeasyPrint + Jinja2
-- **Calculations:** Custom K2 calculation module.
 
 ## How to Run the Application
 
@@ -23,36 +22,27 @@ This project is a full-stack clone of the Swedish financial reporting website `e
 - Node.js 18+
 
 ### 2. Backend Setup
-1.  **Navigate to the backend directory:**
-    ```bash
-    cd backend
-    ```
+1.  **Navigate to the `backend` directory.**
 2.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
 3.  **Run the Server:**
-    The application is configured to automatically create the necessary SQLite database (`eredovisning.db`) and its tables on startup.
+    The application will automatically create the `eredovisning.db` database file and its tables on first startup.
     ```bash
     uvicorn app.main:app --reload
     ```
     The API will be available at `http://localhost:8000`.
 
 ### 3. Frontend Setup
-1.  **Navigate to the frontend directory (in a new terminal):**
-    ```bash
-    cd frontend
-    ```
+1.  **Navigate to the `frontend` directory (in a new terminal).**
 2.  **Install dependencies:**
     ```bash
     npm install
     ```
 3.  **Run the frontend development server:**
-    The Next.js app is configured to proxy API requests to the backend.
+    The Next.js app is configured with a proxy, so API calls will be automatically routed to the backend.
     ```bash
     npm run dev
     ```
-    The web application will be available at `http://localhost:3000`. To start the annual report creation process, navigate to `http://localhost:3000/arsredovisning/ny`.
-
-## Legal Disclaimer
-This project is a technical clone for demonstration purposes. It is **not** a legally compliant tool for financial reporting. The generated documents do not guarantee compliance with K2 regulations or Skatteverket's requirements. A full legal and accounting review would be necessary before using this application for real financial submissions.
+    The web application will be available at `http://localhost:3000`. The wizard for creating a new report is at `http://localhost:3000/arsredovisning/ny`.
