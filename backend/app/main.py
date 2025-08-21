@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 import io
+import json
 from datetime import date
 from contextlib import asynccontextmanager
 
@@ -11,6 +12,8 @@ from .sie_parser.sie_parse import SieParser
 from .sie_parser.accounting_data import SieData
 from .database import engine, SessionLocal, Base
 
+# This will hold the loaded chart of accounts
+chart_of_accounts = {}
 
 def _seed_database():
     """Ensures a default company exists in the database."""
@@ -29,6 +32,16 @@ def _seed_database():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Runs on startup
+    global chart_of_accounts
+    # Load the chart of accounts from the JSON file.
+    # Assuming the script is run from the project root where `public/` exists.
+    try:
+        with open("public/kontoplan.json", "r", encoding="utf-8") as f:
+            chart_of_accounts = json.load(f)
+    except FileNotFoundError:
+        # Handle case where file might not exist, though we just created it.
+        chart_of_accounts = {}
+
     Base.metadata.create_all(bind=engine)
     _seed_database()
     yield
@@ -40,6 +53,11 @@ app = FastAPI(title="Eredovisning API", lifespan=lifespan)
 # CORS
 origins = ["http://localhost:3000"]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+
+@app.get("/api/kontoplan")
+def get_kontoplan():
+    """Returns the entire chart of accounts."""
+    return chart_of_accounts
 
 def get_db():
     db = SessionLocal()
