@@ -26,17 +26,17 @@ def get_db():
 def read_root():
     return {"message": "Welcome to the Eredovisning API"}
 
-@app.post("/api/reports", response_model=schemas.AnnualReport)
+@app.post("/api/annual-reports", response_model=schemas.AnnualReport)
 def create_annual_report(report_in: schemas.AnnualReportCreate, company_id: int, db: Session = Depends(get_db)):
     # This endpoint now creates the report with all its data at once.
     return crud.create_report(db=db, company_id=company_id, report_data=report_in)
 
-@app.put("/api/reports/{report_id}", response_model=schemas.AnnualReport)
+@app.put("/api/annual-reports/{report_id}", response_model=schemas.AnnualReport)
 def update_annual_report(report_id: int, report_in: schemas.AnnualReportCreate, db: Session = Depends(get_db)):
     # This endpoint updates an existing report with new data.
     return crud.update_report(db=db, report_id=report_id, report_data=report_in)
 
-@app.post("/api/reports/{report_id}/calculate", response_model=schemas.AnnualReport)
+@app.post("/api/annual-reports/{report_id}/calculate", response_model=schemas.AnnualReport)
 def calculate_and_save_report(report_id: int, db: Session = Depends(get_db)):
     """
     Takes the saved report data, runs the K2 calculations, and saves the result.
@@ -53,7 +53,7 @@ def calculate_and_save_report(report_id: int, db: Session = Depends(get_db)):
     db.refresh(calculated_report)
     return calculated_report
 
-@app.get("/api/reports/{report_id}/preview", response_class=StreamingResponse)
+@app.get("/api/annual-reports/{report_id}/preview", response_class=StreamingResponse)
 def get_report_preview(report_id: int, db: Session = Depends(get_db)):
     report = crud.get_report(db, report_id)
     if not report:
