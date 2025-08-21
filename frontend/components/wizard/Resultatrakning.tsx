@@ -1,6 +1,5 @@
 import React from 'react';
 
-// This is a placeholder for a single input row in the form
 const ReportRow = ({ label, fieldName, value, handleChange }) => (
   <div className="flex items-center justify-between py-2 border-b">
     <label htmlFor={fieldName} className="text-gray-700">{label}</label>
@@ -8,10 +7,11 @@ const ReportRow = ({ label, fieldName, value, handleChange }) => (
       type="number"
       id={fieldName}
       name={fieldName}
-      value={value}
+      value={value || ''}
       onChange={handleChange}
       className="w-48 p-2 border rounded text-right"
-      placeholder="0 kr"
+      placeholder="0"
+      data-section="income_statement"
     />
   </div>
 );
@@ -27,14 +27,10 @@ const Resultatrakning = ({ nextStep, prevStep, values, handleChange }) => {
         <ReportRow label="Övriga rörelseintäkter" fieldName="ovriga_rorelseintakter" value={values.ovriga_rorelseintakter} handleChange={handleChange} />
 
         <h3 className="font-semibold text-lg mt-4 border-b pb-2">Rörelsens kostnader</h3>
-        <ReportRow label="Råvaror och förnödenheter" fieldName="ravaror_fornoddenheter" value={values.ravaror_fornoddenheter} handleChange={handleChange} />
-        <ReportRow label="Handelsvaror" fieldName="handelsvaror" value={values.handelsvaror} handleChange={handleChange} />
-        <ReportRow label="Externa kostnader" fieldName="externa_kostnader" value={values.externa_kostnader} handleChange={handleChange} />
+        <ReportRow label="Råvaror och förnödenheter" fieldName="ravaror_och_fornoddenheter" value={values.ravaror_och_fornoddenheter} handleChange={handleChange} />
+        <ReportRow label="Övriga externa kostnader" fieldName="ovriga_externa_kostnader" value={values.ovriga_externa_kostnader} handleChange={handleChange} />
         <ReportRow label="Personalkostnader" fieldName="personalkostnader" value={values.personalkostnader} handleChange={handleChange} />
         <ReportRow label="Avskrivningar" fieldName="avskrivningar" value={values.avskrivningar} handleChange={handleChange} />
-
-        {/* More fields would be added here based on the full K2 schema */}
-
       </div>
 
       <div className="mt-8 flex justify-between">

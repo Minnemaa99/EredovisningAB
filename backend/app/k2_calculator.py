@@ -2,46 +2,40 @@ from collections import defaultdict
 
 K2_MAPPINGS = {
     "balance_sheet": {
-        "Materiella anlaggningstillgangar": list(range(1200, 1300)),
-        "Finansiella anlaggningstillgangar": list(range(1300, 1400)),
-        "Varulager_mm": list(range(1400, 1500)),
-        "Kortfristiga fordringar": list(range(1500, 1800)),
-        "Kortfristiga placeringar": list(range(1800, 1900)),
-        "Kassa och bank": list(range(1900, 2000)),
-        "Bundet eget kapital": list(range(2080, 2090)),
-        "Fritt eget kapital": list(range(2090, 2100)),
-        "Obeskattade reserver": list(range(2100, 2200)),
-        "Langfristiga skulder": list(range(2300, 2400)),
-        "Kortfristiga skulder": list(range(2400, 3000)),
+        "materiella_anlaggningstillgangar": list(range(1200, 1300)),
+        "finansiella_anlaggningstillgangar": list(range(1300, 1400)),
+        "varulager_mm": list(range(1400, 1500)),
+        "kortfristiga_fordringar": list(range(1500, 1800)),
+        "kortfristiga_placeringar": list(range(1800, 1900)),
+        "kassa_och_bank": list(range(1900, 2000)),
+        "bundet_eget_kapital": list(range(2080, 2090)),
+        "fritt_eget_kapital": list(range(2090, 2100)),
+        "obeskattade_reserver": list(range(2100, 2200)),
+        "langfristiga_skulder": list(range(2300, 2400)),
+        "kortfristiga_skulder": list(range(2400, 3000)),
     },
     "income_statement": {
-        "Nettoomsattning": list(range(3000, 3800)),
-        "Forandring av lager": list(range(4900, 5000)),
-        "Ovriga rorelseintakter": list(range(3800, 4000)),
-        "Ravaror och fornoddenheter": list(range(4000, 4800)),
-        "Ovriga externa kostnader": list(range(5000, 6900)),
-        "Personalkostnader": list(range(7000, 7700)),
-        "Avskrivningar": list(range(7700, 7900)),
-        "Ovriga rorelsekostnader": list(range(7900, 8000)),
-        "Finansiella poster": list(range(8200, 8500)),
-        "Bokslutsdispositioner": list(range(8800, 8900)),
-        "Skatt pa arets resultat": list(range(8900, 9000)),
+        "nettoomsattning": list(range(3000, 3800)),
+        "forandring_av_lager": list(range(4900, 5000)),
+        "ovriga_rorelseintakter": list(range(3800, 4000)),
+        "ravaror_och_fornoddenheter": list(range(4000, 4800)),
+        "ovriga_externa_kostnader": list(range(5000, 6900)),
+        "personalkostnader": list(range(7000, 7700)),
+        "avskrivningar": list(range(7700, 7900)),
+        "ovriga_rorelsekostnader": list(range(7900, 8000)),
+        "finansiella_poster": list(range(8200, 8500)),
+        "bokslutsdispositioner": list(range(8800, 8900)),
+        "skatt_pa_arets_resultat": list(range(8900, 9000)),
     }
 }
 
 def calculate_from_sie_data(sie_data) -> dict:
-    """
-    Takes parsed SIE data and calculates a structured K2 report.
-    """
     account_balances = defaultdict(float)
     verifications = sie_data.get_data('#VER')
     for ver in verifications:
         for trans in ver.trans_list:
             account_balances[trans.kontonr] += trans.belopp
-
-    # --- Re-use the main calculation logic ---
     return calculate_from_balances(dict(account_balances))
-
 
 def calculate_from_balances(account_balances: dict) -> dict:
     report = {
@@ -64,28 +58,29 @@ def calculate_from_balances(account_balances: dict) -> dict:
             elif acc_num in account_to_is_category:
                 report["income_statement"][account_to_is_category[acc_num]] += balance
             else:
-                if balance != 0: # Only report unmatched accounts with a balance
+                if balance != 0:
                     report["unmatched_accounts"].append(acc_str)
         except (ValueError, TypeError):
             report["unmatched_accounts"].append(acc_str)
 
-    # --- Calculate Derived Values ---
     is_calc = report["income_statement"]
-    is_calc["Rorelseresultat"] = (is_calc.get("Nettoomsattning", 0) + is_calc.get("Forandring av lager", 0) +
-                                  is_calc.get("Ovriga rorelseintakter", 0) + is_calc.get("Ravaror och fornoddenheter", 0) +
-                                  is_calc.get("Ovriga externa kostnader", 0) + is_calc.get("Personalkostnader", 0) +
-                                  is_calc.get("Avskrivningar", 0) + is_calc.get("Ovriga rorelsekostnader", 0))
-    is_calc["Resultat efter finansiella poster"] = is_calc["Rorelseresultat"] + is_calc.get("Finansiella poster", 0)
-    is_calc["Resultat fore skatt"] = is_calc["Resultat efter finansiella poster"] + is_calc.get("Bokslutsdispositioner", 0)
-    is_calc["Arets resultat"] = is_calc["Resultat fore skatt"] + is_calc.get("Skatt pa arets resultat", 0)
+    is_calc["rorelseresultat"] = (is_calc.get("nettoomsattning", 0) + is_calc.get("forandring_av_lager", 0) +
+                                  is_calc.get("ovriga_rorelseintakter", 0) + is_calc.get("ravaror_och_fornoddenheter", 0) +
+                                  is_calc.get("ovriga_externa_kostnader", 0) + is_calc.get("personalkostnader", 0) +
+                                  is_calc.get("avskrivningar", 0) + is_calc.get("ovriga_rorelsekostnader", 0))
+    is_calc["resultat_efter_finansiella_poster"] = is_calc["rorelseresultat"] + is_calc.get("finansiella_poster", 0)
+    is_calc["resultat_fore_skatt"] = is_calc["resultat_efter_finansiella_poster"] + is_calc.get("bokslutsdispositioner", 0)
+    is_calc["arets_resultat"] = is_calc["resultat_fore_skatt"] + is_calc.get("skatt_pa_arets_resultat", 0)
 
     bs_calc = report["balance_sheet"]
-    bs_calc["Arets resultat"] = is_calc["Arets resultat"]
+    bs_calc["arets_resultat"] = is_calc["arets_resultat"]
 
-    total_assets = sum(v for k, v in bs_calc.items() if k in K2_MAPPINGS["balance_sheet"] and any(int(acc) < 2000 for acc in K2_MAPPINGS["balance_sheet"][k]))
-    total_equity_and_liabilities = (bs_calc.get("Bundet eget kapital", 0) + bs_calc.get("Fritt eget kapital", 0) +
-                                    bs_calc.get("Arets resultat", 0) + bs_calc.get("Obeskattade reserver", 0) +
-                                    bs_calc.get("Langfristiga skulder", 0) + bs_calc.get("Kortfristiga skulder", 0))
+    total_assets = (bs_calc.get("materiella_anlaggningstillgangar", 0) + bs_calc.get("finansiella_anlaggningstillgangar", 0) +
+                    bs_calc.get("varulager_mm", 0) + bs_calc.get("kortfristiga_fordringar", 0) +
+                    bs_calc.get("kortfristiga_placeringar", 0) + bs_calc.get("kassa_och_bank", 0))
+    total_equity_and_liabilities = (bs_calc.get("bundet_eget_kapital", 0) + bs_calc.get("fritt_eget_kapital", 0) +
+                                    bs_calc.get("arets_resultat", 0) + bs_calc.get("obeskattade_reserver", 0) +
+                                    bs_calc.get("langfristiga_skulder", 0) + bs_calc.get("kortfristiga_skulder", 0))
 
     if abs(total_assets + total_equity_and_liabilities) > 0.01:
         report["validation_errors"].append("Balansräkningen balanserar inte.")
