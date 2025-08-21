@@ -12,7 +12,8 @@ const Step2_FileUpload = ({ onUploadSuccess, onBack }) => {
       formData.append('file', file);
 
       try {
-        const response = await axios.post(`/api/import/parse-sie`, formData, {
+        // Assuming company_id=1 for this demo, as was done in the original Wizard.tsx
+        const response = await axios.post(`/api/annual-reports/upload-sie?company_id=1`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
