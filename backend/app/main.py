@@ -4,6 +4,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 import io
 from datetime import date
+from contextlib import asynccontextmanager
 
 from . import crud, models, schemas, pdf_generator, k2_calculator
 from .sie_parser.sie_parse import SieParser
@@ -11,26 +12,29 @@ from .sie_parser.accounting_data import SieData
 from .database import engine, SessionLocal, Base
 
 
-@app.on_event("startup")
-def startup_event():
-    # This function will run once when the application starts.
-    # We use it to ensure a default company exists.
+def _seed_database():
+    """Ensures a default company exists in the database."""
     db = SessionLocal()
-    # Check if a company already exists
-    company = db.query(models.Company).filter(models.Company.id == 1).first()
-    if not company:
-        # Create a default company if none exists
-        default_company = schemas.CompanyCreate(
-            name="Testbolaget AB",
-            orgnummer="555555-5555"
-        )
-        crud.create_company(db=db, company=default_company)
-    db.close()
+    try:
+        company = db.query(models.Company).filter(models.Company.id == 1).first()
+        if not company:
+            default_company = schemas.CompanyCreate(
+                name="Testbolaget AB",
+                orgnummer="555555-5555"
+            )
+            crud.create_company(db=db, company=default_company)
+    finally:
+        db.close()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Runs on startup
+    _seed_database()
+    yield
+    # Runs on shutdown
+    pass
 
-# Base.metadata.create_all(bind=engine) # This is now handled by Alembic migrations
-
-app = FastAPI(title="Eredovisning API")
+app = FastAPI(title="Eredovisning API", lifespan=lifespan)
 
 # CORS
 origins = ["http://localhost:3000"]
