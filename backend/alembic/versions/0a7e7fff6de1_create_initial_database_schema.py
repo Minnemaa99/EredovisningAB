@@ -1,8 +1,8 @@
-"""Add detailed financial fields to annual_reports table
+"""Create initial database schema
 
-Revision ID: 6a098c17b026
+Revision ID: 0a7e7fff6de1
 Revises:
-Create Date: 2025-08-21 16:52:26.724359
+Create Date: 2025-08-21 17:03:18.807878
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6a098c17b026'
+revision: str = '0a7e7fff6de1'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
