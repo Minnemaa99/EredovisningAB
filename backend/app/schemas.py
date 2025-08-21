@@ -40,7 +40,7 @@ class AnnualReport(AnnualReportBase):
     bs_arets_resultat_ek: Optional[float] = 0.0 # Calculated field
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CompanyBase(BaseModel):
     name: str
@@ -53,4 +53,4 @@ class Company(CompanyBase):
     id: int
     annual_reports: List[AnnualReport] = []
     class Config:
-        orm_mode = True
+        from_attributes = True
