@@ -17,8 +17,14 @@ export default function Wizard() {
 
   const createReport = async () => {
     try {
+      // For manual entry, we create a shell report on the backend.
+      // The backend expects start and end dates, so we provide placeholders.
+      const payload = {
+        start_date: "2024-01-01",
+        end_date: "2024-12-31",
+      };
       // Assuming company 1 for this demo
-      const response = await axios.post('/api/annual-reports?company_id=1');
+      const response = await axios.post('/api/annual-reports?company_id=1', payload);
       setReportId(response.data.id);
       return response.data.id;
     } catch (error) {
