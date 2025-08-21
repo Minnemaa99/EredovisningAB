@@ -3,3 +3,12 @@ uvicorn[standard]
 sqlalchemy
 alembic
 python-multipart
+weasyprint
+jinja2
+pydantic[email] # For email validation in schemas
+passlib[bcrypt] # For password hashing
+python-jose[cryptography] # For JWT tokens
+pandas # Often useful for data manipulation
+requests # For potential external API calls
+psycopg2-binary # For PostgreSQL in production
+python-dotenv # For managing environment variables
