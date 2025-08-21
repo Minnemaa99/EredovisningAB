@@ -50,7 +50,7 @@ export default function Wizard() {
     // into the AccountLineIn schema for the backend.
     const account_lines = [
         ...Object.entries(reportData.income_statement).map(([k, v]) => ({ account_number: k, balance_current_year: parseFloat(v || 0) })),
-        ...Object.entries(report_Data.balance_sheet).map(([k, v]) => ({ account_number: k, balance_current_year: parseFloat(v || 0) }))
+        ...Object.entries(reportData.balance_sheet).map(([k, v]) => ({ account_number: k, balance_current_year: parseFloat(v || 0) }))
     ];
 
     const payload = {
