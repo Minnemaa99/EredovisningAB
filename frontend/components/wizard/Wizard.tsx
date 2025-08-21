@@ -28,20 +28,40 @@ export default function Wizard() {
   };
 
   const handleChoice = async (choice) => {
-    const newReportId = await createReport();
-    if (!newReportId) return;
-
     if (choice === 'manual') {
+      const newReportId = await createReport();
+      if (!newReportId) return;
       setStep(1);
     } else if (choice === 'import') {
+      // Don't create a report here. The upload step will do it.
       setStep(0.5);
     }
   };
 
-  const handleUploadSuccess = (parsedData) => {
+  const handleUploadSuccess = (reportData) => {
+    setReportId(reportData.id); // Set the report ID from the response
+
+    // The backend now returns a flat structure based on the schema (e.g., "bs_kassa_bank").
+    // The form components expect a different structure (e.g., { balance_sheet: { Kassa_bank: ... } }).
+    // This function rebuilds the object for the form state.
+    const income_statement = {};
+    const balance_sheet = {};
+
+    for (const key in reportData) {
+      if (key.startsWith('is_')) {
+        // A bit of a hacky way to map flat schema fields to the nested form state
+        // e.g., is_nettoomsattning -> Nettoomsattning
+        const formKey = key.substring(3, 4).toUpperCase() + key.substring(4);
+        income_statement[formKey] = reportData[key];
+      } else if (key.startsWith('bs_')) {
+        const formKey = key.substring(3, 4).toUpperCase() + key.substring(4);
+        balance_sheet[formKey] = reportData[key];
+      }
+    }
+
     setFormData({
-        income_statement: parsedData.income_statement,
-        balance_sheet: parsedData.balance_sheet,
+      income_statement,
+      balance_sheet,
     });
     setStep(1); // Go to the first form for review
   };
