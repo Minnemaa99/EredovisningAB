@@ -8,9 +8,27 @@ from datetime import date
 from . import crud, models, schemas, pdf_generator, k2_calculator
 from .sie_parser.sie_parse import SieParser
 from .sie_parser.accounting_data import SieData
-from .database import engine, SessionLocal
+from .database import engine, SessionLocal, Base
 
-models.Base.metadata.create_all(bind=engine)
+
+@app.on_event("startup")
+def startup_event():
+    # This function will run once when the application starts.
+    # We use it to ensure a default company exists.
+    db = SessionLocal()
+    # Check if a company already exists
+    company = db.query(models.Company).filter(models.Company.id == 1).first()
+    if not company:
+        # Create a default company if none exists
+        default_company = schemas.CompanyCreate(
+            name="Testbolaget AB",
+            orgnummer="555555-5555"
+        )
+        crud.create_company(db=db, company=default_company)
+    db.close()
+
+
+# Base.metadata.create_all(bind=engine) # This is now handled by Alembic migrations
 
 app = FastAPI(title="Eredovisning API")
 
