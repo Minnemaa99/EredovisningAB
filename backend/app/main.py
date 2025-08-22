@@ -201,7 +201,17 @@ def create_report_from_details(payload: schemas.DetailedReportPayload, db: Sessi
 
     report_create_schema = schemas.AnnualReportCreate(**report_data)
 
-    return crud.create_report(db=db, company_id=payload.company_id, report_data=report_create_schema)
+    # First, create the report with the aggregated data
+    db_report = crud.create_report(db=db, company_id=payload.company_id, report_data=report_create_schema)
+
+    # Now, perform the final calculations that link the income statement and balance sheet
+    calculated_report = k2_calculator.perform_calculations(db_report)
+
+    # The calculator modifies the object, but we should commit to be safe
+    db.commit()
+    db.refresh(calculated_report)
+
+    return calculated_report
 
 @app.post("/api/annual-reports/{report_id}/calculate", response_model=schemas.AnnualReport)
 def calculate_and_save_report(report_id: int, db: Session = Depends(get_db)):
