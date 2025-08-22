@@ -34,16 +34,22 @@ def _seed_database():
 async def lifespan(app: FastAPI):
     # Runs on startup
     global chart_of_accounts
-    # Load the chart of accounts from the JSON file.
-    # Build an absolute path to the file to avoid issues with the current working directory.
+    print("--- Attempting to load chart of accounts ---")
     try:
         project_root = Path(__file__).resolve().parent.parent.parent
         kontoplan_path = project_root / "public" / "kontoplan.json"
+        print(f"DEBUG: Trying to open kontoplan at path: {kontoplan_path}")
         with open(kontoplan_path, "r", encoding="utf-8") as f:
             chart_of_accounts = json.load(f)
+        print(f"DEBUG: Successfully loaded {len(chart_of_accounts)} accounts.")
     except FileNotFoundError:
-        # Handle case where file might not exist.
+        print("DEBUG: FileNotFoundError! `kontoplan.json` not found at the specified path.")
         chart_of_accounts = {}
+    except Exception as e:
+        print(f"DEBUG: An unexpected error occurred: {e}")
+        chart_of_accounts = {}
+
+    print("--- Finished loading chart of accounts ---")
 
     Base.metadata.create_all(bind=engine)
     _seed_database()
