@@ -4,7 +4,6 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 import io
 import json
-from pathlib import Path
 from datetime import date
 from contextlib import asynccontextmanager
 
@@ -12,6 +11,7 @@ from . import crud, models, schemas, pdf_generator, k2_calculator
 from .sie_parser.sie_parse import SieParser
 from .sie_parser.accounting_data import SieData
 from .database import engine, SessionLocal, Base
+from . import chart_of_accounts_data
 
 # This will hold the loaded chart of accounts
 chart_of_accounts = {}
@@ -34,22 +34,8 @@ def _seed_database():
 async def lifespan(app: FastAPI):
     # Runs on startup
     global chart_of_accounts
-    print("--- Attempting to load chart of accounts ---")
-    try:
-        project_root = Path(__file__).resolve().parent.parent.parent
-        kontoplan_path = project_root / "public" / "kontoplan.json"
-        print(f"DEBUG: Trying to open kontoplan at path: {kontoplan_path}")
-        with open(kontoplan_path, "r", encoding="utf-8") as f:
-            chart_of_accounts = json.load(f)
-        print(f"DEBUG: Successfully loaded {len(chart_of_accounts)} accounts.")
-    except FileNotFoundError:
-        print("DEBUG: FileNotFoundError! `kontoplan.json` not found at the specified path.")
-        chart_of_accounts = {}
-    except Exception as e:
-        print(f"DEBUG: An unexpected error occurred: {e}")
-        chart_of_accounts = {}
-
-    print("--- Finished loading chart of accounts ---")
+    # Load the chart of accounts directly from the Python module.
+    chart_of_accounts = chart_of_accounts_data.CHART_OF_ACCOUNTS
 
     Base.metadata.create_all(bind=engine)
     _seed_database()

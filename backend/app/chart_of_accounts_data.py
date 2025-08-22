@@ -1,4 +1,4 @@
-{
+CHART_OF_ACCOUNTS = {
   "1010": {
     "name": "Utvecklingsutgifter"
   },
