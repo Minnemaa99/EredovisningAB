@@ -4,6 +4,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 import io
 import json
+from pathlib import Path
 from datetime import date
 from contextlib import asynccontextmanager
 
@@ -34,12 +35,14 @@ async def lifespan(app: FastAPI):
     # Runs on startup
     global chart_of_accounts
     # Load the chart of accounts from the JSON file.
-    # Assuming the script is run from the project root where `public/` exists.
+    # Build an absolute path to the file to avoid issues with the current working directory.
     try:
-        with open("public/kontoplan.json", "r", encoding="utf-8") as f:
+        project_root = Path(__file__).resolve().parent.parent.parent
+        kontoplan_path = project_root / "public" / "kontoplan.json"
+        with open(kontoplan_path, "r", encoding="utf-8") as f:
             chart_of_accounts = json.load(f)
     except FileNotFoundError:
-        # Handle case where file might not exist, though we just created it.
+        # Handle case where file might not exist.
         chart_of_accounts = {}
 
     Base.metadata.create_all(bind=engine)
