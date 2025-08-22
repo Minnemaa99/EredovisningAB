@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-import Step1_Rakenskapsar from "./steps/Step1_Rakenskapsar";
-import Step2_Resultatrakning from "./steps/Step2_Resultatrakning";
-import Step3_Balansrakning from "./steps/Step3_Balansrakning";
-import Step4_Noter from "./steps/Step4_Noter";
-import Step5_Forvaltningsberattelse from "./steps/Step5_Forvaltningsberattelse";
-import Step6_Foretradare from "./steps/Step6_Foretradare";
-import Step7_LamnaIn from "./steps/Step7_LamnaIn";
+import Step1_Rakenskapsar from "./steps/Step1_Rakenskapsar.tsx";
+import Step2_Resultatrakning from "./steps/Step2_Resultatrakning.tsx";
+import Step3_Balansrakning from "./steps/Step3_Balansrakning.tsx";
+import Step4_Noter from "./steps/Step4_Noter.tsx";
+import Step5_Forvaltningsberattelse from "./steps/Step5_Forvaltningsberattelse.tsx";
+import Step6_Foretradare from "./steps/Step6_Foretradare.tsx";
+import Step7_LamnaIn from "./steps/Step7_LamnaIn.tsx";
 
 export default function Wizard() {
   const steps = [
