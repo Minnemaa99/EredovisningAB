@@ -90,7 +90,7 @@ def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas
     accounts = []
     ub_entries = sie_data.get_data("#UB")
     for entry in ub_entries:
-        account_num_str = entry.data[1]
+        account_num_str = entry.data[1].strip()
         balance = float(entry.data[2])
 
         # Look up account name from the chart of accounts, provide a default if not found.
