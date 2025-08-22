@@ -82,7 +82,7 @@ def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas
     accounts = []
     ub_entries = sie_data.get_data("#UB")
     for entry in ub_entries:
-        account_num_str = entry.data[1].strip()
+        account_num_str = str(entry.data[1]).strip()
         balance = float(entry.data[2])
 
         # Look up account name from the chart of accounts, provide a default if not found.
@@ -104,8 +104,8 @@ async def parse_sie_file(file: UploadFile = File(...)):
     """
     Parses an uploaded SIE file and returns the detailed account balances without saving.
     """
-    if not file.filename.lower().endswith(('.se', '.si')):
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a .si or .se file.")
+    if not file.filename.lower().endswith(('.se', '.si', '.sie')):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a .si, .se, or .sie file.")
 
     try:
         file_contents = await file.read()
@@ -159,7 +159,7 @@ def create_report_from_details(payload: schemas.DetailedReportPayload, db: Sessi
     # Aggregate balances from the detailed list
     for account in payload.accounts:
         try:
-            account_num = int(account.account_number)
+            account_num = int(str(account.account_number).strip())
             balance = float(account.balance)
         except (ValueError, TypeError):
             continue # Skip if account number or balance is not a valid number
