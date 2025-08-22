@@ -8,23 +8,34 @@ class SieParser:
     def __init__(self, file_contents=None):
         if not file_contents:
             raise ValueError("file_contents must be provided.")
-        self.file_contents = file_contents
+        
+        # Om det är en sträng, dela upp på rader
+        if isinstance(file_contents, str):
+            self.file_contents = file_contents.splitlines()
+        else:
+            self.file_contents = file_contents
+        
         self.result = None
 
     def parse(self):
         """Läs in filen och tolka den. Spara tolkade objekt till result."""
         self.result = self._parse_sie(self.file_contents)
 
-    def _parse_sie(self, handle):
+    def _parse_sie(self, lines):
         parse_result = SieData()
         current_verification = None
 
-        for line in handle:
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
             tokens = shlex.split(line)
             if not tokens:
                 continue
 
             tag = tokens[0]
+
             if tag == '#VER':
                 current_verification = Verification(*tokens[1:])
             elif tag == '{':
@@ -43,11 +54,14 @@ class SieParser:
 
     @staticmethod
     def _parse_trans(tokens):
-        # #TRANS kontonr {objekt} belopp transdat transtext ...
+        """
+        #TRANS kontonr {objekt} belopp transdat transtext ...
+        Returnerar Transaction med korrekt float-belopp.
+        """
         kontonr = tokens[1]
         objekt = []
 
-        # Find object list, which is enclosed in {}
+        # Hitta objektlistan, om den finns
         obj_start_idx = -1
         obj_end_idx = -1
         for i, token in enumerate(tokens):
@@ -60,13 +74,18 @@ class SieParser:
         if obj_start_idx != -1 and obj_end_idx != -1:
             obj_str = ' '.join(tokens[obj_start_idx:obj_end_idx+1])
             objekt = shlex.split(obj_str[1:-1])
-            # The rest of the tokens are after the object list
             rest_tokens = tokens[obj_end_idx+1:]
         else:
-            # No object list found
             rest_tokens = tokens[2:]
 
-        belopp = rest_tokens[0] if rest_tokens else '0'
+        # Belopp → float, hantera både komma och punkt
+        belopp_str = rest_tokens[0] if rest_tokens else '0'
+        belopp_str = belopp_str.replace(',', '.')
+        try:
+            belopp = float(belopp_str)
+        except ValueError:
+            belopp = 0.0
+
         transdat = rest_tokens[1] if len(rest_tokens) > 1 else ''
         transtext = rest_tokens[2] if len(rest_tokens) > 2 else ''
 
