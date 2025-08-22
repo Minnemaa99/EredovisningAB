@@ -41,12 +41,12 @@
     {% endif %}
 
     <h1>Årsredovisning</h1>
-    <h2>{{ company.name }} {% if not is_preview %}({{ company.orgnummer }}){% endif %}</h2>
-    <p>För räkenskapsåret {{ report.start_date }} - {{ report.end_date }}</p>
+    <h2>{{ company.name }} {% if not is_preview %}({{ company.orgnr }}){% endif %}</h2>
+    <p>För räkenskapsåret {{ report.start_date }} – {{ report.end_date }}</p>
 
-    <!-- Förvaltningsberättelse (Placeholder) -->
+    <!-- Förvaltningsberättelse -->
     <h2>Förvaltningsberättelse</h2>
-    <p>Här skulle förvaltningsberättelsen infogas...</p>
+    <p>{{ report.management_report or "Förvaltningsberättelsen är inte inlagd ännu." }}</p>
 
     <!-- Resultaträkning -->
     <h2>Resultaträkning</h2>
@@ -59,24 +59,25 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Nettoomsättning</td>
-                <td>{{ calculated.income_statement.Nettoomsattning | round(0) | int }}</td>
-                <td>...</td>
-            </tr>
-            <!-- Add other income statement rows here -->
-            <tr class="total-row">
-                <td>Årets resultat</td>
-                <td>{{ calculated.income_statement['Arets resultat'] | round(0) | int }}</td>
-                <td>...</td>
-            </tr>
+            <tr><td>Nettoomsättning</td><td>{{ calculated.income_statement.Nettoomsattning | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Förändring av lager</td><td>{{ calculated.income_statement.Forandring_lager | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Övriga rörelseintäkter</td><td>{{ calculated.income_statement.Ovriga_rorelseintakter | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Kostnad för råvaror</td><td>{{ calculated.income_statement.Kostnad_ravaror | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Externa kostnader</td><td>{{ calculated.income_statement.Kostnad_externa | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Personalkostnader</td><td>{{ calculated.income_statement.Kostnad_personal | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Avskrivningar</td><td>{{ calculated.income_statement.Avskrivningar | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Finansiella intäkter</td><td>{{ calculated.income_statement.Finansiella_intakter | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Finansiella kostnader</td><td>{{ calculated.income_statement.Finansiella_kostnader | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Bokslutsdispositioner</td><td>{{ calculated.income_statement.Bokslutsdispositioner | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Skatt</td><td>{{ calculated.income_statement.Skatt | round(0) | int }}</td><td>...</td></tr>
+            <tr class="total-row"><td>Årets resultat</td><td>{{ calculated.income_statement['Arets resultat'] | round(0) | int }}</td><td>...</td></tr>
         </tbody>
     </table>
 
     <!-- Balansräkning -->
     <h2>Balansräkning</h2>
     <table class="report-table">
-         <thead>
+        <thead>
             <tr>
                 <th>TILLGÅNGAR</th>
                 <th>{{ report.end_date.year }}</th>
@@ -85,12 +86,12 @@
         </thead>
         <tbody>
             <tr><td>Materiella anläggningstillgångar</td><td>{{ calculated.balance_sheet['Materiella anlaggningstillgangar'] | round(0) | int }}</td><td>...</td></tr>
-            <!-- Add other asset rows here -->
-            <tr class="total-row">
-                <td>SUMMA TILLGÅNGAR</td>
-                <td>{{ calculated.totals.assets | round(0) | int }}</td>
-                <td>...</td>
-            </tr>
+            <tr><td>Finansiella anläggningstillgångar</td><td>{{ calculated.balance_sheet['Finansiella anlaggningstillgangar'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Varulager m.m.</td><td>{{ calculated.balance_sheet.Varulager_mm | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Kortfristiga fordringar</td><td>{{ calculated.balance_sheet['Kortfristiga fordringar'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Kortfristiga placeringar</td><td>{{ calculated.balance_sheet['Kortfristiga placeringar'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Kassa och bank</td><td>{{ calculated.balance_sheet['Kassa och bank'] | round(0) | int }}</td><td>...</td></tr>
+            <tr class="total-row"><td>SUMMA TILLGÅNGAR</td><td>{{ calculated.totals.assets | round(0) | int }}</td><td>...</td></tr>
         </tbody>
         <thead>
             <tr>
@@ -100,17 +101,17 @@
             </tr>
         </thead>
         <tbody>
-             <tr><td>Bundet eget kapital</td><td>{{ calculated.balance_sheet['Bundet eget kapital'] | round(0) | int }}</td><td>...</td></tr>
-             <!-- Add other equity/liability rows here -->
-            <tr class="total-row">
-                <td>SUMMA EGET KAPITAL OCH SKULDER</td>
-                <td>{{ calculated.totals.equity_and_liabilities | round(0) | int }}</td>
-                <td>...</td>
-            </tr>
+            <tr><td>Bundet eget kapital</td><td>{{ calculated.balance_sheet['Bundet eget kapital'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Fritt eget kapital</td><td>{{ calculated.balance_sheet['Fritt eget kapital'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Årets resultat</td><td>{{ calculated.balance_sheet['Arets resultat'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Obeskattade reserver</td><td>{{ calculated.balance_sheet['Obeskattade reserver'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Långfristiga skulder</td><td>{{ calculated.balance_sheet['Langfristiga skulder'] | round(0) | int }}</td><td>...</td></tr>
+            <tr><td>Kortfristiga skulder</td><td>{{ calculated.balance_sheet['Kortfristiga skulder'] | round(0) | int }}</td><td>...</td></tr>
+            <tr class="total-row"><td>SUMMA EK OCH SKULDER</td><td>{{ calculated.totals.equity_and_liabilities | round(0) | int }}</td><td>...</td></tr>
         </tbody>
     </table>
 
-    <!-- Underskrifter (Placeholder) -->
+    <!-- Underskrifter -->
     <h2>Underskrifter</h2>
     <p>Ort: __________ Datum: __________</p>
     <br><br>
