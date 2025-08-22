@@ -6,6 +6,12 @@ from collections import defaultdict
 from itertools import takewhile
 
 def _quote(fields, leave_trailing=True):
+    """
+    Wrap each field in quotes if it contains a space or is empty.
+    leave_trailing: If True, do not quote empty fields at the end of the list.
+    Ex. If True: ['a b', 'c', '', ''] becomes ['"a b"', 'c', '', ''].
+    If false: ['"a b"', 'c', '""', '""']
+    """
     if leave_trailing:
         trailing = len(list(takewhile(lambda f: not f, reversed(fields))))
         return _quote(fields[:len(fields)-trailing], False) + ([''] * trailing)
@@ -13,12 +19,15 @@ def _quote(fields, leave_trailing=True):
         return ['"' + str(f) + '"' if ' ' in str(f) or not str(f) else str(f) for f in fields]
 
 def _format_float(num, comma_decimal=False):
+    """Use comma instead of dot. Remove trailing zeroes"""
     result = format(num, '.2f').rstrip('0').rstrip('.')
     if comma_decimal:
-        result = result.replace('.', ',')
+        result.replace('.',',')
     return result
 
+
 class SieData:
+    """Lagrar datan som behövs i en SI-fil"""
     single_fields = ['#FLAGGA', '#PROGRAM', '#FORMAT', '#GEN', '#SIETYP',
                      '#FNAMN', '#ORGNR']
     needed_fields = ['#FLAGGA', '#PROGRAM', '#FORMAT', '#GEN', '#SIETYP',
@@ -95,13 +104,10 @@ class Transaction:
     def __init__(self, kontonr, objekt, belopp, transdat='', transtext='', kvantitet=0.0, sign=''):
         self.kontonr = kontonr
         self.objekt = objekt
-        # FIX: hantera kommatecken i SIE-filen
-        belopp_str = str(belopp).replace(',', '.')
-        self.belopp = float(belopp_str) if belopp_str else 0.0
-        kvantitet_str = str(kvantitet).replace(',', '.')
-        self.kvantitet = float(kvantitet_str) if kvantitet_str else 0.0
+        self.belopp = float(belopp)
         self.transdat = MaybeDate(transdat)
         self.transtext = transtext
+        self.kvantitet = float(kvantitet) if kvantitet else 0.0
         self.sign = sign
     def __repr__(self):
         kvantitet = _format_float(self.kvantitet) if self.kvantitet else ''
