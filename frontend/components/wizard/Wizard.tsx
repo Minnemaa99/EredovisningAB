@@ -1,126 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 import Step1_DataChoice from './Step1_DataChoice';
 import Step2_FileUpload from './Step2_FileUpload';
-import Resultatrakning from './Resultatrakning';
-import Balansrakning from './Balansrakning';
-// ... other steps
+import ReviewSieData from './ReviewSieData';
+import FinalStep from './FinalStep'; // Assuming a final step component exists
 
 export default function Wizard() {
-  const [step, setStep] = useState(0); // 0: Choice, 0.5: Upload, 1: Forms
-  const [reportId, setReportId] = useState(null);
-  const [formData, setFormData] = useState({
-    income_statement: {},
-    balance_sheet: {},
-  });
+  const [step, setStep] = useState(0); // 0: Choice, 0.5: Upload, 1: Review, 2: Final
 
-  const createReport = async () => {
-    try {
-      // For manual entry, we create a shell report on the backend.
-      // The backend expects start and end dates, so we provide placeholders.
-      const payload = {
-        start_date: "2024-01-01",
-        end_date: "2024-12-31",
-      };
-      // Assuming company 1 for this demo
-      const response = await axios.post('/api/annual-reports?company_id=1', payload);
-      setReportId(response.data.id);
-      return response.data.id;
-    } catch (error) {
-      alert('Kunde inte starta en ny rapport.');
-      return null;
-    }
-  };
+  // State for the new SIE workflow
+  const [detailedAccounts, setDetailedAccounts] = useState([]);
+  const [reportDates, setReportDates] = useState({ start_date: '', end_date: '' });
 
-  const handleChoice = async (choice) => {
+  // We'll keep the old reportId for the final step
+  const [finalReportId, setFinalReportId] = useState(null);
+
+  const handleChoice = (choice) => {
     if (choice === 'manual') {
-      const newReportId = await createReport();
-      if (!newReportId) return;
-      setStep(1);
+      alert("Manuell inmatning är inte implementerad i denna version.");
+      // In a real app, this would trigger the manual form flow.
     } else if (choice === 'import') {
-      // Don't create a report here. The upload step will do it.
       setStep(0.5);
     }
   };
 
-  const handleUploadSuccess = (reportData) => {
-    setReportId(reportData.id); // Set the report ID from the response
-
-    // The backend now returns a flat structure based on the schema (e.g., "bs_kassa_bank").
-    // The form components expect a different structure (e.g., { balance_sheet: { Kassa_bank: ... } }).
-    // This function rebuilds the object for the form state.
-    const income_statement = {};
-    const balance_sheet = {};
-
-    for (const key in reportData) {
-      if (key.startsWith('is_')) {
-        // A bit of a hacky way to map flat schema fields to the nested form state
-        // e.g., is_nettoomsattning -> Nettoomsattning
-        const formKey = key.substring(3, 4).toUpperCase() + key.substring(4);
-        income_statement[formKey] = reportData[key];
-      } else if (key.startsWith('bs_')) {
-        const formKey = key.substring(3, 4).toUpperCase() + key.substring(4);
-        balance_sheet[formKey] = reportData[key];
-      }
-    }
-
-    setFormData({
-      income_statement,
-      balance_sheet,
+  const handleUploadSuccess = (sieParseResult) => {
+    setDetailedAccounts(sieParseResult.accounts || []);
+    setReportDates({
+      start_date: sieParseResult.start_date,
+      end_date: sieParseResult.end_date,
     });
-    setStep(1); // Go to the first form for review
+    setStep(1); // Go to the new review step
   };
 
-  const handleChange = (e) => {
-    const { name, value, dataset } = e.target;
-    const section = dataset.section;
-    setFormData(prev => ({
-      ...prev,
-      [section]: { ...prev[section], [name]: value }
-    }));
-  };
-
-  const handleSaveProgress = async () => {
-    const account_lines = [
-      ...Object.entries(formData.income_statement).map(([k, v]) => ({ account_number: k, balance_current_year: parseFloat(v || 0) })),
-      ...Object.entries(formData.balance_sheet).map(([k, v]) => ({ account_number: k, balance_current_year: parseFloat(v || 0) }))
-    ];
-    const payload = {
-      start_date: "2024-01-01",
-      end_date: "2024-12-31",
-      account_lines: account_lines.filter(l => !isNaN(l.balance_current_year)),
+  const handleAccountChange = (index, newBalance) => {
+    const updatedAccounts = [...detailedAccounts];
+    updatedAccounts[index] = {
+      ...updatedAccounts[index],
+      balance: parseFloat(newBalance) || 0,
     };
+    setDetailedAccounts(updatedAccounts);
+  };
+
+  const handleSaveAndContinue = async () => {
+    const payload = {
+      company_id: 1, // Assuming company 1 for this demo
+      start_date: reportDates.start_date,
+      end_date: reportDates.end_date,
+      accounts: detailedAccounts,
+    };
+
     try {
-      await axios.put(`/api/annual-reports/${reportId}`, payload);
-      alert("Framsteg sparat!");
+      const response = await axios.post('/api/annual-reports/from-details', payload);
+      setFinalReportId(response.data.id);
+      alert("Rapporten har sparats!");
+      setStep(2); // Move to a final step
     } catch (error) {
-      alert("Kunde inte spara framsteg.");
+      console.error("Failed to save the report", error);
+      alert("Kunde inte spara rapporten.");
     }
   };
 
   const handlePreview = () => {
-    if (reportId) {
-      window.open(`/api/annual-reports/${reportId}/preview`, '_blank');
+    if (finalReportId) {
+      window.open(`/api/annual-reports/${finalReportId}/preview`, '_blank');
     } else {
-      alert("Starta en rapport först.");
+      alert("Du måste spara rapporten först för att kunna förhandsgranska den.");
     }
   };
 
   const renderContent = () => {
-    if (step === 0) return <Step1_DataChoice onChoice={handleChoice} />;
-    if (step === 0.5) return <Step2_FileUpload onUploadSuccess={handleUploadSuccess} onBack={() => setStep(0)} />;
-    if (step >= 1) {
-      return (
-        <div>
-          {/* Now we show the forms, which are just editors for the formData state */}
-          <Resultatrakning values={formData.income_statement} handleChange={handleChange} />
-          <Balansrakning values={formData.balance_sheet} handleChange={handleChange} />
-          {/* In a real app, these would be separate steps */}
-        </div>
-      );
+    switch (step) {
+      case 0:
+        return <Step1_DataChoice onChoice={handleChoice} />;
+      case 0.5:
+        return <Step2_FileUpload onUploadSuccess={handleUploadSuccess} onBack={() => setStep(0)} />;
+      case 1:
+        return (
+          <ReviewSieData
+            accounts={detailedAccounts}
+            onAccountChange={handleAccountChange}
+            onBack={() => setStep(0.5)}
+            onNext={handleSaveAndContinue}
+          />
+        );
+      case 2:
+        return <FinalStep reportId={finalReportId} onRestart={() => {
+            setStep(0);
+            setDetailedAccounts([]);
+            setReportDates({ start_date: '', end_date: '' });
+            setFinalReportId(null);
+        }} />;
+      default:
+        return null;
     }
-    return null;
   };
 
   return (
@@ -129,20 +103,13 @@ export default function Wizard() {
         <h1 className="text-2xl font-bold">Skapa Årsredovisning</h1>
         <button
           onClick={handlePreview}
-          disabled={!reportId}
+          disabled={!finalReportId}
           className="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-full hover:bg-gray-300 disabled:opacity-50"
         >
           Visa PDF-utkast
         </button>
       </div>
       {renderContent()}
-       {step >= 1 && (
-        <div className="mt-8 flex justify-end">
-            <button onClick={handleSaveProgress} className="bg-green-500 text-white font-bold py-2 px-6 rounded-full hover:bg-green-600">
-                Spara & Fortsätt
-            </button>
-        </div>
-       )}
     </div>
   );
 }
