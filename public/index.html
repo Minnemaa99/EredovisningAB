@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edeklarera - Din skatteassistent</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1>Edeklarera</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#hem">Hem</a></li>
+                <li><a href="#funktioner">Funktioner</a></li>
+                <li><a href="#kontakt">Kontakt</a></li>
+                <li><a href="#faq">Vanliga frågor</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hem" class="hero">
+        <div class="hero-content">
+            <h1>Förenkla din deklaration</h1>
+            <p>Skicka in dina skatter enkelt. Snabbt, säkert och pålitligt.</p>
+            <a href="arsredovisning.html" class="btn">Kom igång</a>
+        </div>
+    </section>
+
+    <!-- Tax Form Section -->
+    <section id="form-section" class="form-section">
+        <h2>Lämna in din skatteinformation</h2>
+        <form id="taxForm">
+            <div class="form-group">
+                <label for="namn">Fullständigt namn:</label>
+                <input type="text" id="namn" name="namn" placeholder="Ange ditt namn" required>
+            </div>
+            <div class="form-group">
+                <label for="inkomst">Inkomst (SEK):</label>
+                <input type="number" id="inkomst" name="inkomst" placeholder="Ange din inkomst" required>
+            </div>
+            <div class="form-group">
+                <label for="avdrag">Avdrag (SEK):</label>
+                <input type="number" id="avdrag" name="avdrag" placeholder="Ange dina avdrag">
+            </div>
+            <div class="form-group">
+                <label for="submit"></label>
+                <input type="submit" value="Skicka">
+            </div>
+        </form>
+    </section>
+
+    <!-- Features Section -->
+    <section id="funktioner" class="features-section">
+        <h2>Varför välja Edeklarera?</h2>
+        <div class="feature-box">
+            <div class="feature">
+                <h3>Snabb process</h3>
+                <p>Skicka in dina skatter på några minuter med vår enkla process.</p>
+            </div>
+            <div class="feature">
+                <h3>Säkerhet</h3>
+                <p>All din data krypteras och skyddas med säkerhetsstandard i världsklass.</p>
+            </div>
+            <div class="feature">
+                <h3>Pålitlig</h3>
+                <p>Vi är pålitliga och används av tusentals användare för sina årliga deklarationer.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+        <h2>Vanliga frågor</h2>
+        <div class="faq">
+            <h3>Hur lång tid tar processen?</h3>
+            <p>Det tar vanligtvis cirka 10 minuter att slutföra din deklaration.</p>
+        </div>
+        <div class="faq">
+            <h3>Är min information säker?</h3>
+            <p>Ja, vi använder SSL-kryptering och följer de högsta säkerhetsstandarderna för att skydda din data.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer id="kontakt" class="footer-section">
+        <h2>Kontakta oss</h2>
+        <p>E-post: support@edeklarera.se | Telefon: +46 123 456 789</p>
+        <p>&copy; 2024 Edeklarera. Alla rättigheter förbehållna.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
