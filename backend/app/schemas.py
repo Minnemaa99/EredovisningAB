@@ -54,3 +54,19 @@ class Company(CompanyBase):
     annual_reports: List[AnnualReport] = []
     class Config:
         from_attributes = True
+
+class AccountBalance(BaseModel):
+    account_number: str
+    account_name: str
+    balance: float
+
+class SieParseResult(BaseModel):
+    start_date: date
+    end_date: date
+    accounts: List[AccountBalance]
+
+class DetailedReportPayload(BaseModel):
+    company_id: int
+    start_date: date
+    end_date: date
+    accounts: List[AccountBalance]
