@@ -48,7 +48,6 @@ export default function Wizard() {
       end_date: reportDates.end_date,
       accounts: detailedAccounts,
     };
-
     try {
       const response = await axios.post(
         "/api/annual-reports/from-details",
