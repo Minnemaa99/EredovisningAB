@@ -25,7 +25,7 @@ const ReviewSieData = ({ accounts, onAccountChange, onNext, onBack }) => {
           </thead>
           <tbody>
             {accounts.map((account, index) => (
-              <tr key={account.account_number} className="bg-white border-b hover:bg-gray-50">
+              <tr key={`${account.account_number}-${index}`} className="bg-white border-b hover:bg-gray-50">
                 <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
                   {account.account_number}
                 </th>
