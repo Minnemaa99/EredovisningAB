@@ -6,13 +6,39 @@ import io
 import json
 from datetime import date
 from contextlib import asynccontextmanager
-
+from app.sie_parser import SieParser
 from . import crud, models, schemas, pdf_generator, k2_calculator
 from .sie_parser.sie_parse import SieParser
 from .sie_parser.accounting_data import SieData
 from .database import engine, SessionLocal, Base
 from . import chart_of_accounts_data
+from fastapi import FastAPI, UploadFile, File, HTTPException
+import traceback
+from app.sie_parser import SieParser
 
+app = FastAPI()
+
+@app.post("/api/annual-reports/upload-sie")
+async def upload_sie(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        print("📄 Raw file size:", len(content))
+
+        text = content.decode("utf-8")
+        print("📄 Decoded text length:", len(text))
+
+        parser = SieParser(text)
+        parser.parse()
+
+        accounts = parser.result.get_accounts_list()
+        print("✅ Parsed accounts count:", len(accounts))
+
+        return accounts
+
+    except Exception as e:
+        print("❌ Server error:", e)
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 # This will hold the loaded chart of accounts
 chart_of_accounts = {}
 
@@ -238,3 +264,5 @@ def get_report_preview(report_id: int, db: Session = Depends(get_db)):
 
     pdf_bytes = pdf_generator.generate_pdf(report, is_preview=True)
     return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")
+
+

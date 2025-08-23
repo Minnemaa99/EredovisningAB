@@ -1,3 +1,5 @@
+
+
 #!/usr/bin/env python3
 """Klasser för att lagra bokföringsdata från en SI-fil"""
 
@@ -140,3 +142,4 @@ class SieIO:
                 file_handle.write(repr(sie_data))
         except FileExistsError:
             raise Exception(f"Kan inte skriva {filename}, filen finns redan.")
+

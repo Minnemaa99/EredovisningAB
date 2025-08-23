@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-import Step1_Rakenskapsar from "./steps/Step1_Rakenskapsar";
-import Step2_Resultatrakning from "./steps/Step2_Resultatrakning";
-import Step3_Balansrakning from "./steps/Step3_Balansrakning";
-import Step4_Noter from "./steps/Step4_Noter";
-import Step5_Forvaltningsberattelse from "./steps/Step5_Forvaltningsberattelse";
-import Step6_Foretradare from "./steps/Step6_Foretradare";
-import Step7_LamnaIn from "./steps/Step7_LamnaIn";
+import Step1_Rakenskapsar from "./Step1_Rakenskapsar";
+import Step2_Resultatrakning from "./Step2_Resultatrakning";
+import Step3_Balansrakning from "./Step3_Balansrakning";
+import Step4_Noter from "./Step4_Noter";
+import Step5_Forvaltningsberattelse from "./Step5_Forvaltningsberattelse";
+import Step6_Foretradare from "./Step6_Foretradare";
+import Step7_LamnaIn from "./Step7_LamnaIn";
 
 export default function Wizard() {
   // stegen i flödet
@@ -37,6 +37,7 @@ export default function Wizard() {
   const nextStep = () => {
     if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1);
   };
+
   const prevStep = () => {
     if (stepIndex > 0) setStepIndex(stepIndex - 1);
   };
@@ -63,14 +64,9 @@ export default function Wizard() {
 
   const handlePreview = () => {
     if (finalReportId) {
-      window.open(
-        `/api/annual-reports/${finalReportId}/preview`,
-        "_blank"
-      );
+      window.open(`/api/annual-reports/${finalReportId}/preview`, "_blank");
     } else {
-      alert(
-        "Du måste spara rapporten först för att kunna förhandsgranska den."
-      );
+      alert("Du måste spara rapporten först för att kunna förhandsgranska den.");
     }
   };
 
@@ -81,8 +77,13 @@ export default function Wizard() {
           <Step1_Rakenskapsar
             reportDates={reportDates}
             setReportDates={setReportDates}
+            onUploadSuccess={(data) => {
+              console.log("Upload success:", data);
+              setDetailedAccounts(data.accounts || []); // spara uppladdade konton i state
+            }}
             onNext={nextStep}
           />
+
         );
       case 1:
         return (

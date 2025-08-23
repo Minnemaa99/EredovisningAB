@@ -6,26 +6,40 @@ const Step1_Rakenskapsar = ({ reportDates, setReportDates, onUploadSuccess, onNe
   const [uploadChoice, setUploadChoice] = useState(false);
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setIsLoading(true);
-      const formData = new FormData();
-      formData.append('file', file);
+  const file = e.target.files[0];
+  if (file) {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append('file', file);
 
-      try {
-        const response = await axios.post(`/api/annual-reports/upload-sie`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        onUploadSuccess(response.data);
-        setIsLoading(false);
-        onNext(); // Move to the next step after successful upload and data processing
-      } catch (error) {
-        console.error("Failed to upload and parse SIE file", error);
-        alert("Kunde inte analysera filen. Kontrollera att det är en giltig SIE-fil.");
-        setIsLoading(false);
+    try {
+      const response = await axios.post(`/api/annual-reports/upload-sie`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      console.log("Upload response data:", response.data);
+
+      onUploadSuccess(response.data);
+      setIsLoading(false);
+      onNext(); 
+    } catch (error) {
+      console.error("Failed to upload and parse SIE file", error);
+
+      if (error.response) {
+        console.log("Server responded with:", error.response.data);
+        console.log("Status:", error.response.status);
+      } else if (error.request) {
+        console.log("No response received, request was:", error.request);
+      } else {
+        console.log("Error setting up request:", error.message);
       }
+
+      alert("Kunde inte analysera filen. Kontrollera att det är en giltig SIE-fil.");
+      setIsLoading(false);
     }
-  };
+  }
+};
+
 
   return (
     <div>
