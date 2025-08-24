@@ -9,6 +9,7 @@ import Step5_Forvaltningsberattelse from "./Step5_Forvaltningsberattelse";
 import Step6_Foretradare from "./Step6_Foretradare";
 import Step7_LamnaIn from "./Step7_LamnaIn";
 
+
 export default function Wizard() {
   const steps = [
     "Räkenskapsår",
@@ -24,6 +25,7 @@ export default function Wizard() {
   const [detailedAccounts, setDetailedAccounts] = useState([]);
   const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
   const [finalReportId, setFinalReportId] = useState(null);
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {

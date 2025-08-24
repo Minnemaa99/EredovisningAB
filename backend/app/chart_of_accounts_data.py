@@ -1,2756 +1,1225 @@
 CHART_OF_ACCOUNTS = {
-  "1010": {
-    "name": "Utvecklingsutgifter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Utvecklingsutgifter"
-  },
-  "1020": {
-    "name": "Koncessioner m.m.",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Koncessioner m.m."
-  },
-  "1030": {
-    "name": "Patent",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Patent"
-  },
-  "1040": {
-    "name": "Licenser",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Licenser"
-  },
-  "1050": {
-    "name": "Varumärken",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Varumärken"
-  },
-  "1060": {
-    "name": "Hyresrätter, tomträtter och liknande",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Hyresrätter, tomträtter och liknande"
-  },
-  "1070": {
-    "name": "Goodwill",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Goodwill"
-  },
-  "1080": {
-    "name": "Förskott för immateriella anläggningstillgångar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förskott för immateriella anläggningstillgångar"
-  },
-  "1110": {
-    "name": "Byggnader",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Byggnader"
-  },
-  "1120": {
-    "name": "Förbättringsutgifter på annans fastighet",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förbättringsutgifter på annans fastighet"
-  },
-  "1130": {
-    "name": "Mark",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Mark"
-  },
-  "1140": {
-    "name": "Tomter och obebyggda markområden",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Tomter och obebyggda markområden"
-  },
-  "1150": {
-    "name": "Markanläggningar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Markanläggningar"
-  },
-  "1180": {
-    "name": "Pågående nyanläggningar och förskott för byggnader och mark",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Pågående nyanläggningar och förskott för byggnader och mark"
-  },
-  "1210": {
-    "name": "Maskiner och andra tekniska anläggningar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Maskiner och andra tekniska anläggningar"
-  },
-  "1220": {
-    "name": "Inventarier och verktyg",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Inventarier och verktyg"
-  },
-  "1230": {
-    "name": "Installationer",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Installationer"
-  },
-  "1240": {
-    "name": "Bilar och andra transportmedel",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Bilar och andra transportmedel"
-  },
-  "1250": {
-    "name": "Datorer",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Datorer"
-  },
-  "1260": {
-    "name": "Leasade tillgångar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Leasade tillgångar"
-  },
-  "1280": {
-    "name": "Pågående nyanläggningar och förskott för maskiner och inventarier",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Pågående nyanläggningar och förskott för maskiner och inventarier"
-  },
-  "1290": {
-    "name": "Övriga materiella anläggningstillgångar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Övriga materiella anläggningstillgångar"
-  },
-  "1310": {
-    "name": "Andelar i koncernföretag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andelar i koncernföretag"
-  },
-  "1320": {
-    "name": "Långfristiga fordringar hos koncernföretag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Långfristiga fordringar hos koncernföretag"
-  },
-  "1330": {
-    "name": "Andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "1340": {
-    "name": "Långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "1350": {
-    "name": "Andelar och värdepapper i andra företag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andelar och värdepapper i andra företag"
-  },
-  "1360": {
-    "name": "Lån till delägare eller närstående, långfristig del",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Lån till delägare eller närstående, långfristig del"
-  },
-  "1370": {
-    "name": "Uppskjuten skattefordran",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Uppskjuten skattefordran"
-  },
-  "1380": {
-    "name": "Andra långfristiga fordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andra långfristiga fordringar"
-  },
-  "1410": {
-    "name": "Lager av råvaror",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Lager av råvaror"
-  },
-  "1420": {
-    "name": "Lager av tillsatsmaterial och förnödenheter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Lager av tillsatsmaterial och förnödenheter"
-  },
-  "1440": {
-    "name": "Produkter i arbete",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Produkter i arbete"
-  },
-  "1450": {
-    "name": "Lager av färdiga varor",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Lager av färdiga varor"
-  },
-  "1460": {
-    "name": "Lager av handelsvaror",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Lager av handelsvaror"
-  },
-  "1470": {
-    "name": "Pågående arbeten",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Pågående arbeten"
-  },
-  "1480": {
-    "name": "Förskott för varor och tjänster",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förskott för varor och tjänster"
-  },
-  "1490": {
-    "name": "Övriga lagertillgångar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Övriga lagertillgångar"
-  },
-  "1510": {
-    "name": "Kundfordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kundfordringar"
-  },
-  "1520": {
-    "name": "Växelfordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Växelfordringar"
-  },
-  "1530": {
-    "name": "Kontraktsfordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kontraktsfordringar"
-  },
-  "1550": {
-    "name": "Konsignationsfordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Konsignationsfordringar"
-  },
-  "1560": {
-    "name": "Kundfordringar hos koncernföretag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kundfordringar hos koncernföretag"
-  },
-  "1570": {
-    "name": "Kundfordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kundfordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "1580": {
-    "name": "Fordringar för kontokort och kuponger",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Fordringar för kontokort och kuponger"
-  },
-  "1610": {
-    "name": "Kortfristiga fordringar hos anställda",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga fordringar hos anställda"
-  },
-  "1620": {
-    "name": "Upparbetad men ej fakturerad intäkt",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Upparbetad men ej fakturerad intäkt"
-  },
-  "1630": {
-    "name": "Avräkning för skatter och avgifter (skattekonto)",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Avräkning för skatter och avgifter (skattekonto)"
-  },
-  "1640": {
-    "name": "Skattefordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Skattefordringar"
-  },
-  "1650": {
-    "name": "Momsfordran",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Momsfordran"
-  },
-  "1660": {
-    "name": "Kortfristiga fordringar hos koncernföretag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga fordringar hos koncernföretag"
-  },
-  "1670": {
-    "name": "Kortfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "1680": {
-    "name": "Andra kortfristiga fordringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andra kortfristiga fordringar"
-  },
-  "1690": {
-    "name": "Fordringar för tecknat men ej inbetalt aktiekapital",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Fordringar för tecknat men ej inbetalt aktiekapital"
-  },
-  "1710": {
-    "name": "Förutbetalda hyreskostnader",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förutbetalda hyreskostnader"
-  },
-  "1720": {
-    "name": "Förutbetalda leasingavgifter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förutbetalda leasingavgifter"
-  },
-  "1730": {
-    "name": "Förutbetalda försäkringspremier",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förutbetalda försäkringspremier"
-  },
-  "1740": {
-    "name": "Förutbetalda räntekostnader",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Förutbetalda räntekostnader"
-  },
-  "1750": {
-    "name": "Upplupna hyresintäkter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Upplupna hyresintäkter"
-  },
-  "1760": {
-    "name": "Upplupna ränteintäkter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Upplupna ränteintäkter"
-  },
-  "1770": {
-    "name": "Tillgångar av kostnadsnatur",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Tillgångar av kostnadsnatur"
-  },
-  "1780": {
-    "name": "Upplupna avtalsintäkter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Upplupna avtalsintäkter"
-  },
-  "1790": {
-    "name": "Övriga förutbetalda kostnader och upplupna intäkter",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Övriga förutbetalda kostnader och upplupna intäkter"
-  },
-  "1810": {
-    "name": "Andelar i börsnoterade företag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andelar i börsnoterade företag"
-  },
-  "1820": {
-    "name": "Obligationer",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Obligationer"
-  },
-  "1830": {
-    "name": "Konvertibla skuldebrev",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Konvertibla skuldebrev"
-  },
-  "1860": {
-    "name": "Andelar i koncernföretag, kortfristigt",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andelar i koncernföretag, kortfristigt"
-  },
-  "1880": {
-    "name": "Andra kortfristiga placeringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Andra kortfristiga placeringar"
-  },
-  "1890": {
-    "name": "Nedskrivning av kortfristiga placeringar",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Nedskrivning av kortfristiga placeringar"
-  },
-  "1910": {
-    "name": "Kassa",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Kassa"
-  },
-  "1920": {
-    "name": "PlusGiro",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "PlusGiro"
-  },
-  "1930": {
-    "name": "Företagskonto/checkkonto/affärskonto",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Företagskonto/checkkonto/affärskonto"
-  },
-  "1940": {
-    "name": "Övriga bankkonton",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Övriga bankkonton"
-  },
-  "1950": {
-    "name": "Bankcertifikat",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Bankcertifikat"
-  },
-  "1960": {
-    "name": "Koncernkonto moderföretag",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Koncernkonto moderföretag"
-  },
-  "1970": {
-    "name": "Särskilda bankkonton",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Särskilda bankkonton"
-  },
-  "1980": {
-    "name": "Valutakonton",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Valutakonton"
-  },
-  "1990": {
-    "name": "Redovisningsmedel",
-    "type": "Tillgångar",
-    "statement": "Balansräkning",
-    "category": "Redovisningsmedel"
-  },
-  "2010": {
-    "name": "Eget kapital",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Eget kapital (enskild firma)"
-  },
-  "2020": {
-    "name": "Eget kapital",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Eget kapital, delägare 2"
-  },
-  "2030": {
-    "name": "Eget kapital",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Eget kapital, delägare 3"
-  },
-  "2040": {
-    "name": "Eget kapital",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Eget kapital, delägare 4"
-  },
-  "2050": {
-    "name": "Avsättning till expansionsfond",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avsättning till expansionsfond"
-  },
-  "2060": {
-    "name": "Eget kapital i ideella föreningar, stiftelser och registrerade trossamfund",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Eget kapital i ideella föreningar, stiftelser och registrerade trossamfund"
-  },
-  "2070": {
-    "name": "Ändamålsbestämda medel",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Ändamålsbestämda medel"
-  },
-  "2080": {
-    "name": "Bundet eget kapital",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Bundet eget kapital"
-  },
-  "2090": {
-    "name": "Fritt eget kapital",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Fritt eget kapital"
-  },
-  "2110": {
-    "name": "Periodiseringsfonder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Periodiseringsfonder"
-  },
-  "2120": {
-    "name": "Periodiseringsfond 2020",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Periodiseringsfond 2020"
-  },
-  "2130": {
-    "name": "Periodiseringsfond 2020 – nr 2",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Periodiseringsfond 2020 – nr 2"
-  },
-  "2150": {
-    "name": "Ackumulerade överavskrivningar",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Ackumulerade överavskrivningar"
-  },
-  "2160": {
-    "name": "Ersättningsfond",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Ersättningsfond"
-  },
-  "2190": {
-    "name": "Övriga obeskattade reserver",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga obeskattade reserver"
-  },
-  "2210": {
-    "name": "Avsättningar för pensioner enligt tryggandelagen",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avsättningar för pensioner enligt tryggandelagen"
-  },
-  "2220": {
-    "name": "Avsättningar för garantier",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avsättningar för garantier"
-  },
-  "2230": {
-    "name": "Övriga avsättningar för pensioner och liknande förpliktelser",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga avsättningar för pensioner och liknande förpliktelser"
-  },
-  "2240": {
-    "name": "Avsättningar för uppskjutna skatter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avsättningar för uppskjutna skatter"
-  },
-  "2250": {
-    "name": "Övriga avsättningar för skatter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga avsättningar för skatter"
-  },
-  "2290": {
-    "name": "Övriga avsättningar",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga avsättningar"
-  },
-  "2310": {
-    "name": "Obligations- och förlagslån",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Obligations- och förlagslån"
-  },
-  "2320": {
-    "name": "Konvertibla lån och liknande",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Konvertibla lån och liknande"
-  },
-  "2330": {
-    "name": "Checkräkningskredit",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Checkräkningskredit"
-  },
-  "2340": {
-    "name": "Byggnadskreditiv",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Byggnadskreditiv"
-  },
-  "2350": {
-    "name": "Andra långfristiga skulder till kreditinstitut",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Andra långfristiga skulder till kreditinstitut"
-  },
-  "2360": {
-    "name": "Långfristiga skulder till koncernföretag",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Långfristiga skulder till koncernföretag"
-  },
-  "2370": {
-    "name": "Långfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Långfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "2390": {
-    "name": "Övriga långfristiga skulder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga långfristiga skulder"
-  },
-  "2410": {
-    "name": "Andra kortfristiga låneskulder till kreditinstitut",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Andra kortfristiga låneskulder till kreditinstitut"
-  },
-  "2420": {
-    "name": "Förskott från kunder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Förskott från kunder"
-  },
-  "2430": {
-    "name": "Pågående arbeten",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Pågående arbeten"
-  },
-  "2440": {
-    "name": "Leverantörsskulder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Leverantörsskulder"
-  },
-  "2450": {
-    "name": "Fakturerad men ej upparbetad intäkt",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Fakturerad men ej upparbetad intäkt"
-  },
-  "2460": {
-    "name": "Leverantörsskulder till koncernföretag",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Leverantörsskulder till koncernföretag"
-  },
-  "2470": {
-    "name": "Leverantörsskulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Leverantörsskulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "2480": {
-    "name": "Checkräkningskredit, kortfristig",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Checkräkningskredit, kortfristig"
-  },
-  "2490": {
-    "name": "Övriga kortfristiga skulder till kreditinstitut, kunder och leverantörer",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga kortfristiga skulder till kreditinstitut, kunder och leverantörer"
-  },
-  "2510": {
-    "name": "Skatteskulder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Skatteskulder"
-  },
-  "2610": {
-    "name": "Utgående moms, 25 %",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Utgående moms, 25 %"
-  },
-  "2620": {
-    "name": "Utgående moms, 12 %",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Utgående moms, 12 %"
-  },
-  "2630": {
-    "name": "Utgående moms, 6 %",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Utgående moms, 6 %"
-  },
-  "2640": {
-    "name": "Ingående moms",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Ingående moms"
-  },
-  "2650": {
-    "name": "Redovisningskonto för moms",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Redovisningskonto för moms"
-  },
-  "2660": {
-    "name": "Punktskatter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Punktskatter"
-  },
-  "2670": {
-    "name": "Utgående moms på försäljning inom EU, OSS",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Utgående moms, OSS"
-  },
-  "2710": {
-    "name": "Personalskatt",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Personalskatt"
-  },
-  "2730": {
-    "name": "Lagstadgade sociala avgifter och särskild löneskatt",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Lagstadgade sociala avgifter och särskild löneskatt"
-  },
-  "2740": {
-    "name": "Avtalade sociala avgifter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avtalade sociala avgifter"
-  },
-  "2750": {
-    "name": "Utmätning i lön m.m.",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Utmätning i lön m.m."
-  },
-  "2760": {
-    "name": "Semestermedel",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Semestermedel"
-  },
-  "2790": {
-    "name": "Övriga löneavdrag",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga löneavdrag"
-  },
-  "2810": {
-    "name": "Avräkning för factoring och belånade kontraktsfordringar",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avräkning för factoring och belånade kontraktsfordringar"
-  },
-  "2820": {
-    "name": "Kortfristiga skulder till anställda",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga skulder till anställda"
-  },
-  "2830": {
-    "name": "Avräkning för annans räkning",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avräkning för annans räkning"
-  },
-  "2840": {
-    "name": "Kortfristiga låneskulder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga låneskulder"
-  },
-  "2850": {
-    "name": "Avräkning för skatter och avgifter (skattekonto)",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Avräkning för skatter och avgifter (skattekonto)"
-  },
-  "2860": {
-    "name": "Kortfristiga skulder till koncernföretag",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga skulder till koncernföretag"
-  },
-  "2870": {
-    "name": "Kortfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Kortfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "2880": {
-    "name": "Skuld erhållna bidrag",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Skuld erhållna bidrag"
-  },
-  "2890": {
-    "name": "Övriga kortfristiga skulder",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga kortfristiga skulder"
-  },
-  "2910": {
-    "name": "Upplupna löner",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna löner"
-  },
-  "2920": {
-    "name": "Upplupna semesterlöner",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna semesterlöner"
-  },
-  "2930": {
-    "name": "Upplupna pensionskostnader",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna pensionskostnader"
-  },
-  "2940": {
-    "name": "Upplupna lagstadgade sociala och andra avgifter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna lagstadgade sociala och andra avgifter"
-  },
-  "2950": {
-    "name": "Upplupna avtalade sociala avgifter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna avtalade sociala avgifter"
-  },
-  "2960": {
-    "name": "Upplupna räntekostnader",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna räntekostnader"
-  },
-  "2970": {
-    "name": "Förutbetalda intäkter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Förutbetalda intäkter"
-  },
-  "2980": {
-    "name": "Upplupna avtalskostnader",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Upplupna avtalskostnader"
-  },
-  "2990": {
-    "name": "Övriga upplupna kostnader och förutbetalda intäkter",
-    "type": "Eget kapital & Skulder",
-    "statement": "Balansräkning",
-    "category": "Övriga upplupna kostnader och förutbetalda intäkter"
-  },
-  "3000": {
-    "name": "Försäljning inom Sverige",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning inom Sverige"
-  },
-  "3100": {
-    "name": "Försäljning av varor utanför Sverige",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning av varor utanför Sverige"
-  },
-  "3200": {
-    "name": "Försäljning VMB och omvänd moms",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning VMB och omvänd moms"
-  },
-  "3211": {
-    "name": "Försäljning positiv VMB 25 %",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning positiv VMB 25 %"
-  },
-  "3231": {
-    "name": "Försäljning inom byggsektorn, omvänd betalningsskyldighet moms",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning inom byggsektorn, omvänd betalningsskyldighet moms"
-  },
-  "3300": {
-    "name": "Försäljning av tjänster utanför Sverige",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning av tjänster utanför Sverige"
-  },
-  "3400": {
-    "name": "Försäljning, egna uttag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning, egna uttag"
-  },
-  "3500": {
-    "name": "Fakturerade kostnader (gruppkonto)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerade kostnader (gruppkonto)"
-  },
-  "3510": {
-    "name": "Fakturerat emballage",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerat emballage"
-  },
-  "3520": {
-    "name": "Fakturerade frakter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerade frakter"
-  },
-  "3530": {
-    "name": "Fakturerade tull- och speditionskostnader m.m.",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerade tull- och speditionskostnader m.m."
-  },
-  "3540": {
-    "name": "Faktureringsavgifter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Faktureringsavgifter"
-  },
-  "3550": {
-    "name": "Fakturerade resekostnader",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerade resekostnader"
-  },
-  "3560": {
-    "name": "Fakturerade kostnader till koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerade kostnader till koncernföretag"
-  },
-  "3570": {
-    "name": "Fakturerade kostnader till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Fakturerade kostnader till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "3590": {
-    "name": "Övriga fakturerade kostnader",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga fakturerade kostnader"
-  },
-  "3600": {
-    "name": "Rörelsens sidointäkter (gruppkonto)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Rörelsens sidointäkter (gruppkonto)"
-  },
-  "3610": {
-    "name": "Försäljning av material",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Försäljning av material"
-  },
-  "3620": {
-    "name": "Tillfällig uthyrning av personal",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Tillfällig uthyrning av personal"
-  },
-  "3630": {
-    "name": "Tillfällig uthyrning av transportmedel",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Tillfällig uthyrning av transportmedel"
-  },
-  "3670": {
-    "name": "Intäkter från värdepapper",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Intäkter från värdepapper"
-  },
-  "3680": {
-    "name": "Management fees",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Management fees"
-  },
-  "3690": {
-    "name": "Övriga sidointäkter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga sidointäkter"
-  },
-  "3700": {
-    "name": "Intäktskorrigeringar (gruppkonto)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Intäktskorrigeringar (gruppkonto)"
-  },
-  "3710": {
-    "name": "Ofördelade intäktsreduktioner",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Ofördelade intäktsreduktioner"
-  },
-  "3730": {
-    "name": "Lämnade rabatter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Lämnade rabatter"
-  },
-  "3740": {
-    "name": "Öres- och kronutjämning",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Öres- och kronutjämning"
-  },
-  "3750": {
-    "name": "Punktskatter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Punktskatter"
-  },
-  "3790": {
-    "name": "Övriga intäktskorrigeringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga intäktskorrigeringar"
-  },
-  "3800": {
-    "name": "Aktiverat arbete för egen räkning (gruppkonto)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Aktiverat arbete för egen räkning (gruppkonto)"
-  },
-  "3840": {
-    "name": "Aktiverat arbete (material)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Aktiverat arbete (material)"
-  },
-  "3850": {
-    "name": "Aktiverat arbete (omkostnader)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Aktiverat arbete (omkostnader)"
-  },
-  "3870": {
-    "name": "Aktiverat arbete (personal)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Aktiverat arbete (personal)"
-  },
-  "3900": {
-    "name": "Övriga rörelseintäkter (gruppkonto)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga rörelseintäkter (gruppkonto)"
-  },
-  "3910": {
-    "name": "Hyres- och arrendeintäkter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Hyres- och arrendeintäkter"
-  },
-  "3920": {
-    "name": "Provisionsintäkter, licensintäkter och royalties",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Provisionsintäkter, licensintäkter och royalties"
-  },
-  "3940": {
-    "name": "Orealiserade negativa/positiva värdeförändringar på säkringsinstrument",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Orealiserade negativa/positiva värdeförändringar på säkringsinstrument"
-  },
-  "3950": {
-    "name": "Återvunna, tidigare avskrivna kundfordringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Återvunna, tidigare avskrivna kundfordringar"
-  },
-  "3960": {
-    "name": "Valutakursvinster på fordringar och skulder av rörelsekaraktär",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Valutakursvinster på fordringar och skulder av rörelsekaraktär"
-  },
-  "3970": {
-    "name": "Vinst vid avyttring av immateriella och materiella anläggningstillgångar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Vinst vid avyttring av immateriella och materiella anläggningstillgångar"
-  },
-  "3980": {
-    "name": "Erhållna offentliga bidrag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Erhållna offentliga bidrag"
-  },
-  "3990": {
-    "name": "Övriga ersättningar, bidrag och intäkter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga ersättningar, bidrag och intäkter"
-  },
-  "4000": {
-    "name": "Inköp av varor från Sverige",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inköp av varor från Sverige"
-  },
-  "4200": {
-    "name": "Sålda varor VMB",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Sålda varor VMB"
-  },
-  "4211": {
-    "name": "Sålda varor positiv VMB 25 %",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Sålda varor VMB 25 %"
-  },
-  "4400": {
-    "name": "Momspliktiga inköp i Sverige",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Momspliktiga inköp i Sverige"
-  },
-  "4415": {
-    "name": "Inköpta varor i Sverige, omvänd betalningsskyldighet, 25 % moms",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inköpta varor i Sverige, omvänd betalningsskyldighet"
-  },
-  "4425": {
-    "name": "Inköpta tjänster i Sverige, omvänd betalningsskyldighet, 25 % moms",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inköpta tjänster i Sverige, omvänd betalningsskyldighet"
-  },
-  "4500": {
-    "name": "Övriga momspliktiga inköp",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga momspliktiga inköp"
-  },
-  "4515": {
-    "name": "Inköp av varor från annat EU-land, 25 %",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inköp av varor från annat EU-land"
-  },
-  "4531": {
-    "name": "Inköp av tjänster från ett land utanför EU, 25 % moms",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inköp av tjänster från ett land utanför EU"
-  },
-  "4545": {
-    "name": "Import av varor, 25 % moms",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Import av varor"
-  },
-  "4600": {
-    "name": "Legoarbeten och underentreprenader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Legoarbeten och underentreprenader (gruppkonto)"
-  },
-  "4700": {
-    "name": "Reduktion av inköpspriser (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reduktion av inköpspriser (gruppkonto)"
-  },
-  "4730": {
-    "name": "Erhållna rabatter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Erhållna rabatter"
-  },
-  "4790": {
-    "name": "Övriga reduktioner av inköpspriser",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga reduktioner av inköpspriser"
-  },
-  "4900": {
-    "name": "Förändring av lager (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av lager (gruppkonto)"
-  },
-  "4910": {
-    "name": "Förändring av lager av råvaror",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av lager av råvaror"
-  },
-  "4920": {
-    "name": "Förändring av lager av tillsatsmaterial och förnödenheter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av lager av tillsatsmaterial och förnödenheter"
-  },
-  "4940": {
-    "name": "Förändring av produkter i arbete",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av produkter i arbete"
-  },
-  "4950": {
-    "name": "Förändring av lager av färdiga varor",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av lager av färdiga varor"
-  },
-  "4960": {
-    "name": "Förändring av lager av handelsvaror",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av lager av handelsvaror"
-  },
-  "4970": {
-    "name": "Förändring av pågående arbeten, nedlagda kostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av pågående arbeten, nedlagda kostnader"
-  },
-  "4980": {
-    "name": "Förändring av lager av värdepapper",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av lager av värdepapper"
-  },
-  "5000": {
-    "name": "Lokalkostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Lokalkostnader (gruppkonto)"
-  },
-  "5010": {
-    "name": "Lokalhyra",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Lokalhyra"
-  },
-  "5020": {
-    "name": "El för belysning",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "El för belysning"
-  },
-  "5030": {
-    "name": "Värme",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Värme"
-  },
-  "5040": {
-    "name": "Vatten och avlopp",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Vatten och avlopp"
-  },
-  "5050": {
-    "name": "Lokaltillbehör",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Lokaltillbehör"
-  },
-  "5060": {
-    "name": "Städning och renhållning",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Städning och renhållning"
-  },
-  "5070": {
-    "name": "Reparation och underhåll av lokaler",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll av lokaler"
-  },
-  "5090": {
-    "name": "Övriga lokalkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga lokalkostnader"
-  },
-  "5100": {
-    "name": "Fastighetskostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Fastighetskostnader (gruppkonto)"
-  },
-  "5110": {
-    "name": "Tomträttsavgäld/arrende",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Tomträttsavgäld/arrende"
-  },
-  "5120": {
-    "name": "El för belysning",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "El för belysning"
-  },
-  "5130": {
-    "name": "Värme",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Värme"
-  },
-  "5140": {
-    "name": "Vatten och avlopp",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Vatten och avlopp"
-  },
-  "5160": {
-    "name": "Städning och renhållning",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Städning och renhållning"
-  },
-  "5170": {
-    "name": "Reparation och underhåll av fastighet",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll av fastighet"
-  },
-  "5190": {
-    "name": "Övriga fastighetskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga fastighetskostnader"
-  },
-  "5200": {
-    "name": "Hyra av anläggningstillgångar (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Hyra av anläggningstillgångar (gruppkonto)"
-  },
-  "5210": {
-    "name": "Hyra av maskiner och andra tekniska anläggningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Hyra av maskiner och andra tekniska anläggningar"
-  },
-  "5220": {
-    "name": "Hyra av inventarier och verktyg",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Hyra av inventarier och verktyg"
-  },
-  "5250": {
-    "name": "Hyra av datorer",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Hyra av datorer"
-  },
-  "5290": {
-    "name": "Övriga hyreskostnader för anläggningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga hyreskostnader för anläggningstillgångar"
-  },
-  "5300": {
-    "name": "Energikostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Energikostnader (gruppkonto)"
-  },
-  "5310": {
-    "name": "El för drift",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "El för drift"
-  },
-  "5320": {
-    "name": "Gas",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Gas"
-  },
-  "5330": {
-    "name": "Eldningsolja",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Eldningsolja"
-  },
-  "5340": {
-    "name": "Stenkol och koks",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Stenkol och koks"
-  },
-  "5350": {
-    "name": "Torv, träkol, ved och annat träbränsle",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Torv, träkol, ved och annat träbränsle"
-  },
-  "5360": {
-    "name": "Bensin, fotogen och motorbrännolja",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Bensin, fotogen och motorbrännolja"
-  },
-  "5370": {
-    "name": "Fjärrvärme, kyla och ånga",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Fjärrvärme, kyla och ånga"
-  },
-  "5380": {
-    "name": "Vatten",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Vatten"
-  },
-  "5390": {
-    "name": "Övriga energikostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga energikostnader"
-  },
-  "5400": {
-    "name": "Förbrukningsinventarier och förbrukningsmaterial (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förbrukningsinventarier och förbrukningsmaterial (gruppkonto)"
-  },
-  "5410": {
-    "name": "Förbrukningsinventarier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förbrukningsinventarier"
-  },
-  "5420": {
-    "name": "Programvaror",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Programvaror"
-  },
-  "5430": {
-    "name": "Transportinventarier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Transportinventarier"
-  },
-  "5440": {
-    "name": "Förbrukningsemballage",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förbrukningsemballage"
-  },
-  "5460": {
-    "name": "Förbrukningsmaterial",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förbrukningsmaterial"
-  },
-  "5480": {
-    "name": "Arbetskläder och skyddsmaterial",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Arbetskläder och skyddsmaterial"
-  },
-  "5490": {
-    "name": "Övriga förbrukningsinventarier och förbrukningsmaterial",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga förbrukningsinventarier och förbrukningsmaterial"
-  },
-  "5500": {
-    "name": "Reparation och underhåll (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll (gruppkonto)"
-  },
-  "5510": {
-    "name": "Reparation och underhåll av maskiner och andra tekniska anläggningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll av maskiner och andra tekniska anläggningar"
-  },
-  "5520": {
-    "name": "Reparation och underhåll av inventarier, verktyg och datorer m.m.",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll av inventarier, verktyg och datorer m.m."
-  },
-  "5530": {
-    "name": "Reparation och underhåll av installationer",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll av installationer"
-  },
-  "5550": {
-    "name": "Reparation och underhåll av förbrukningsinventarier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reparation och underhåll av förbrukningsinventarier"
-  },
-  "5580": {
-    "name": "Underhåll och tvätt av arbetskläder",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Underhåll och tvätt av arbetskläder"
-  },
-  "5590": {
-    "name": "Övriga kostnader för reparation och underhåll",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga kostnader för reparation och underhåll"
-  },
-  "5600": {
-    "name": "Kostnader för transportmedel (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnader för transportmedel (gruppkonto)"
-  },
-  "5610": {
-    "name": "Personbilskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Personbilskostnader"
-  },
-  "5620": {
-    "name": "Lastbilskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Lastbilskostnader"
-  },
-  "5630": {
-    "name": "Truckkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Truckkostnader"
-  },
-  "5640": {
-    "name": "Kostnader för arbetsmaskiner",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnader för arbetsmaskiner"
-  },
-  "5650": {
-    "name": "Traktorkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Traktorkostnader"
-  },
-  "5660": {
-    "name": "Motorcykel-, moped- och skoterkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Motorcykel-, moped- och skoterkostnader"
-  },
-  "5670": {
-    "name": "Båt-, flygplans- och helikopterkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Båt-, flygplans- och helikopterkostnader"
-  },
-  "5690": {
-    "name": "Övriga kostnader för transportmedel",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga kostnader för transportmedel"
-  },
-  "5700": {
-    "name": "Frakter och transporter (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Frakter och transporter (gruppkonto)"
-  },
-  "5710": {
-    "name": "Frakter, transporter och försäkringar vid varudistribution",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Frakter, transporter och försäkringar vid varudistribution"
-  },
-  "5720": {
-    "name": "Tull- och speditionskostnader m.m.",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Tull- och speditionskostnader m.m."
-  },
-  "5730": {
-    "name": "Arbetstransporter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Arbetstransporter"
-  },
-  "5790": {
-    "name": "Övriga kostnader för frakter och transporter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga kostnader för frakter och transporter"
-  },
-  "5800": {
-    "name": "Resekostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Resekostnader (gruppkonto)"
-  },
-  "5810": {
-    "name": "Biljetter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Biljetter"
-  },
-  "5820": {
-    "name": "Hyrbilskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Hyrbilskostnader"
-  },
-  "5830": {
-    "name": "Kost och logi",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kost och logi"
-  },
-  "5890": {
-    "name": "Övriga resekostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga resekostnader"
-  },
-  "5900": {
-    "name": "Reklam och PR (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reklam och PR (gruppkonto)"
-  },
-  "5910": {
-    "name": "Annonsering",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Annonsering"
-  },
-  "5920": {
-    "name": "Utomhus- och trafikreklam",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Utomhus- och trafikreklam"
-  },
-  "5930": {
-    "name": "Reklamtrycksaker och direktreklam",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Reklamtrycksaker och direktreklam"
-  },
-  "5940": {
-    "name": "Utställningar och mässor",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Utställningar och mässor"
-  },
-  "5950": {
-    "name": "Butiksreklam och återförsäljarreklam",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Butiksreklam och återförsäljarreklam"
-  },
-  "5960": {
-    "name": "Varuprover, reklamgåvor, presentreklam och tävlingar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Varuprover, reklamgåvor, presentreklam och tävlingar"
-  },
-  "5970": {
-    "name": "Film-, radio-, TV- och Internetreklam",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Film-, radio-, TV- och Internetreklam"
-  },
-  "5980": {
-    "name": "PR, institutionell reklam och sponsring",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "PR, institutionell reklam och sponsring"
-  },
-  "5990": {
-    "name": "Övriga kostnader för reklam och PR",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga kostnader för reklam och PR"
-  },
-  "6000": {
-    "name": "Övriga försäljningskostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga försäljningskostnader (gruppkonto)"
-  },
-  "6010": {
-    "name": "Kataloger, prislistor m.m.",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kataloger, prislistor m.m."
-  },
-  "6020": {
-    "name": "Egna facktidskrifter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Egna facktidskrifter"
-  },
-  "6030": {
-    "name": "Speciella orderkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Speciella orderkostnader"
-  },
-  "6040": {
-    "name": "Kontokortsavgifter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kontokortsavgifter"
-  },
-  "6050": {
-    "name": "Försäljningsprovisioner",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Försäljningsprovisioner"
-  },
-  "6060": {
-    "name": "Kreditförsäljningskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kreditförsäljningskostnader"
-  },
-  "6070": {
-    "name": "Representation",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Representation"
-  },
-  "6080": {
-    "name": "Bankgarantier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Bankgarantier"
-  },
-  "6090": {
-    "name": "Övriga försäljningskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga försäljningskostnader"
-  },
-  "6100": {
-    "name": "Kontorsmateriel och trycksaker (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kontorsmateriel och trycksaker (gruppkonto)"
-  },
-  "6110": {
-    "name": "Kontorsmateriel",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kontorsmateriel"
-  },
-  "6150": {
-    "name": "Trycksaker",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Trycksaker"
-  },
-  "6200": {
-    "name": "Tele och post (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Tele och post (gruppkonto)"
-  },
-  "6210": {
-    "name": "Telekommunikation",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Telekommunikation"
-  },
-  "6230": {
-    "name": "Datakommunikation",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Datakommunikation"
-  },
-  "6250": {
-    "name": "Postbefordran",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Postbefordran"
-  },
-  "6300": {
-    "name": "Företagsförsäkringar och övriga riskkostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Företagsförsäkringar och övriga riskkostnader (gruppkonto)"
-  },
-  "6310": {
-    "name": "Företagsförsäkringar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Företagsförsäkringar"
-  },
-  "6320": {
-    "name": "Självrisker vid skada",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Självrisker vid skada"
-  },
-  "6330": {
-    "name": "Förluster i pågående arbeten",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förluster i pågående arbeten"
-  },
-  "6340": {
-    "name": "Lämnade skadestånd",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Lämnade skadestånd"
-  },
-  "6350": {
-    "name": "Förluster på kundfordringar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förluster på kundfordringar"
-  },
-  "6360": {
-    "name": "Garantikostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Garantikostnader"
-  },
-  "6370": {
-    "name": "Kostnader för bevakning och larm",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnader för bevakning och larm"
-  },
-  "6380": {
-    "name": "Förluster på övriga kortfristiga fordringar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förluster på övriga kortfristiga fordringar"
-  },
-  "6390": {
-    "name": "Övriga riskkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga riskkostnader"
-  },
-  "6400": {
-    "name": "Förvaltningskostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förvaltningskostnader (gruppkonto)"
-  },
-  "6410": {
-    "name": "Styrelsearvoden som inte är lön",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Styrelsearvoden som inte är lön"
-  },
-  "6420": {
-    "name": "Ersättningar till revisor",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Ersättningar till revisor"
-  },
-  "6430": {
-    "name": "Management fees",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Management fees"
-  },
-  "6440": {
-    "name": "Årsredovisning och delårsrapporter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Årsredovisning och delårsrapporter"
-  },
-  "6450": {
-    "name": "Bolagsstämma/års- eller föreningsstämma",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Bolagsstämma/års- eller föreningsstämma"
-  },
-  "6490": {
-    "name": "Övriga förvaltningskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga förvaltningskostnader"
-  },
-  "6500": {
-    "name": "Övriga externa tjänster (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga externa tjänster (gruppkonto)"
-  },
-  "6510": {
-    "name": "Mätningskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Mätningskostnader"
-  },
-  "6520": {
-    "name": "Ritnings- och kopieringskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Ritnings- och kopieringskostnader"
-  },
-  "6530": {
-    "name": "Redovisningstjänster",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Redovisningstjänster"
-  },
-  "6540": {
-    "name": "IT-tjänster",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "IT-tjänster"
-  },
-  "6550": {
-    "name": "Konsultarvoden",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Konsultarvoden"
-  },
-  "6560": {
-    "name": "Serviceavgifter till branschorganisationer",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Serviceavgifter till branschorganisationer"
-  },
-  "6570": {
-    "name": "Bankkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Bankkostnader"
-  },
-  "6580": {
-    "name": "Advokat- och rättegångskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Advokat- och rättegångskostnader"
-  },
-  "6590": {
-    "name": "Övriga externa tjänster",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga externa tjänster"
-  },
-  "6800": {
-    "name": "Inhyrd personal (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd personal (gruppkonto)"
-  },
-  "6810": {
-    "name": "Inhyrd produktionspersonal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd produktionspersonal"
-  },
-  "6820": {
-    "name": "Inhyrd lagerpersonal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd lagerpersonal"
-  },
-  "6830": {
-    "name": "Inhyrd transportpersonal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd transportpersonal"
-  },
-  "6840": {
-    "name": "Inhyrd kontors- och ekonomipersonal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd kontors- och ekonomipersonal"
-  },
-  "6850": {
-    "name": "Inhyrd IT-personal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd IT-personal"
-  },
-  "6860": {
-    "name": "Inhyrd marknads- och försäljningspersonal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd marknads- och försäljningspersonal"
-  },
-  "6870": {
-    "name": "Inhyrd restaurang- och butikspersonal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrd restaurang- och butikspersonal"
-  },
-  "6880": {
-    "name": "Inhyrda företagsledare",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Inhyrda företagsledare"
-  },
-  "6890": {
-    "name": "Övrig inhyrd personal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övrig inhyrd personal"
-  },
-  "6900": {
-    "name": "Övriga externa kostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga externa kostnader (gruppkonto)"
-  },
-  "6910": {
-    "name": "Licensavgifter och royalties",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Licensavgifter och royalties"
-  },
-  "6920": {
-    "name": "Kostnader för egna patent",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnader för egna patent"
-  },
-  "6930": {
-    "name": "Kostnader för varumärken m.m.",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnader för varumärken m.m."
-  },
-  "6940": {
-    "name": "Kontroll-, provnings- och stämpelavgifter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kontroll-, provnings- och stämpelavgifter"
-  },
-  "6950": {
-    "name": "Tillsynsavgifter myndigheter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Tillsynsavgifter myndigheter"
-  },
-  "6970": {
-    "name": "Tidningar, tidskrifter och facklitteratur",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Tidningar, tidskrifter och facklitteratur"
-  },
-  "6980": {
-    "name": "Föreningsavgifter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Föreningsavgifter"
-  },
-  "6990": {
-    "name": "Övriga externa kostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga externa kostnader"
-  },
-  "7000": {
-    "name": "Löner till kollektivanställda (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till kollektivanställda (gruppkonto)"
-  },
-  "7010": {
-    "name": "Löner till kollektivanställda",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till kollektivanställda"
-  },
-  "7030": {
-    "name": "Löner till kollektivanställda (utlandsanställda)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till kollektivanställda (utlandsanställda)"
-  },
-  "7080": {
-    "name": "Löner till kollektivanställda för ej arbetad tid",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till kollektivanställda för ej arbetad tid"
-  },
-  "7090": {
-    "name": "Förändring av semesterlöneskuld",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av semesterlöneskuld"
-  },
-  "7200": {
-    "name": "Löner till tjänstemän och företagsledare (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till tjänstemän och företagsledare (gruppkonto)"
-  },
-  "7210": {
-    "name": "Löner till tjänstemän",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till tjänstemän"
-  },
-  "7220": {
-    "name": "Löner till företagsledare",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till företagsledare"
-  },
-  "7230": {
-    "name": "Löner till tjänstemän och ftgsledare (utlandsanställda)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till tjänstemän och ftgsledare (utlandsanställda)"
-  },
-  "7240": {
-    "name": "Styrelsearvoden",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Styrelsearvoden"
-  },
-  "7280": {
-    "name": "Löner till tjänstemän och företagsledare för ej arbetad tid",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Löner till tjänstemän och företagsledare för ej arbetad tid"
-  },
-  "7290": {
-    "name": "Förändring av semesterlöneskuld",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av semesterlöneskuld"
-  },
-  "7300": {
-    "name": "Kostnadsersättningar och förmåner (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnadsersättningar och förmåner (gruppkonto)"
-  },
-  "7310": {
-    "name": "Kontanta extraersättningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kontanta extraersättningar"
-  },
-  "7320": {
-    "name": "Traktamenten vid tjänsteresa",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Traktamenten vid tjänsteresa"
-  },
-  "7330": {
-    "name": "Bilersättningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Bilersättningar"
-  },
-  "7350": {
-    "name": "Ersättningar för föreskrivna arbetskläder",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Ersättningar för föreskrivna arbetskläder"
-  },
-  "7370": {
-    "name": "Representationsersättningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Representationsersättningar"
-  },
-  "7380": {
-    "name": "Kostnader för förmåner till anställda",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Kostnader för förmåner till anställda"
-  },
-  "7390": {
-    "name": "Övriga kostnadsersättningar och förmåner",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga kostnadsersättningar och förmåner"
-  },
-  "7400": {
-    "name": "Pensionskostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Pensionskostnader (gruppkonto)"
-  },
-  "7410": {
-    "name": "Pensionsförsäkringspremier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Pensionsförsäkringspremier"
-  },
-  "7420": {
-    "name": "Förändring av pensionsskuld",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av pensionsskuld"
-  },
-  "7430": {
-    "name": "Avdrag för räntedel i pensionskostnad",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Avdrag för räntedel i pensionskostnad"
-  },
-  "7440": {
-    "name": "Förändring av pensionsstiftelsekapital",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av pensionsstiftelsekapital"
-  },
-  "7460": {
-    "name": "Pensionsutbetalningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Pensionsutbetalningar"
-  },
-  "7470": {
-    "name": "Förvaltnings- och kreditförsäkringsavgifter",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förvaltnings- och kreditförsäkringsavgifter"
-  },
-  "7490": {
-    "name": "Övriga pensionskostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga pensionskostnader"
-  },
-  "7500": {
-    "name": "Sociala och andra avgifter enligt lag och avtal (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Sociala och andra avgifter enligt lag och avtal (gruppkonto)"
-  },
-  "7510": {
-    "name": "Arbetsgivaravgifter 31,42 %",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Arbetsgivaravgifter 31,42 %"
-  },
-  "7530": {
-    "name": "Särskild löneskatt",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Särskild löneskatt"
-  },
-  "7550": {
-    "name": "Avkastningsskatt på pensionsmedel",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Avkastningsskatt på pensionsmedel"
-  },
-  "7570": {
-    "name": "Premier för arbetsmarknadsförsäkringar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Premier för arbetsmarknadsförsäkringar"
-  },
-  "7580": {
-    "name": "Gruppförsäkringspremier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Gruppförsäkringspremier"
-  },
-  "7590": {
-    "name": "Övriga sociala och andra avgifter enligt lag och avtal",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga sociala och andra avgifter enligt lag och avtal"
-  },
-  "7600": {
-    "name": "Övriga personalkostnader (gruppkonto)",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga personalkostnader (gruppkonto)"
-  },
-  "7610": {
-    "name": "Utbildning",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Utbildning"
-  },
-  "7620": {
-    "name": "Sjuk- och hälsovård",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Sjuk- och hälsovård"
-  },
-  "7630": {
-    "name": "Personalrepresentation",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Personalrepresentation"
-  },
-  "7650": {
-    "name": "Sjuklöneförsäkring",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Sjuklöneförsäkring"
-  },
-  "7670": {
-    "name": "Förändring av personalstiftelsekapital",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förändring av personalstiftelsekapital"
-  },
-  "7690": {
-    "name": "Övriga personalkostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga personalkostnader"
-  },
-  "7710": {
-    "name": "Nedskrivningar av immateriella anläggningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av immateriella anläggningstillgångar"
-  },
-  "7720": {
-    "name": "Nedskrivningar av byggnader och mark",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av byggnader och mark"
-  },
-  "7730": {
-    "name": "Nedskrivningar av maskiner och inventarier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av maskiner och inventarier"
-  },
-  "7740": {
-    "name": "Nedskrivningar av vissa omsättningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av vissa omsättningstillgångar"
-  },
-  "7760": {
-    "name": "Återföring av nedskrivningar av immateriella anläggningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Återföring av nedskrivningar av immateriella anläggningstillgångar"
-  },
-  "7770": {
-    "name": "Återföring av nedskrivningar av byggnader och mark",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Återföring av nedskrivningar av byggnader och mark"
-  },
-  "7780": {
-    "name": "Återföring av nedskrivningar av maskiner och inventarier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Återföring av nedskrivningar av maskiner och inventarier"
-  },
-  "7790": {
-    "name": "Återföring av nedskrivningar av vissa omsättningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Återföring av nedskrivningar av vissa omsättningstillgångar"
-  },
-  "7810": {
-    "name": "Avskrivningar på immateriella anläggningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Avskrivningar på immateriella anläggningstillgångar"
-  },
-  "7820": {
-    "name": "Avskrivningar på byggnader och markanläggningar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Avskrivningar på byggnader och markanläggningar"
-  },
-  "7830": {
-    "name": "Avskrivningar på maskiner och inventarier",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Avskrivningar på maskiner och inventarier"
-  },
-  "7840": {
-    "name": "Avskrivningar på förbättringsutgifter på annans fastighet",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Avskrivningar på förbättringsutgifter på annans fastighet"
-  },
-  "7940": {
-    "name": "Orealiserade positiva/negativa värdeförändringar på säkringsinstrument",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Orealiserade positiva/negativa värdeförändringar på säkringsinstrument"
-  },
-  "7960": {
-    "name": "Valutakursförluster på fordringar och skulder av rörelsekaraktär",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Valutakursförluster på fordringar och skulder av rörelsekaraktär"
-  },
-  "7970": {
-    "name": "Förlust vid avyttring av immateriella och materiella anläggningstillgångar",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Förlust vid avyttring av immateriella och materiella anläggningstillgångar"
-  },
-  "7990": {
-    "name": "Övriga rörelsekostnader",
-    "type": "Kostnader",
-    "statement": "Resultaträkning",
-    "category": "Övriga rörelsekostnader"
-  },
-  "8010": {
-    "name": "Utdelning på andelar i koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Utdelning på andelar i koncernföretag"
-  },
-  "8020": {
-    "name": "Resultat vid försäljning av andelar i koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultat vid försäljning av andelar i koncernföretag"
-  },
-  "8030": {
-    "name": "Resultatandelar från handelsbolag (dotterföretag)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultatandelar från handelsbolag (dotterföretag)"
-  },
-  "8070": {
-    "name": "Nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag"
-  },
-  "8080": {
-    "name": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag"
-  },
-  "8110": {
-    "name": "Utdelningar på andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Utdelningar på andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "8120": {
-    "name": "Resultat vid försäljning av andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultat vid försäljning av andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "8130": {
-    "name": "Resultatandelar från handelsbolag (intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultatandelar från handelsbolag (intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i)"
-  },
-  "8170": {
-    "name": "Nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"
-  },
-  "8180": {
-    "name": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag"
-  },
-  "8210": {
-    "name": "Utdelningar på andelar i andra företag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Utdelningar på andelar i andra företag"
-  },
-  "8220": {
-    "name": "Resultat vid försäljning av värdepapper i och långfristiga fordringar hos andra företag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultat vid försäljning av värdepapper i och långfristiga fordringar hos andra företag"
-  },
-  "8230": {
-    "name": "Valutakursdifferenser på långfristiga fordringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Valutakursdifferenser på långfristiga fordringar"
-  },
-  "8240": {
-    "name": "Resultatandelar från handelsbolag (andra företag)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultatandelar från handelsbolag (andra företag)"
-  },
-  "8250": {
-    "name": "Ränteintäkter från långfristiga fordringar hos och värdepapper i andra företag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Ränteintäkter från långfristiga fordringar hos och värdepapper i andra företag"
-  },
-  "8260": {
-    "name": "Ränteintäkter från långfristiga fordringar hos koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Ränteintäkter från långfristiga fordringar hos koncernföretag"
-  },
-  "8270": {
-    "name": "Nedskrivningar av innehav av andelar i och långfristiga fordringar hos andra företag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av innehav av andelar i och långfristiga fordringar hos andra företag"
-  },
-  "8280": {
-    "name": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos andra företag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos andra företag"
-  },
-  "8290": {
-    "name": "Värdering till verkligt värde, anläggningstillgångar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Värdering till verkligt värde, anläggningstillgångar"
-  },
-  "8310": {
-    "name": "Ränteintäkter från omsättningstillgångar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Ränteintäkter från omsättningstillgångar"
-  },
-  "8320": {
-    "name": "Värdering till verkligt värde, omsättningstillgångar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Värdering till verkligt värde, omsättningstillgångar"
-  },
-  "8330": {
-    "name": "Valutakursdifferenser på kortfristiga fordringar och placeringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Valutakursdifferenser på kortfristiga fordringar och placeringar"
-  },
-  "8340": {
-    "name": "Utdelningar på kortfristiga placeringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Utdelningar på kortfristiga placeringar"
-  },
-  "8350": {
-    "name": "Resultat vid försäljning av kortfristiga placeringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultat vid försäljning av kortfristiga placeringar"
-  },
-  "8360": {
-    "name": "Övriga ränteintäkter från koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga ränteintäkter från koncernföretag"
-  },
-  "8370": {
-    "name": "Nedskrivningar av kortfristiga placeringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Nedskrivningar av kortfristiga placeringar"
-  },
-  "8380": {
-    "name": "Återföringar av nedskrivningar av kortfristiga placeringar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Återföringar av nedskrivningar av kortfristiga placeringar"
-  },
-  "8390": {
-    "name": "Övriga finansiella intäkter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga finansiella intäkter"
-  },
-  "8400": {
-    "name": "Räntekostnader (gruppkonto)",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Räntekostnader (gruppkonto)"
-  },
-  "8410": {
-    "name": "Räntekostnader för långfristiga skulder",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Räntekostnader för långfristiga skulder"
-  },
-  "8420": {
-    "name": "Räntekostnader för kortfristiga skulder",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Räntekostnader för kortfristiga skulder"
-  },
-  "8430": {
-    "name": "Valutakursdifferenser på skulder",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Valutakursdifferenser på skulder"
-  },
-  "8440": {
-    "name": "Erhållna räntebidrag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Erhållna räntebidrag"
-  },
-  "8450": {
-    "name": "Orealiserade värdeförändringar på skulder",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Orealiserade värdeförändringar på skulder"
-  },
-  "8460": {
-    "name": "Räntekostnader till koncernföretag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Räntekostnader till koncernföretag"
-  },
-  "8480": {
-    "name": "Aktiverade ränteutgifter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Aktiverade ränteutgifter"
-  },
-  "8490": {
-    "name": "Övriga skuldrelaterade poster",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga skuldrelaterade poster"
-  },
-  "8810": {
-    "name": "Förändring av periodiseringsfond",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Förändring av periodiseringsfond"
-  },
-  "8820": {
-    "name": "Mottagna koncernbidrag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Mottagna koncernbidrag"
-  },
-  "8830": {
-    "name": "Lämnade koncernbidrag",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Lämnade koncernbidrag"
-  },
-  "8840": {
-    "name": "Lämnade gottgörelser",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Lämnade gottgörelser"
-  },
-  "8850": {
-    "name": "Förändring av överavskrivningar",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Förändring av överavskrivningar"
-  },
-  "8860": {
-    "name": "Förändring av ersättningsfond",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Förändring av ersättningsfond"
-  },
-  "8890": {
-    "name": "Övriga bokslutsdispositioner",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga bokslutsdispositioner"
-  },
-  "8910": {
-    "name": "Skatt som belastar årets resultat",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Skatt på grund av ändrad beskattning"
-  },
-  "8920": {
-    "name": "Skatt på grund av ändrad beskattning",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Skatt som belastar årets resultat"
-  },
-  "8930": {
-    "name": "Restituerad skatt",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Restituerad skatt"
-  },
-  "8940": {
-    "name": "Uppskjuten skatt",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Uppskjuten skatt"
-  },
-  "8980": {
-    "name": "Övriga skatter",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Övriga skatter"
-  },
-  "8990": {
-    "name": "Resultat",
-    "type": "Intäkter",
-    "statement": "Resultaträkning",
-    "category": "Resultat"
-  }
+    "1010": {"name": "Utvecklingsutgifter"},
+    "1011": {"name": "Balanserade utgifter för forskning och utveckling"},
+    "1012": {"name": "Balanserade utgifter för programvaror"},
+    "1018": {"name": "Ackumulerade nedskrivningar på balanserade utgifter"},
+    "1019": {"name": "Ackumulerade avskrivningar på balanserade utgifter"},
+    "1020": {"name": "Koncessioner m.m."},
+    "1028": {"name": "Ackumulerade nedskrivningar på koncessioner m.m."},
+    "1029": {"name": "Ackumulerade avskrivningar på koncessioner m.m."},
+    "1030": {"name": "Patent"},
+    "1038": {"name": "Ackumulerade nedskrivningar på patent"},
+    "1039": {"name": "Ackumulerade avskrivningar på patent"},
+    "1040": {"name": "Licenser"},
+    "1048": {"name": "Ackumulerade nedskrivningar på licenser"},
+    "1049": {"name": "Ackumulerade avskrivningar på licenser"},
+    "1050": {"name": "Varumärken"},
+    "1058": {"name": "Ackumulerade nedskrivningar på varumärken"},
+    "1059": {"name": "Ackumulerade avskrivningar på varumärken"},
+    "1060": {"name": "Hyresrätter, tomträtter och liknande"},
+    "1068": {"name": "Ackumulerade nedskrivningar på hyresrätter, tomträtter och liknande"},
+    "1069": {"name": "Ackumulerade avskrivningar på hyresrätter, tomträtter och liknande"},
+    "1070": {"name": "Goodwill"},
+    "1078": {"name": "Ackumulerade nedskrivningar på goodwill"},
+    "1079": {"name": "Ackumulerade avskrivningar på goodwill"},
+    "1080": {"name": "Förskott för immateriella anläggningstillgångar"},
+    "1081": {"name": "Pågående projekt för immateriella anläggningstillgångar"},
+    "1088": {"name": "Förskott för immateriella anläggningstillgångar"},
+    "1110": {"name": "Byggnader"},
+    "1111": {"name": "Byggnader på egen mark"},
+    "1112": {"name": "Byggnader på annans mark"},
+    "1118": {"name": "Ackumulerade nedskrivningar på byggnader"},
+    "1119": {"name": "Ackumulerade avskrivningar på byggnader"},
+    "1120": {"name": "Förbättringsutgifter på annans fastighet"},
+    "1129": {"name": "Ackumulerade avskrivningar på förbättringsutgifter på annans fastighet"},
+    "1130": {"name": "Mark"},
+    "1140": {"name": "Tomter och obebyggda markområden"},
+    "1150": {"name": "Markanläggningar"},
+    "1158": {"name": "Ackumulerade nedskrivningar på markanläggningar"},
+    "1159": {"name": "Ackumulerade avskrivningar på markanläggningar"},
+    "1180": {"name": "Pågående nyanläggningar och förskott för byggnader och mark"},
+    "1181": {"name": "Pågående ny-, till- och ombyggnad"},
+    "1188": {"name": "Förskott för byggnader och mark"},
+    "1210": {"name": "Maskiner och andra tekniska anläggningar"},
+    "1211": {"name": "Maskiner"},
+    "1213": {"name": "Andra tekniska anläggningar"},
+    "1218": {"name": "Ackumulerade nedskrivningar på maskiner och andra tekniska anläggningar"},
+    "1219": {"name": "Ackumulerade avskrivningar på maskiner och andra tekniska anläggningar"},
+    "1220": {"name": "Inventarier och verktyg"},
+    "1221": {"name": "Inventarier"},
+    "1222": {"name": "Byggnadsinventarier"},
+    "1223": {"name": "Markinventarier"},
+    "1225": {"name": "Verktyg"},
+    "1228": {"name": "Ackumulerade nedskrivningar på inventarier och verktyg"},
+    "1229": {"name": "Ackumulerade avskrivningar på inventarier och verktyg"},
+    "1230": {"name": "Installationer"},
+    "1231": {"name": "Installationer på egen fastighet"},
+    "1232": {"name": "Installationer på annans fastighet"},
+    "1238": {"name": "Ackumulerade nedskrivningar på installationer"},
+    "1239": {"name": "Ackumulerade avskrivningar på installationer"},
+    "1240": {"name": "Bilar och andra transportmedel"},
+    "1241": {"name": "Personbilar"},
+    "1242": {"name": "Lastbilar"},
+    "1243": {"name": "Truckar"},
+    "1244": {"name": "Arbetsmaskiner"},
+    "1245": {"name": "Traktorer"},
+    "1246": {"name": "Motorcyklar, mopeder och skotrar"},
+    "1247": {"name": "Båtar, flygplan och helikoptrar"},
+    "1248": {"name": "Ackumulerade nedskrivningar på bilar och andra transportmedel"},
+    "1249": {"name": "Ackumulerade avskrivningar på bilar och andra transportmedel"},
+    "1250": {"name": "Datorer"},
+    "1251": {"name": "Datorer, företaget"},
+    "1257": {"name": "Datorer, personal"},
+    "1258": {"name": "Ackumulerade nedskrivningar på datorer"},
+    "1259": {"name": "Ackumulerade avskrivningar på datorer"},
+    "1260": {"name": "Leasade tillgångar"},
+    "1269": {"name": "Ackumulerade avskrivningar på leasade tillgångar"},
+    "1280": {"name": "Pågående nyanläggningar och förskott för maskiner och inventarier"},
+    "1281": {"name": "Pågående nyanläggningar, maskiner och inventarier"},
+    "1288": {"name": "Förskott för maskiner och inventarier"},
+    "1290": {"name": "Övriga materiella anläggningstillgångar"},
+    "1291": {"name": "Konst och liknande tillgångar"},
+    "1292": {"name": "Djur som klassificeras som anläggningstillgång"},
+    "1298": {"name": "Ackumulerade nedskrivningar på övriga materiella anläggningstillgångar"},
+    "1299": {"name": "Ackumulerade avskrivningar på övriga materiella anläggningstillgångar"},
+    "1310": {"name": "Andelar i koncernföretag"},
+    "1311": {"name": "Aktier i noterade svenska koncernföretag"},
+    "1312": {"name": "Aktier i onoterade svenska koncernföretag"},
+    "1313": {"name": "Aktier i noterade utländska koncernföretag"},
+    "1314": {"name": "Aktier i onoterade utländska koncernföretag"},
+    "1316": {"name": "Andra andelar i svenska koncernföretag"},
+    "1317": {"name": "Andra andelar i utländska koncernförertag"},
+    "1318": {"name": "Ackumulerade nedskrivningar av andelar i koncernföretag"},
+    "1320": {"name": "Långfristiga fordringar hos koncernföretag"},
+    "1321": {"name": "Långfristiga fordringar hos moderföretag"},
+    "1322": {"name": "Långfristiga fordringar hos dotterföretag"},
+    "1323": {"name": "Långfristiga fordringar hos andra koncernföretag"},
+    "1328": {"name": "Ackumulerade nedskrivningar av långfristiga fordringar hos koncernföretag"},
+    "1330": {"name": "Andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "1331": {"name": "Andelar i intresseföretag"},
+    "1332": {"name": "Ackumulerade nedskrivningar av andelar i intresseföretag"},
+    "1333": {"name": "Andelar i gemensamt styrda företag"},
+    "1334": {"name": "Ackumulerade nedskrivningar av andelar i gemensamt styrda företag"},
+    "1336": {"name": "Andelar i övriga företag som det finns ett ägarintresse i"},
+    "1337": {"name": "Ackumulerade nedskrivningar av andelar i övriga företag som det finns ett ägarintresse i"},
+    "1338": {"name": "Ackumulerade nedskrivningar av andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "1340": {"name": "Långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "1341": {"name": "Långfristiga fordringar hos intresseföretag"},
+    "1342": {"name": "Ackumulerade nedskrivningar av långfristiga fordringar hos intresseföretag"},
+    "1343": {"name": "Långfristiga fordringar hos gemensamt styrda företag"},
+    "1344": {"name": "Ackumulerade nedskrivningar av långfristiga fordringar hos gemensamt styrda företag"},
+    "1346": {"name": "Långfristiga fordringar hos övriga företag som det finns ett ägarintresse i"},
+    "1347": {"name": "Ackumulerade nedskrivningar av långfristiga fordringar hos övriga företag som det finns ett ägarintresse i"},
+    "1348": {"name": "Ackumulerade nedskrivningar av långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "1350": {"name": "Andelar och värdepapper i andra företag"},
+    "1351": {"name": "Andelar i noterade företag"},
+    "1352": {"name": "Andra andelar"},
+    "1353": {"name": "Andelar i bostadsrättsföreningar"},
+    "1354": {"name": "Obligationer"},
+    "1356": {"name": "Andelar i ekonomiska föreningar, övriga företag"},
+    "1357": {"name": "Andelar i handelsbolag, andra företag"},
+    "1358": {"name": "Ackumulerade nedskrivningar av andra andelar och värdepapper"},
+    "1360": {"name": "Lån till delägare eller närstående, långfristig del"},
+    "1369": {"name": "Ackumulerade nedskrivningar av lån till delägare eller närstående, långfristig del"},
+    "1370": {"name": "Uppskjuten skattefordran"},
+    "1380": {"name": "Andra långfristiga fordringar"},
+    "1381": {"name": "Långfristiga reversfordringar"},
+    "1382": {"name": "Långfristiga fordringar hos anställda"},
+    "1383": {"name": "Lämnade depositioner, långfristiga"},
+    "1384": {"name": "Derivat"},
+    "1385": {"name": "Kapitalförsäkring"},
+    "1387": {"name": "Långfristiga kontraktsfordringar"},
+    "1388": {"name": "Långfristiga kundfordringar"},
+    "1389": {"name": "Ackumulerade nedskrivningar av andra långfristiga fordringar"},
+    "1410": {"name": "Lager av råvaror"},
+    "1419": {"name": "Förändring av lager av råvaror"},
+    "1420": {"name": "Lager av tillsatsmaterial och förnödenheter"},
+    "1429": {"name": "Förändring av lager av tillsatsmaterial och förnödenheter"},
+    "1440": {"name": "Produkter i arbete"},
+    "1449": {"name": "Förändring av produkter i arbete"},
+    "1450": {"name": "Lager av färdiga varor"},
+    "1459": {"name": "Förändring av lager av färdiga varor"},
+    "1460": {"name": "Lager av handelsvaror"},
+    "1465": {"name": "Lager av varor VMB"},
+    "1466": {"name": "Nedskrivning av varor VMB"},
+    "1467": {"name": "Lager av varor VMB förenklad"},
+    "1469": {"name": "Förändring av lager av handelsvaror"},
+    "1470": {"name": "Pågående arbeten"},
+    "1471": {"name": "Pågående arbeten, nedlagda kostnader"},
+    "1478": {"name": "Pågående arbeten, fakturering"},
+    "1479": {"name": "Förändring av pågående arbeten"},
+    "1480": {"name": "Förskott för varor och tjänster"},
+    "1481": {"name": "Remburser"},
+    "1489": {"name": "Övriga förskott till leverantörer"},
+    "1490": {"name": "Övriga lagertillgångar"},
+    "1491": {"name": "Lager av värdepapper"},
+    "1492": {"name": "Lager av fastigheter"},
+    "1493": {"name": "Djur som klassificeras som omsättningstillgång"},
+    "1510": {"name": "Kundfordringar"},
+    "1511": {"name": "Kundfordringar"},
+    "1512": {"name": "Belånade kundfordringar (factoring)"},
+    "1513": {"name": "Kundfordringar – delad faktura"},
+    "1516": {"name": "Tvistiga kundfordringar"},
+    "1518": {"name": "Ej reskontraförda kundfordringar"},
+    "1519": {"name": "Nedskrivning av kundfordringar"},
+    "1520": {"name": "Växelfordringar"},
+    "1525": {"name": "Osäkra växelfordringar"},
+    "1529": {"name": "Nedskrivning av växelfordringar"},
+    "1530": {"name": "Kontraktsfordringar"},
+    "1531": {"name": "Kontraktsfordringar"},
+    "1532": {"name": "Belånade kontraktsfordringar"},
+    "1536": {"name": "Tvistiga kontraktsfordringar"},
+    "1539": {"name": "Nedskrivning av kontraktsfordringar"},
+    "1550": {"name": "Konsignationsfordringar"},
+    "1560": {"name": "Kundfordringar hos koncernföretag"},
+    "1561": {"name": "Kundfordringar hos moderföretag"},
+    "1562": {"name": "Kundfordringar hos dotterföretag"},
+    "1563": {"name": "Kundfordringar hos andra koncernföretag"},
+    "1568": {"name": "Ej reskontraförda kundfordringar hos koncernföretag"},
+    "1569": {"name": "Nedskrivning av kundfordringar hos koncernföretag"},
+    "1570": {"name": "Kundfordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "1571": {"name": "Kundfordringar hos intresseföretag"},
+    "1572": {"name": "Kundfordringar hos gemensamt styrda företag"},
+    "1573": {"name": "Kundfordringar hos övriga företag som det finns ett ägarintresse i"},
+    "1580": {"name": "Fordringar för kontokort och kuponger"},
+    "1610": {"name": "Kortfristiga fordringar hos anställda"},
+    "1611": {"name": "Reseförskott"},
+    "1612": {"name": "Kassaförskott"},
+    "1613": {"name": "Övriga förskott"},
+    "1614": {"name": "Tillfälliga lån till anställda"},
+    "1619": {"name": "Övriga fordringar hos anställda"},
+    "1620": {"name": "Upparbetad men ej fakturerad intäkt"},
+    "1630": {"name": "Avräkning för skatter och avgifter (skattekonto)"},
+    "1640": {"name": "Skattefordringar"},
+    "1650": {"name": "Momsfordran"},
+    "1660": {"name": "Kortfristiga fordringar hos koncernföretag"},
+    "1661": {"name": "Kortfristiga fordringar hos moderföretag"},
+    "1662": {"name": "Kortfristiga fordringar hos dotterföretag"},
+    "1663": {"name": "Kortfristiga fordringar hos andra koncernföretag"},
+    "1670": {"name": "Kortfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "1671": {"name": "Kortfristiga fordringar hos intresseföretag"},
+    "1672": {"name": "Kortfristiga fordringar hos gemensamt styrda företag"},
+    "1673": {"name": "Kortfristiga fordringar hos övriga företag som det finns ett ägarintresse i"},
+    "1680": {"name": "Andra kortfristiga fordringar"},
+    "1681": {"name": "Utlägg för kunder"},
+    "1682": {"name": "Kortfristiga lånefordringar"},
+    "1683": {"name": "Derivat"},
+    "1684": {"name": "Kortfristiga fordringar hos leverantörer"},
+    "1685": {"name": "Kortfristiga fordringar hos delägare eller närstående"},
+    "1687": {"name": "Kortfristig del av långfristiga fordringar"},
+    "1688": {"name": "Fordran arbetsmarknadsförsäkringar"},
+    "1689": {"name": "Övriga kortfristiga fordringar"},
+    "1690": {"name": "Fordringar för tecknat men ej inbetalt aktiekapital"},
+    "1710": {"name": "Förutbetalda hyreskostnader"},
+    "1720": {"name": "Förutbetalda leasingavgifter"},
+    "1730": {"name": "Förutbetalda försäkringspremier"},
+    "1740": {"name": "Förutbetalda räntekostnader"},
+    "1750": {"name": "Upplupna hyresintäkter"},
+    "1760": {"name": "Upplupna ränteintäkter"},
+    "1770": {"name": "Tillgångar av kostnadsnatur"},
+    "1780": {"name": "Upplupna avtalsintäkter"},
+    "1790": {"name": "Övriga förutbetalda kostnader och upplupna intäkter"},
+    "1810": {"name": "Andelar i börsnoterade företag"},
+    "1820": {"name": "Obligationer"},
+    "1830": {"name": "Konvertibla skuldebrev"},
+    "1860": {"name": "Andelar i koncernföretag, kortfristigt"},
+    "1880": {"name": "Andra kortfristiga placeringar"},
+    "1886": {"name": "Derivat"},
+    "1889": {"name": "Andelar i övriga företag"},
+    "1890": {"name": "Nedskrivning av kortfristiga placeringar"},
+    "1910": {"name": "Kassa"},
+    "1911": {"name": "Huvudkassa"},
+    "1912": {"name": "Kassa 2"},
+    "1913": {"name": "Kassa 3"},
+    "1920": {"name": "PlusGiro"},
+    "1930": {"name": "Företagskonto/checkkonto/affärskonto"},
+    "1940": {"name": "Övriga bankkonton"},
+    "1950": {"name": "Bankcertifikat"},
+    "1960": {"name": "Koncernkonto moderföretag"},
+    "1970": {"name": "Särskilda bankkonton"},
+    "1972": {"name": "Upphovsmannakonto"},
+    "1973": {"name": "Skogskonto"},
+    "1974": {"name": "Spärrade bankmedel"},
+    "1979": {"name": "Övriga särskilda bankkonton"},
+    "1980": {"name": "Valutakonton"},
+    "1990": {"name": "Redovisningsmedel"},
+    "2010": {"name": "Eget kapital"},
+    "2011": {"name": "Egna varuuttag"},
+    "2013": {"name": "Övriga egna uttag"},
+    "2017": {"name": "Årets kapitaltillskott"},
+    "2018": {"name": "Övriga egna insättningar"},
+    "2019": {"name": "Årets resultat, delägare 1"},
+    "2020": {"name": "Eget kapital"},
+    "2021": {"name": "Egna varuuttag"},
+    "2023": {"name": "Övriga egna uttag"},
+    "2027": {"name": "Årets kapitaltillskott"},
+    "2028": {"name": "Övriga egna insättningar"},
+    "2029": {"name": "Årets resultat, delägare 2"},
+    "2030": {"name": "Eget kapital"},
+    "2031": {"name": "Egna varuuttag"},
+    "2033": {"name": "Övriga egna uttag"},
+    "2037": {"name": "Årets kapitaltillskott"},
+    "2038": {"name": "Övriga egna insättningar"},
+    "2039": {"name": "Årets resultat, delägare 3"},
+    "2040": {"name": "Eget kapital"},
+    "2041": {"name": "Egna varuuttag"},
+    "2043": {"name": "Övriga egna uttag"},
+    "2047": {"name": "Årets kapitaltillskott"},
+    "2048": {"name": "Övriga egna insättningar"},
+    "2049": {"name": "Årets resultat, delägare 4"},
+    "2050": {"name": "Avsättning till expansionsfond"},
+    "2060": {"name": "Eget kapital i ideella föreningar, stiftelser och registrerade trossamfund"},
+    "2061": {"name": "Kapital/stiftelsekapital/grundkapital"},
+    "2064": {"name": "Ackumulerat realisationsresultat"},
+    "2065": {"name": "Fond för verkligt värde"},
+    "2066": {"name": "Värdesäkringsfond"},
+    "2067": {"name": "Balanserat överskott eller underskott"},
+    "2068": {"name": "Överskott eller underskott från föregående år"},
+    "2069": {"name": "Årets resultat"},
+    "2070": {"name": "Ändamålsbestämda medel"},
+    "2071": {"name": "Ändamål 1"},
+    "2072": {"name": "Ändamål 2"},
+    "2080": {"name": "Bundet eget kapital"},
+    "2081": {"name": "Aktiekapital"},
+    "2082": {"name": "Ej registrerat aktiekapital"},
+    "2083": {"name": "Medlemsinsatser"},
+    "2084": {"name": "Förlagsinsatser"},
+    "2085": {"name": "Uppskrivningsfond"},
+    "2086": {"name": "Reservfond"},
+    "2087": {"name": "Bunden överkursfond"},
+    "2088": {"name": "Fond för yttre underhåll"},
+    "2089": {"name": "Fond för utvecklingsutgifter"},
+    "2090": {"name": "Fritt eget kapital"},
+    "2091": {"name": "Balanserad vinst eller förlust"},
+    "2092": {"name": "Mottagna/lämnade koncernbidrag"},
+    "2093": {"name": "Erhållna aktieägartillskott"},
+    "2094": {"name": "Egna aktier"},
+    "2095": {"name": "Fusionsresultat"},
+    "2096": {"name": "Fond för verkligt värde"},
+    "2097": {"name": "Fri överkursfond"},
+    "2098": {"name": "Vinst eller förlust från föregående år"},
+    "2099": {"name": "Årets resultat"},
+    "2110": {"name": "Periodiseringsfonder"},
+    "2120": {"name": "Periodiseringsfond 2020"},
+    "2121": {"name": "Periodiseringsfond 2021"},
+    "2122": {"name": "Periodiseringsfond 2022"},
+    "2123": {"name": "Periodiseringsfond 2023"},
+    "2124": {"name": "Periodiseringsfond 2024"},
+    "2125": {"name": "Periodiseringsfond 2025"},
+    "2126": {"name": "Periodiseringsfond 2026"},
+    "2128": {"name": "Periodiseringsfond 2018"},
+    "2129": {"name": "Periodiseringsfond 2019"},
+    "2130": {"name": "Periodiseringsfond 2020 – nr 2"},
+    "2131": {"name": "Periodiseringsfond 2021 – nr 2"},
+    "2132": {"name": "Periodiseringsfond 2022 – nr 2"},
+    "2133": {"name": "Periodiseringsfond 2023 – nr 2"},
+    "2134": {"name": "Periodiseringsfond 2024 – nr 2"},
+    "2135": {"name": "Periodiseringsfond 2025 - nr 2"},
+    "2136": {"name": "Periodiseringsfond 2026 - nr 2"},
+    "2138": {"name": "Periodiseringsfond 2018 – nr 2"},
+    "2139": {"name": "Periodiseringsfond 2019 – nr 2"},
+    "2150": {"name": "Ackumulerade överavskrivningar"},
+    "2151": {"name": "Ackumulerade överavskrivningar på immateriella anläggningstillgångar"},
+    "2152": {"name": "Ackumulerade överavskrivningar på byggnader och markanläggningar"},
+    "2153": {"name": "Ackumulerade överavskrivningar på maskiner och inventarier"},
+    "2160": {"name": "Ersättningsfond"},
+    "2161": {"name": "Ersättningsfond maskiner och inventarier"},
+    "2162": {"name": "Ersättningsfond byggnader och markanläggningar"},
+    "2164": {"name": "Ersättningsfond för djurlager i jordbruk och renskötsel"},
+    "2190": {"name": "Övriga obeskattade reserver"},
+    "2196": {"name": "Lagerreserv"},
+    "2199": {"name": "Övriga obeskattade reserver"},
+    "2210": {"name": "Avsättningar för pensioner enligt tryggandelagen"},
+    "2220": {"name": "Avsättningar för garantier"},
+    "2230": {"name": "Övriga avsättningar för pensioner och liknande förpliktelser"},
+    "2240": {"name": "Avsättningar för uppskjutna skatter"},
+    "2250": {"name": "Övriga avsättningar för skatter"},
+    "2252": {"name": "Avsättningar för tvistiga skatter"},
+    "2253": {"name": "Avsättningar särskild löneskatt, deklarationspost"},
+    "2290": {"name": "Övriga avsättningar"},
+    "2310": {"name": "Obligations- och förlagslån"},
+    "2320": {"name": "Konvertibla lån och liknande"},
+    "2321": {"name": "Konvertibla lån"},
+    "2322": {"name": "Lån förenade med optionsrätt"},
+    "2323": {"name": "Vinstandelslån"},
+    "2324": {"name": "Kapitalandelslån"},
+    "2330": {"name": "Checkräkningskredit"},
+    "2331": {"name": "Checkräkningskredit 1"},
+    "2332": {"name": "Checkräkningskredit 2"},
+    "2340": {"name": "Byggnadskreditiv"},
+    "2350": {"name": "Andra långfristiga skulder till kreditinstitut"},
+    "2351": {"name": "Fastighetslån, långfristig del"},
+    "2355": {"name": "Långfristiga lån i utländsk valuta från kreditinstitut"},
+    "2359": {"name": "Övriga långfristiga lån från kreditinstitut"},
+    "2360": {"name": "Långfristiga skulder till koncernföretag"},
+    "2361": {"name": "Långfristiga skulder till moderföretag"},
+    "2362": {"name": "Långfristiga skulder till dotterföretag"},
+    "2363": {"name": "Långfristiga skulder till andra koncernföretag"},
+    "2370": {"name": "Långfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "2371": {"name": "Långfristiga skulder till intresseföretag"},
+    "2372": {"name": "Långfristiga skulder till gemensamt styrda företag"},
+    "2373": {"name": "Långfristiga skulder till övriga företag som det finns ett ägarintresse i"},
+    "2390": {"name": "Övriga långfristiga skulder"},
+    "2391": {"name": "Avbetalningskontrakt, långfristig del"},
+    "2392": {"name": "Villkorliga långfristiga skulder"},
+    "2393": {"name": "Lån från närstående personer, långfristig del"},
+    "2394": {"name": "Långfristiga leverantörskrediter"},
+    "2395": {"name": "Andra långfristiga lån i utländsk valuta"},
+    "2396": {"name": "Derivat"},
+    "2397": {"name": "Mottagna depositioner, långfristiga"},
+    "2399": {"name": "Övriga långfristiga skulder"},
+    "2410": {"name": "Andra kortfristiga låneskulder till kreditinstitut"},
+    "2411": {"name": "Kortfristiga lån från kreditinstitut"},
+    "2412": {"name": "Byggnadskreditiv, kortfristig del"},
+    "2417": {"name": "Kortfristig del av långfristiga skulder till kreditinstitut"},
+    "2419": {"name": "Övriga kortfristiga skulder till kreditinstitut"},
+    "2420": {"name": "Förskott från kunder"},
+    "2421": {"name": "Ej inlösta presentkort"},
+    "2429": {"name": "Övriga förskott från kunder"},
+    "2430": {"name": "Pågående arbeten"},
+    "2431": {"name": "Pågående arbeten, fakturering"},
+    "2438": {"name": "Pågående arbeten, nedlagda kostnader"},
+    "2439": {"name": "Beräknad förändring av pågående arbeten"},
+    "2440": {"name": "Leverantörsskulder"},
+    "2441": {"name": "Leverantörsskulder"},
+    "2443": {"name": "Konsignationsskulder"},
+    "2445": {"name": "Tvistiga leverantörsskulder"},
+    "2448": {"name": "Ej reskontraförda leverantörsskulder"},
+    "2450": {"name": "Fakturerad men ej upparbetad intäkt"},
+    "2460": {"name": "Leverantörsskulder till koncernföretag"},
+    "2461": {"name": "Leverantörsskulder till moderföretag"},
+    "2462": {"name": "Leverantörsskulder till dotterföretag"},
+    "2463": {"name": "Leverantörsskulder till andra koncernföretag"},
+    "2470": {"name": "Leverantörsskulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "2471": {"name": "Leverantörsskulder till intresseföretag"},
+    "2472": {"name": "Leverantörsskulder till gemensamt styrda företag"},
+    "2473": {"name": "Leverantörsskulder till övriga företag som det finns ett ägarintresse i"},
+    "2480": {"name": "Checkräkningskredit, kortfristig"},
+    "2490": {"name": "Övriga kortfristiga skulder till kreditinstitut, kunder och leverantörer"},
+    "2491": {"name": "Avräkning spelarrangörer"},
+    "2492": {"name": "Växelskulder"},
+    "2499": {"name": "Andra övriga kortfristiga skulder"},
+    "2510": {"name": "Skatteskulder"},
+    "2512": {"name": "Beräknad inkomstskatt"},
+    "2513": {"name": "Beräknad fastighetsskatt/fastighetsavgift"},
+    "2514": {"name": "Beräknad särskild löneskatt på pensionskostnader"},
+    "2515": {"name": "Beräknad avkastningsskatt"},
+    "2517": {"name": "Beräknad utländsk skatt"},
+    "2518": {"name": "Betald F-skatt"},
+    "2610": {"name": "Utgående moms, 25 %"},
+    "2611": {"name": "Utgående moms på försäljning inom Sverige, 25 %"},
+    "2612": {"name": "Utgående moms på egna uttag, 25 %"},
+    "2613": {"name": "Utgående moms för uthyrning, 25 %"},
+    "2614": {"name": "Utgående moms, omvänd betalningsskyldighet, 25 %"},
+    "2615": {"name": "Utgående moms import av varor, 25 %"},
+    "2616": {"name": "Utgående moms VMB 25 %"},
+    "2618": {"name": "Vilande utgående moms, 25 %"},
+    "2620": {"name": "Utgående moms, 12 %"},
+    "2621": {"name": "Utgående moms på försäljning inom Sverige, 12 %"},
+    "2622": {"name": "Utgående moms på egna uttag, 12 %"},
+    "2623": {"name": "Utgående moms för uthyrning, 12 %"},
+    "2624": {"name": "Utgående moms, omvänd betalningsskyldighet, 12 %"},
+    "2625": {"name": "Utgående moms import av varor, 12 %"},
+    "2626": {"name": "Utgående moms VMB 12 %"},
+    "2628": {"name": "Vilande utgående moms, 12 %"},
+    "2630": {"name": "Utgående moms, 6 %"},
+    "2631": {"name": "Utgående moms på försäljning inom Sverige, 6 %"},
+    "2632": {"name": "Utgående moms på egna uttag, 6 %"},
+    "2633": {"name": "Utgående moms för uthyrning, 6 %"},
+    "2634": {"name": "Utgående moms, omvänd betalningsskyldighet, 6 %"},
+    "2635": {"name": "Utgående moms import av varor, 6 %"},
+    "2636": {"name": "Utgående moms VMB 6 %"},
+    "2638": {"name": "Vilande utgående moms, 6 %"},
+    "2640": {"name": "Ingående moms"},
+    "2641": {"name": "Debiterad ingående moms"},
+    "2642": {"name": "Debiterad ingående moms i anslutning till frivillig betalningsskyldighet"},
+    "2645": {"name": "Beräknad ingående moms på förvärv från utlandet"},
+    "2646": {"name": "Ingående moms på uthyrning"},
+    "2647": {"name": "Ingående moms, omvänd betalningsskyldighet varor och tjänster i Sverige"},
+    "2648": {"name": "Vilande ingående moms"},
+    "2649": {"name": "Ingående moms, blandad verksamhet"},
+    "2650": {"name": "Redovisningskonto för moms"},
+    "2660": {"name": "Punktskatter"},
+    "2670": {"name": "Utgående moms på försäljning inom EU, OSS"},
+    "2710": {"name": "Personalskatt"},
+    "2730": {"name": "Lagstadgade sociala avgifter och särskild löneskatt"},
+    "2731": {"name": "Avräkning lagstadgade sociala avgifter"},
+    "2732": {"name": "Avräkning särskild löneskatt"},
+    "2740": {"name": "Avtalade sociala avgifter"},
+    "2750": {"name": "Utmätning i lön m.m."},
+    "2760": {"name": "Semestermedel"},
+    "2761": {"name": "Avräkning semesterlöner"},
+    "2762": {"name": "Semesterlönekassa"},
+    "2790": {"name": "Övriga löneavdrag"},
+    "2791": {"name": "Personalens intressekonto"},
+    "2792": {"name": "Lönsparande"},
+    "2793": {"name": "Gruppförsäkringspremier"},
+    "2794": {"name": "Fackföreningsavgifter"},
+    "2795": {"name": "Mätnings- och granskningsarvoden"},
+    "2799": {"name": "Övriga löneavdrag"},
+    "2810": {"name": "Avräkning för factoring och belånade kontraktsfordringar"},
+    "2811": {"name": "Avräkning för factoring"},
+    "2812": {"name": "Avräkning för belånade kontraktsfordringar"},
+    "2820": {"name": "Kortfristiga skulder till anställda"},
+    "2821": {"name": "Löneskulder"},
+    "2822": {"name": "Reseräkningar"},
+    "2823": {"name": "Tantiem, gratifikationer"},
+    "2829": {"name": "Övriga kortfristiga skulder till anställda"},
+    "2830": {"name": "Avräkning för annans räkning"},
+    "2840": {"name": "Kortfristiga låneskulder"},
+    "2841": {"name": "Kortfristig del av långfristiga skulder"},
+    "2849": {"name": "Övriga kortfristiga låneskulder"},
+    "2850": {"name": "Avräkning för skatter och avgifter (skattekonto)"},
+    "2852": {"name": "Anståndsbelopp för moms, arbetsgivaravgifter och personalskatt"},
+    "2860": {"name": "Kortfristiga skulder till koncernföretag"},
+    "2861": {"name": "Kortfristiga skulder till moderföretag"},
+    "2862": {"name": "Kortfristiga skulder till dotterföretag"},
+    "2863": {"name": "Kortfristiga skulder till andra koncernföretag"},
+    "2870": {"name": "Kortfristiga skulder till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "2871": {"name": "Kortfristiga skulder till intresseföretag"},
+    "2872": {"name": "Kortfristiga skulder till gemensamt styrda företag"},
+    "2873": {"name": "Kortfristiga skulder till övriga företag som det finns ett ägarintresse i"},
+    "2880": {"name": "Skuld erhållna bidrag"},
+    "2890": {"name": "Övriga kortfristiga skulder"},
+    "2891": {"name": "Skulder under indrivning"},
+    "2892": {"name": "Inre reparationsfond/underhållsfond"},
+    "2893": {"name": "Skulder till närstående personer, kortfristig del"},
+    "2895": {"name": "Derivat (kortfristiga skulder)"},
+    "2897": {"name": "Mottagna depositioner, kortfristiga"},
+    "2898": {"name": "Outtagen vinstutdelning"},
+    "2899": {"name": "Övriga kortfristiga skulder"},
+    "2910": {"name": "Upplupna löner"},
+    "2911": {"name": "Löneskulder"},
+    "2912": {"name": "Ackordsöverskott"},
+    "2919": {"name": "Övriga upplupna löner"},
+    "2920": {"name": "Upplupna semesterlöner"},
+    "2930": {"name": "Upplupna pensionskostnader"},
+    "2931": {"name": "Upplupna pensionsutbetalningar"},
+    "2940": {"name": "Upplupna lagstadgade sociala och andra avgifter"},
+    "2941": {"name": "Beräknade upplupna lagstadgade sociala avgifter"},
+    "2942": {"name": "Beräknad upplupen särskild löneskatt"},
+    "2943": {"name": "Beräknad upplupen särskild löneskatt på pensionskostnader, deklarationspost"},
+    "2944": {"name": "Beräknad upplupen avkastningsskatt på pensionskostnader"},
+    "2950": {"name": "Upplupna avtalade sociala avgifter"},
+    "2951": {"name": "Upplupna avtalade arbetsmarknadsförsäkringar"},
+    "2959": {"name": "Upplupna avtalade pensionsförsäkringsavgifter, deklarationspost"},
+    "2960": {"name": "Upplupna räntekostnader"},
+    "2970": {"name": "Förutbetalda intäkter"},
+    "2971": {"name": "Förutbetalda hyresintäkter"},
+    "2972": {"name": "Förutbetalda medlemsavgifter"},
+    "2979": {"name": "Övriga förutbetalda intäkter"},
+    "2980": {"name": "Upplupna avtalskostnader"},
+    "2990": {"name": "Övriga upplupna kostnader och förutbetalda intäkter"},
+    "2991": {"name": "Beräknat arvode för bokslut"},
+    "2992": {"name": "Beräknat arvode för revision"},
+    "2993": {"name": "Ospecificerad skuld till leverantörer"},
+    "2995": {"name": "Ej ankomna leverantörsfakturor"},
+    "2998": {"name": "Övriga upplupna kostnader och förutbetalda intäkter"},
+    "2999": {"name": "OBS-konto"},
+    "3000": {"name": "Försäljning inom Sverige"},
+    "3001": {"name": "Försäljning inom Sverige, 25 % moms"},
+    "3002": {"name": "Försäljning inom Sverige, 12 % moms"},
+    "3003": {"name": "Försäljning inom Sverige, 6 % moms"},
+    "3004": {"name": "Försäljning inom Sverige, momsfri"},
+    "3100": {"name": "Försäljning av varor utanför Sverige"},
+    "3105": {"name": "Försäljning varor till land utanför EU"},
+    "3106": {"name": "Försäljning varor till annat EU-land, momspliktig"},
+    "3108": {"name": "Försäljning varor till annat EU-land, momsfri"},
+    "3200": {"name": "Försäljning VMB och omvänd moms"},
+    "3211": {"name": "Försäljning positiv VMB 25 %"},
+    "3212": {"name": "Försäljning negativ VMB 25 %"},
+    "3231": {"name": "Försäljning inom byggsektorn, omvänd betalningsskyldighet moms"},
+    "3300": {"name": "Försäljning av tjänster utanför Sverige"},
+    "3305": {"name": "Försäljning tjänster till land utanför EU"},
+    "3308": {"name": "Försäljning tjänster till annat EU-land"},
+    "3400": {"name": "Försäljning, egna uttag"},
+    "3401": {"name": "Egna uttag momspliktiga, 25 %"},
+    "3402": {"name": "Egna uttag momspliktiga, 12 %"},
+    "3403": {"name": "Egna uttag momspliktiga, 6 %"},
+    "3404": {"name": "Egna uttag, momsfria"},
+    "3500": {"name": "Fakturerade kostnader (gruppkonto)"},
+    "3510": {"name": "Fakturerat emballage"},
+    "3511": {"name": "Fakturerat emballage"},
+    "3518": {"name": "Returnerat emballage"},
+    "3520": {"name": "Fakturerade frakter"},
+    "3521": {"name": "Fakturerade frakter, EU-land"},
+    "3522": {"name": "Fakturerade frakter, export"},
+    "3530": {"name": "Fakturerade tull- och speditionskostnader m.m."},
+    "3540": {"name": "Faktureringsavgifter"},
+    "3541": {"name": "Faktureringsavgifter, EU-land"},
+    "3542": {"name": "Faktureringsavgifter, export"},
+    "3550": {"name": "Fakturerade resekostnader"},
+    "3560": {"name": "Fakturerade kostnader till koncernföretag"},
+    "3561": {"name": "Fakturerade kostnader till moderföretag"},
+    "3562": {"name": "Fakturerade kostnader till dotterföretag"},
+    "3563": {"name": "Fakturerade kostnader till andra koncernföretag"},
+    "3570": {"name": "Fakturerade kostnader till intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "3590": {"name": "Övriga fakturerade kostnader"},
+    "3600": {"name": "Rörelsens sidointäkter (gruppkonto)"},
+    "3610": {"name": "Försäljning av material"},
+    "3611": {"name": "Försäljning av råmaterial"},
+    "3612": {"name": "Försäljning av skrot"},
+    "3613": {"name": "Försäljning av förbrukningsmaterial"},
+    "3619": {"name": "Försäljning av övrigt material"},
+    "3620": {"name": "Tillfällig uthyrning av personal"},
+    "3630": {"name": "Tillfällig uthyrning av transportmedel"},
+    "3670": {"name": "Intäkter från värdepapper"},
+    "3671": {"name": "Försäljning av värdepapper"},
+    "3672": {"name": "Utdelning från värdepapper"},
+    "3679": {"name": "Övriga intäkter från värdepapper"},
+    "3680": {"name": "Management fees"},
+    "3690": {"name": "Övriga sidointäkter"},
+    "3700": {"name": "Intäktskorrigeringar (gruppkonto)"},
+    "3710": {"name": "Ofördelade intäktsreduktioner"},
+    "3730": {"name": "Lämnade rabatter"},
+    "3731": {"name": "Lämnade kassarabatter"},
+    "3732": {"name": "Lämnade mängdrabatter"},
+    "3740": {"name": "Öres- och kronutjämning"},
+    "3750": {"name": "Punktskatter"},
+    "3751": {"name": "Intäktsförda punktskatter (kreditkonto)"},
+    "3752": {"name": "Skuldförda punktskatter (debetkonto)"},
+    "3790": {"name": "Övriga intäktskorrigeringar"},
+    "3800": {"name": "Aktiverat arbete för egen räkning (gruppkonto)"},
+    "3840": {"name": "Aktiverat arbete (material)"},
+    "3850": {"name": "Aktiverat arbete (omkostnader)"},
+    "3870": {"name": "Aktiverat arbete (personal)"},
+    "3900": {"name": "Övriga rörelseintäkter (gruppkonto)"},
+    "3910": {"name": "Hyres- och arrendeintäkter"},
+    "3911": {"name": "Hyresintäkter"},
+    "3912": {"name": "Arrendeintäkter"},
+    "3913": {"name": "Frivilligt momspliktiga hyresintäkter"},
+    "3914": {"name": "Övriga momspliktiga hyresintäkter"},
+    "3920": {"name": "Provisionsintäkter, licensintäkter och royalties"},
+    "3921": {"name": "Provisionsintäkter"},
+    "3922": {"name": "Licensintäkter och royalties"},
+    "3925": {"name": "Franchiseintäkter"},
+    "3940": {"name": "Orealiserade negativa/positiva värdeförändringar på säkringsinstrument"},
+    "3950": {"name": "Återvunna, tidigare avskrivna kundfordringar"},
+    "3960": {"name": "Valutakursvinster på fordringar och skulder av rörelsekaraktär"},
+    "3970": {"name": "Vinst vid avyttring av immateriella och materiella anläggningstillgångar"},
+    "3971": {"name": "Vinst vid avyttring av immateriella anläggningstillgångar"},
+    "3972": {"name": "Vinst vid avyttring av byggnader och mark"},
+    "3973": {"name": "Vinst vid avyttring av maskiner och inventarier"},
+    "3980": {"name": "Erhållna offentliga bidrag"},
+    "3981": {"name": "Erhållna EU-bidrag"},
+    "3985": {"name": "Erhållna statliga bidrag"},
+    "3987": {"name": "Erhållna kommunala bidrag"},
+    "3988": {"name": "Erhållna offentliga bidrag för personal"},
+    "3989": {"name": "Övriga erhållna offentliga bidrag"},
+    "3990": {"name": "Övriga ersättningar, bidrag och intäkter"},
+    "3991": {"name": "Konfliktersättning"},
+    "3992": {"name": "Erhållna skadestånd"},
+    "3993": {"name": "Erhållna donationer och gåvor"},
+    "3994": {"name": "Försäkringsersättningar"},
+    "3995": {"name": "Erhållet ackord på skulder av rörelsekaraktär"},
+    "3996": {"name": "Erhållna reklambidrag"},
+    "3997": {"name": "Sjuklöneersättning"},
+    "3998": {"name": "Återbäring av överskott från försäkringsföretag"},
+    "3999": {"name": "Övriga rörelseintäkter"},
+    "4000": {"name": "Inköp av varor från Sverige"},
+    "4200": {"name": "Sålda varor VMB"},
+    "4211": {"name": "Sålda varor positiv VMB 25 %"},
+    "4212": {"name": "Sålda varor negativ VMB 25 %"},
+    "4400": {"name": "Momspliktiga inköp i Sverige"},
+    "4415": {"name": "Inköpta varor i Sverige, omvänd betalningsskyldighet, 25 % moms"},
+    "4416": {"name": "Inköpta varor i Sverige, omvänd betalningsskyldighet, 12 % moms"},
+    "4417": {"name": "Inköpta varor i Sverige, omvänd betalningsskyldighet, 6 % moms"},
+    "4425": {"name": "Inköpta tjänster i Sverige, omvänd betalningsskyldighet, 25 % moms"},
+    "4426": {"name": "Inköpta tjänster i Sverige, omvänd betalningsskyldighet, 12 % moms"},
+    "4427": {"name": "Inköpta tjänster i Sverige, omvänd betalningsskyldighet, 6 % moms"},
+    "4500": {"name": "Övriga momspliktiga inköp"},
+    "4515": {"name": "Inköp av varor från annat EU-land, 25 %"},
+    "4516": {"name": "Inköp av varor från annat EU-land, 12 %"},
+    "4517": {"name": "Inköp av varor från annat EU-land, 6 %"},
+    "4518": {"name": "Inköp av varor från annat EU-land, momsfri"},
+    "4531": {"name": "Inköp av tjänster från ett land utanför EU, 25 % moms"},
+    "4532": {"name": "Inköp av tjänster från ett land utanför EU, 12 % moms"},
+    "4533": {"name": "Inköp av tjänster från ett land utanför EU, 6 % moms"},
+    "4535": {"name": "Inköp av tjänster från annat EU-land, 25 %"},
+    "4536": {"name": "Inköp av tjänster från annat EU-land, 12 %"},
+    "4537": {"name": "Inköp av tjänster från annat EU-land, 6 %"},
+    "4538": {"name": "Inköp av tjänster från annat EU-land, momsfri"},
+    "4545": {"name": "Import av varor, 25 % moms"},
+    "4546": {"name": "Import av varor, 12 % moms"},
+    "4547": {"name": "Import av varor, 6 % moms"},
+    "4600": {"name": "Legoarbeten och underentreprenader (gruppkonto)"},
+    "4700": {"name": "Reduktion av inköpspriser (gruppkonto)"},
+    "4730": {"name": "Erhållna rabatter"},
+    "4731": {"name": "Erhållna kassarabatter"},
+    "4732": {"name": "Erhållna mängdrabatter (inkl. bonus)"},
+    "4733": {"name": "Erhållet aktivitetsstöd"},
+    "4790": {"name": "Övriga reduktioner av inköpspriser"},
+    "4900": {"name": "Förändring av lager (gruppkonto)"},
+    "4910": {"name": "Förändring av lager av råvaror"},
+    "4920": {"name": "Förändring av lager av tillsatsmaterial och förnödenheter"},
+    "4940": {"name": "Förändring av produkter i arbete"},
+    "4944": {"name": "Förändring av produkter i arbete, material och utlägg"},
+    "4945": {"name": "Förändring av produkter i arbete, omkostnader"},
+    "4947": {"name": "Förändring av produkter i arbete, personalkostnader"},
+    "4950": {"name": "Förändring av lager av färdiga varor"},
+    "4960": {"name": "Förändring av lager av handelsvaror"},
+    "4970": {"name": "Förändring av pågående arbeten, nedlagda kostnader"},
+    "4974": {"name": "Förändring av pågående arbeten, material och utlägg"},
+    "4975": {"name": "Förändring av pågående arbeten, omkostnader"},
+    "4977": {"name": "Förändring av pågående arbeten, personalkostnader"},
+    "4980": {"name": "Förändring av lager av värdepapper"},
+    "4981": {"name": "Sålda värdepappers anskaffningsvärde"},
+    "4987": {"name": "Nedskrivning av värdepapper"},
+    "4988": {"name": "Återföring av nedskrivning av värdepapper"},
+    "5000": {"name": "Lokalkostnader (gruppkonto)"},
+    "5010": {"name": "Lokalhyra"},
+    "5011": {"name": "Hyra för kontorslokaler"},
+    "5012": {"name": "Hyra för garage"},
+    "5013": {"name": "Hyra för lagerlokaler"},
+    "5020": {"name": "El för belysning"},
+    "5030": {"name": "Värme"},
+    "5040": {"name": "Vatten och avlopp"},
+    "5050": {"name": "Lokaltillbehör"},
+    "5060": {"name": "Städning och renhållning"},
+    "5061": {"name": "Städning"},
+    "5062": {"name": "Sophämtning"},
+    "5063": {"name": "Hyra för sopcontainer"},
+    "5064": {"name": "Snöröjning"},
+    "5065": {"name": "Trädgårdsskötsel"},
+    "5070": {"name": "Reparation och underhåll av lokaler"},
+    "5090": {"name": "Övriga lokalkostnader"},
+    "5098": {"name": "Övriga lokalkostnader, avdragsgilla"},
+    "5099": {"name": "Övriga lokalkostnader, ej avdragsgilla"},
+    "5100": {"name": "Fastighetskostnader (gruppkonto)"},
+    "5110": {"name": "Tomträttsavgäld/arrende"},
+    "5120": {"name": "El för belysning"},
+    "5130": {"name": "Värme"},
+    "5131": {"name": "Uppvärmning"},
+    "5132": {"name": "Sotning"},
+    "5140": {"name": "Vatten och avlopp"},
+    "5160": {"name": "Städning och renhållning"},
+    "5161": {"name": "Städning"},
+    "5162": {"name": "Sophämtning"},
+    "5163": {"name": "Hyra för sopcontainer"},
+    "5164": {"name": "Snöröjning"},
+    "5165": {"name": "Trädgårdsskötsel"},
+    "5170": {"name": "Reparation och underhåll av fastighet"},
+    "5190": {"name": "Övriga fastighetskostnader"},
+    "5191": {"name": "Fastighetsskatt/fastighetsavgift"},
+    "5192": {"name": "Fastighetsförsäkringspremier"},
+    "5193": {"name": "Fastighetsskötsel och förvaltning"},
+    "5198": {"name": "Övriga fastighetskostnader, avdragsgilla"},
+    "5199": {"name": "Övriga fastighetskostnader, ej avdragsgilla"},
+    "5200": {"name": "Hyra av anläggningstillgångar (gruppkonto)"},
+    "5210": {"name": "Hyra av maskiner och andra tekniska anläggningar"},
+    "5211": {"name": "Korttidshyra av maskiner och andra tekniska anläggningar"},
+    "5212": {"name": "Leasing av maskiner och andra tekniska anläggningar"},
+    "5220": {"name": "Hyra av inventarier och verktyg"},
+    "5221": {"name": "Korttidshyra av inventarier och verktyg"},
+    "5222": {"name": "Leasing av inventarier och verktyg"},
+    "5250": {"name": "Hyra av datorer"},
+    "5251": {"name": "Korttidshyra av datorer"},
+    "5252": {"name": "Leasing av datorer"},
+    "5290": {"name": "Övriga hyreskostnader för anläggningstillgångar"},
+    "5300": {"name": "Energikostnader (gruppkonto)"},
+    "5310": {"name": "El för drift"},
+    "5320": {"name": "Gas"},
+    "5330": {"name": "Eldningsolja"},
+    "5340": {"name": "Stenkol och koks"},
+    "5350": {"name": "Torv, träkol, ved och annat träbränsle"},
+    "5360": {"name": "Bensin, fotogen och motorbrännolja"},
+    "5370": {"name": "Fjärrvärme, kyla och ånga"},
+    "5380": {"name": "Vatten"},
+    "5390": {"name": "Övriga energikostnader"},
+    "5400": {"name": "Förbrukningsinventarier och förbrukningsmaterial (gruppkonto)"},
+    "5410": {"name": "Förbrukningsinventarier"},
+    "5411": {"name": "Förbrukningsinventarier med en livslängd på mer än ett år"},
+    "5412": {"name": "Förbrukningsinventarier med en livslängd på ett år eller mindre"},
+    "5420": {"name": "Programvaror"},
+    "5430": {"name": "Transportinventarier"},
+    "5440": {"name": "Förbrukningsemballage"},
+    "5460": {"name": "Förbrukningsmaterial"},
+    "5480": {"name": "Arbetskläder och skyddsmaterial"},
+    "5490": {"name": "Övriga förbrukningsinventarier och förbrukningsmaterial"},
+    "5491": {"name": "Övriga förbrukningsinventarier med en livslängd på mer än ett år"},
+    "5492": {"name": "Övriga förbrukningsinventarier med en livslängd på ett år eller mindre"},
+    "5493": {"name": "Övrigt förbrukningsmaterial"},
+    "5500": {"name": "Reparation och underhåll (gruppkonto)"},
+    "5510": {"name": "Reparation och underhåll av maskiner och andra tekniska anläggningar"},
+    "5520": {"name": "Reparation och underhåll av inventarier, verktyg och datorer m.m."},
+    "5530": {"name": "Reparation och underhåll av installationer"},
+    "5550": {"name": "Reparation och underhåll av förbrukningsinventarier"},
+    "5580": {"name": "Underhåll och tvätt av arbetskläder"},
+    "5590": {"name": "Övriga kostnader för reparation och underhåll"},
+    "5600": {"name": "Kostnader för transportmedel (gruppkonto)"},
+    "5610": {"name": "Personbilskostnader"},
+    "5611": {"name": "Drivmedel för personbilar"},
+    "5612": {"name": "Försäkring och skatt för personbilar"},
+    "5613": {"name": "Reparation och underhåll av personbilar"},
+    "5615": {"name": "Leasing av personbilar"},
+    "5616": {"name": "Trängselskatt, avdragsgill"},
+    "5619": {"name": "Övriga personbilskostnader"},
+    "5620": {"name": "Lastbilskostnader"},
+    "5630": {"name": "Truckkostnader"},
+    "5640": {"name": "Kostnader för arbetsmaskiner"},
+    "5650": {"name": "Traktorkostnader"},
+    "5660": {"name": "Motorcykel-, moped- och skoterkostnader"},
+    "5670": {"name": "Båt-, flygplans- och helikopterkostnader"},
+    "5690": {"name": "Övriga kostnader för transportmedel"},
+    "5700": {"name": "Frakter och transporter (gruppkonto)"},
+    "5710": {"name": "Frakter, transporter och försäkringar vid varudistribution"},
+    "5720": {"name": "Tull- och speditionskostnader m.m."},
+    "5730": {"name": "Arbetstransporter"},
+    "5790": {"name": "Övriga kostnader för frakter och transporter"},
+    "5800": {"name": "Resekostnader (gruppkonto)"},
+    "5810": {"name": "Biljetter"},
+    "5820": {"name": "Hyrbilskostnader"},
+    "5830": {"name": "Kost och logi"},
+    "5831": {"name": "Kost och logi i Sverige"},
+    "5832": {"name": "Kost och logi i utlandet"},
+    "5890": {"name": "Övriga resekostnader"},
+    "5900": {"name": "Reklam och PR (gruppkonto)"},
+    "5910": {"name": "Annonsering"},
+    "5920": {"name": "Utomhus- och trafikreklam"},
+    "5930": {"name": "Reklamtrycksaker och direktreklam"},
+    "5940": {"name": "Utställningar och mässor"},
+    "5950": {"name": "Butiksreklam och återförsäljarreklam"},
+    "5960": {"name": "Varuprover, reklamgåvor, presentreklam och tävlingar"},
+    "5970": {"name": "Film-, radio-, TV- och Internetreklam"},
+    "5980": {"name": "PR, institutionell reklam och sponsring"},
+    "5990": {"name": "Övriga kostnader för reklam och PR"},
+    "6000": {"name": "Övriga försäljningskostnader (gruppkonto)"},
+    "6010": {"name": "Kataloger, prislistor m.m."},
+    "6020": {"name": "Egna facktidskrifter"},
+    "6030": {"name": "Speciella orderkostnader"},
+    "6040": {"name": "Kontokortsavgifter"},
+    "6050": {"name": "Försäljningsprovisioner"},
+    "6055": {"name": "Franchisekostnader o.dyl."},
+    "6060": {"name": "Kreditförsäljningskostnader"},
+    "6061": {"name": "Kreditupplysning"},
+    "6062": {"name": "Inkasso och KFM-avgifter"},
+    "6063": {"name": "Kreditförsäkringspremier"},
+    "6064": {"name": "Factoringavgifter"},
+    "6069": {"name": "Övriga kreditförsäljningskostnader"},
+    "6070": {"name": "Representation"},
+    "6071": {"name": "Representation, avdragsgill"},
+    "6072": {"name": "Representation, ej avdragsgill"},
+    "6080": {"name": "Bankgarantier"},
+    "6090": {"name": "Övriga försäljningskostnader"},
+    "6100": {"name": "Kontorsmateriel och trycksaker (gruppkonto)"},
+    "6110": {"name": "Kontorsmateriel"},
+    "6150": {"name": "Trycksaker"},
+    "6200": {"name": "Tele och post (gruppkonto)"},
+    "6210": {"name": "Telekommunikation"},
+    "6211": {"name": "Fast telefoni"},
+    "6212": {"name": "Mobiltelefon"},
+    "6213": {"name": "Mobilsökning"},
+    "6214": {"name": "Fax"},
+    "6215": {"name": "Telex"},
+    "6230": {"name": "Datakommunikation"},
+    "6250": {"name": "Postbefordran"},
+    "6300": {"name": "Företagsförsäkringar och övriga riskkostnader (gruppkonto)"},
+    "6310": {"name": "Företagsförsäkringar"},
+    "6320": {"name": "Självrisker vid skada"},
+    "6330": {"name": "Förluster i pågående arbeten"},
+    "6340": {"name": "Lämnade skadestånd"},
+    "6341": {"name": "Lämnade skadestånd, avdragsgilla"},
+    "6342": {"name": "Lämnade skadestånd, ej avdragsgilla"},
+    "6350": {"name": "Förluster på kundfordringar"},
+    "6351": {"name": "Konstaterade förluster på kundfordringar"},
+    "6352": {"name": "Befarade förluster på kundfordringar"},
+    "6360": {"name": "Garantikostnader"},
+    "6361": {"name": "Förändring av garantiavsättning"},
+    "6362": {"name": "Faktiska garantikostnader"},
+    "6370": {"name": "Kostnader för bevakning och larm"},
+    "6380": {"name": "Förluster på övriga kortfristiga fordringar"},
+    "6390": {"name": "Övriga riskkostnader"},
+    "6400": {"name": "Förvaltningskostnader (gruppkonto)"},
+    "6410": {"name": "Styrelsearvoden som inte är lön"},
+    "6420": {"name": "Ersättningar till revisor"},
+    "6421": {"name": "Revision"},
+    "6422": {"name": "Revisonsverksamhet utöver revision"},
+    "6423": {"name": "Skatterådgivning – revisor"},
+    "6424": {"name": "Övriga tjänster – revisor"},
+    "6430": {"name": "Management fees"},
+    "6440": {"name": "Årsredovisning och delårsrapporter"},
+    "6450": {"name": "Bolagsstämma/års- eller föreningsstämma"},
+    "6490": {"name": "Övriga förvaltningskostnader"},
+    "6500": {"name": "Övriga externa tjänster (gruppkonto)"},
+    "6510": {"name": "Mätningskostnader"},
+    "6520": {"name": "Ritnings- och kopieringskostnader"},
+    "6530": {"name": "Redovisningstjänster"},
+    "6540": {"name": "IT-tjänster"},
+    "6550": {"name": "Konsultarvoden"},
+    "6551": {"name": "Arkitekttjänster"},
+    "6552": {"name": "Teknisk provning och analys"},
+    "6553": {"name": "Tekniska konsulttjänster"},
+    "6554": {"name": "Finansiell- och övrig ekonomisk rådgivning"},
+    "6555": {"name": "Skatterådgivning inkl. insolvens- och konkursförvaltning"},
+    "6556": {"name": "Köpta tjänster avseende forskning och utveckling"},
+    "6559": {"name": "Övrig konsultverksamhet"},
+    "6560": {"name": "Serviceavgifter till branschorganisationer"},
+    "6570": {"name": "Bankkostnader"},
+    "6580": {"name": "Advokat- och rättegångskostnader"},
+    "6590": {"name": "Övriga externa tjänster"},
+    "6800": {"name": "Inhyrd personal (gruppkonto)"},
+    "6810": {"name": "Inhyrd produktionspersonal"},
+    "6820": {"name": "Inhyrd lagerpersonal"},
+    "6830": {"name": "Inhyrd transportpersonal"},
+    "6840": {"name": "Inhyrd kontors- och ekonomipersonal"},
+    "6850": {"name": "Inhyrd IT-personal"},
+    "6860": {"name": "Inhyrd marknads- och försäljningspersonal"},
+    "6870": {"name": "Inhyrd restaurang- och butikspersonal"},
+    "6880": {"name": "Inhyrda företagsledare"},
+    "6890": {"name": "Övrig inhyrd personal"},
+    "6900": {"name": "Övriga externa kostnader (gruppkonto)"},
+    "6910": {"name": "Licensavgifter och royalties"},
+    "6920": {"name": "Kostnader för egna patent"},
+    "6930": {"name": "Kostnader för varumärken m.m."},
+    "6940": {"name": "Kontroll-, provnings- och stämpelavgifter"},
+    "6950": {"name": "Tillsynsavgifter myndigheter"},
+    "6970": {"name": "Tidningar, tidskrifter och facklitteratur"},
+    "6980": {"name": "Föreningsavgifter"},
+    "6981": {"name": "Föreningsavgifter, avdragsgilla"},
+    "6982": {"name": "Föreningsavgifter, ej avdragsgilla"},
+    "6990": {"name": "Övriga externa kostnader"},
+    "6991": {"name": "Övriga externa kostnader, avdragsgilla"},
+    "6992": {"name": "Övriga externa kostnader, ej avdragsgilla"},
+    "6993": {"name": "Lämnade bidrag och gåvor"},
+    "6996": {"name": "Betald utländsk inkomstskatt"},
+    "6997": {"name": "Obetald utländsk inkomstskatt"},
+    "6998": {"name": "Utländsk moms"},
+    "6999": {"name": "Ingående moms, blandad verksamhet"},
+    "7000": {"name": "Löner till kollektivanställda (gruppkonto)"},
+    "7010": {"name": "Löner till kollektivanställda"},
+    "7011": {"name": "Löner till kollektivanställda"},
+    "7012": {"name": "Vinstandelar till kollektivanställda"},
+    "7013": {"name": "Lön växa-stöd kollektivanställda 10,21 %"},
+    "7017": {"name": "Avgångsvederlag till kollektivanställda"},
+    "7018": {"name": "Bruttolöneavdrag, kollektivanställda"},
+    "7019": {"name": "Upplupna löner och vinstandelar till kollektivanställda"},
+    "7030": {"name": "Löner till kollektivanställda (utlandsanställda)"},
+    "7031": {"name": "Löner till kollektivanställda (utlandsanställda)"},
+    "7032": {"name": "Vinstandelar till kollektivanställda (utlandsanställda)"},
+    "7037": {"name": "Avgångsvederlag till kollektivanställda (utlandsanställda)"},
+    "7038": {"name": "Bruttolöneavdrag, kollektivanställda (utlandsanställda)"},
+    "7039": {"name": "Upplupna löner och vinstandelar till kollektivanställda (utlandsanställda)"},
+    "7080": {"name": "Löner till kollektivanställda för ej arbetad tid"},
+    "7081": {"name": "Sjuklöner till kollektivanställda"},
+    "7082": {"name": "Semesterlöner till kollektivanställda"},
+    "7083": {"name": "Föräldraersättning till kollektivanställda"},
+    "7089": {"name": "Övriga löner till kollektivanställda för ej arbetad tid"},
+    "7090": {"name": "Förändring av semesterlöneskuld"},
+    "7200": {"name": "Löner till tjänstemän och företagsledare (gruppkonto)"},
+    "7210": {"name": "Löner till tjänstemän"},
+    "7211": {"name": "Löner till tjänstemän"},
+    "7212": {"name": "Vinstandelar till tjänstemän"},
+    "7213": {"name": "Lön växa-stöd tjänstemän 10,21 %"},
+    "7217": {"name": "Avgångsvederlag till tjänstemän"},
+    "7218": {"name": "Bruttolöneavdrag, tjänstemän"},
+    "7219": {"name": "Upplupna löner och vinstandelar till tjänstemän"},
+    "7220": {"name": "Löner till företagsledare"},
+    "7221": {"name": "Löner till företagsledare"},
+    "7222": {"name": "Tantiem till företagsledare"},
+    "7227": {"name": "Avgångsvederlag till företagsledare"},
+    "7228": {"name": "Bruttolöneavdrag, företagsledare"},
+    "7229": {"name": "Upplupna löner och tantiem till företagsledare"},
+    "7230": {"name": "Löner till tjänstemän och ftgsledare (utlandsanställda)"},
+    "7231": {"name": "Löner till tjänstemän och ftgsledare (utlandsanställda)"},
+    "7232": {"name": "Vinstandelar till tjänstemän och ftgsledare (utlandsanställda)"},
+    "7237": {"name": "Avgångsvederlag till tjänstemän och ftgsledare (utlandsanställda)"},
+    "7238": {"name": "Bruttolöneavdrag, tjänstemän och ftgsledare (utlandsanställda)"},
+    "7239": {"name": "Upplupna löner och vinstandelar till tjänstemän och ftgsledare (utlandsanställda)"},
+    "7240": {"name": "Styrelsearvoden"},
+    "7280": {"name": "Löner till tjänstemän och företagsledare för ej arbetad tid"},
+    "7281": {"name": "Sjuklöner till tjänstemän"},
+    "7282": {"name": "Sjuklöner till företagsledare"},
+    "7283": {"name": "Föräldraersättning till tjänstemän"},
+    "7284": {"name": "Föräldraersättning till företagsledare"},
+    "7285": {"name": "Semesterlöner till tjänstemän"},
+    "7286": {"name": "Semesterlöner till företagsledare"},
+    "7288": {"name": "Övriga löner till tjänstemän för ej arbetad tid"},
+    "7289": {"name": "Övriga löner till företagsledare för ej arbetad tid"},
+    "7290": {"name": "Förändring av semesterlöneskuld"},
+    "7291": {"name": "Förändring av semesterlöneskuld till tjänstemän"},
+    "7292": {"name": "Förändring av semesterlöneskuld till företagsledare"},
+    "7300": {"name": "Kostnadsersättningar och förmåner (gruppkonto)"},
+    "7310": {"name": "Kontanta extraersättningar"},
+    "7311": {"name": "Ersättningar för sammanträden m.m."},
+    "7312": {"name": "Ersättningar för förslagsverksamhet och uppfinningar"},
+    "7313": {"name": "Ersättningar för/bidrag till bostadskostnader"},
+    "7314": {"name": "Ersättningar för/bidrag till måltidskostnader"},
+    "7315": {"name": "Ersättningar för/bidrag till resor till och från arbetsplatsen"},
+    "7316": {"name": "Ersättningar för/bidrag till arbetskläder"},
+    "7317": {"name": "Ersättningar för/bidrag till arbetsmaterial och arbetsverktyg"},
+    "7318": {"name": "Felräkningspengar"},
+    "7319": {"name": "Övriga kontanta extraersättningar"},
+    "7320": {"name": "Traktamenten vid tjänsteresa"},
+    "7321": {"name": "Skattefria traktamenten, Sverige"},
+    "7322": {"name": "Skattepliktiga traktamenten, Sverige"},
+    "7323": {"name": "Skattefria traktamenten, utlandet"},
+    "7324": {"name": "Skattepliktiga traktamenten, utlandet"},
+    "7330": {"name": "Bilersättningar"},
+    "7331": {"name": "Skattefria bilersättningar"},
+    "7332": {"name": "Skattepliktiga bilersättningar"},
+    "7333": {"name": "Ersättning för trängselskatt, skattefri"},
+    "7350": {"name": "Ersättningar för föreskrivna arbetskläder"},
+    "7370": {"name": "Representationsersättningar"},
+    "7380": {"name": "Kostnader för förmåner till anställda"},
+    "7381": {"name": "Kostnader för fri bostad"},
+    "7382": {"name": "Kostnader för fria eller subventionerade måltider"},
+    "7383": {"name": "Kostnader för fria resor till och från arbetsplatsen"},
+    "7384": {"name": "Kostnader för fria eller subventionerade arbetskläder"},
+    "7385": {"name": "Kostnader för fri bil"},
+    "7386": {"name": "Subventionerad ränta"},
+    "7387": {"name": "Kostnader för lånedatorer"},
+    "7388": {"name": "Anställdas ersättning för erhållna förmåner"},
+    "7389": {"name": "Övriga kostnader för förmåner"},
+    "7390": {"name": "Övriga kostnadsersättningar och förmåner"},
+    "7391": {"name": "Kostnad för trängselskatteförmån"},
+    "7392": {"name": "Kostnad för förmån av hushållsnära tjänster"},
+    "7400": {"name": "Pensionskostnader (gruppkonto)"},
+    "7410": {"name": "Pensionsförsäkringspremier"},
+    "7411": {"name": "Premier för kollektiva pensionsförsäkringar"},
+    "7412": {"name": "Premier för individuella pensionsförsäkringar"},
+    "7420": {"name": "Förändring av pensionsskuld"},
+    "7430": {"name": "Avdrag för räntedel i pensionskostnad"},
+    "7440": {"name": "Förändring av pensionsstiftelsekapital"},
+    "7441": {"name": "Överföring av medel till pensionsstiftelse"},
+    "7448": {"name": "Gottgörelse från pensionsstiftelse"},
+    "7460": {"name": "Pensionsutbetalningar"},
+    "7461": {"name": "Pensionsutbetalningar till f.d. kollektivanställda"},
+    "7462": {"name": "Pensionsutbetalningar till f.d. tjänstemän"},
+    "7463": {"name": "Pensionsutbetalningar till f.d. företagsledare"},
+    "7470": {"name": "Förvaltnings- och kreditförsäkringsavgifter"},
+    "7490": {"name": "Övriga pensionskostnader"},
+    "7500": {"name": "Sociala och andra avgifter enligt lag och avtal (gruppkonto)"},
+    "7510": {"name": "Arbetsgivaravgifter 31,42 %"},
+    "7511": {"name": "Arbetsgivaravgifter för löner och ersättningar"},
+    "7512": {"name": "Arbetsgivaravgifter för förmånsvärden"},
+    "7515": {"name": "Arbetsgivaravgifter på skattepliktiga kostnadsersättningar"},
+    "7516": {"name": "Arbetsgivaravgifter på arvoden"},
+    "7518": {"name": "Arbetsgivaravgifter på bruttolöneavdrag m.m."},
+    "7519": {"name": "Arbetsgivaravgifter för semester- och löneskulder"},
+    "7530": {"name": "Särskild löneskatt"},
+    "7531": {"name": "Särskild löneskatt för vissa försäkringsersättningar m.m."},
+    "7532": {"name": "Särskild löneskatt pensionskostnader, deklarationspost"},
+    "7533": {"name": "Särskild löneskatt för pensionskostnader"},
+    "7550": {"name": "Avkastningsskatt på pensionsmedel"},
+    "7551": {"name": "Avkastningsskatt 15 % försäkringsföretag m.fl. samt avsatt till pensioner"},
+    "7552": {"name": "Avkastningsskatt 15 % utländska pensionsförsäkringar"},
+    "7553": {"name": "Avkastningsskatt 30 % utländska försäkringsföretag m.fl."},
+    "7554": {"name": "Avkastningsskatt 30 % utländska kapitalförsäkringar"},
+    "7570": {"name": "Premier för arbetsmarknadsförsäkringar"},
+    "7571": {"name": "Arbetsmarknadsförsäkringar"},
+    "7572": {"name": "Arbetsmarknadsförsäkringar pensionsförsäkringspremier, deklarationspost"},
+    "7580": {"name": "Gruppförsäkringspremier"},
+    "7581": {"name": "Grupplivförsäkringspremier"},
+    "7582": {"name": "Gruppsjukförsäkringspremier"},
+    "7583": {"name": "Gruppolycksfallsförsäkringspremier"},
+    "7589": {"name": "Övriga gruppförsäkringspremier"},
+    "7590": {"name": "Övriga sociala och andra avgifter enligt lag och avtal"},
+    "7600": {"name": "Övriga personalkostnader (gruppkonto)"},
+    "7610": {"name": "Utbildning"},
+    "7620": {"name": "Sjuk- och hälsovård"},
+    "7621": {"name": "Sjuk- och hälsovård, avdragsgill"},
+    "7622": {"name": "Sjuk- och hälsovård, ej avdragsgill"},
+    "7623": {"name": "Sjukvårdsförsäkring, ej avdragsgill"},
+    "7630": {"name": "Personalrepresentation"},
+    "7631": {"name": "Personalrepresentation, avdragsgill"},
+    "7632": {"name": "Personalrepresentation, ej avdragsgill"},
+    "7650": {"name": "Sjuklöneförsäkring"},
+    "7670": {"name": "Förändring av personalstiftelsekapital"},
+    "7671": {"name": "Avsättning till personalstiftelse"},
+    "7678": {"name": "Gottgörelse från personalstiftelse"},
+    "7690": {"name": "Övriga personalkostnader"},
+    "7691": {"name": "Personalrekrytering"},
+    "7692": {"name": "Begravningshjälp"},
+    "7693": {"name": "Fritidsverksamhet"},
+    "7699": {"name": "Övriga personalkostnader"},
+    "7710": {"name": "Nedskrivningar av immateriella anläggningstillgångar"},
+    "7720": {"name": "Nedskrivningar av byggnader och mark"},
+    "7730": {"name": "Nedskrivningar av maskiner och inventarier"},
+    "7740": {"name": "Nedskrivningar av vissa omsättningstillgångar"},
+    "7760": {"name": "Återföring av nedskrivningar av immateriella anläggningstillgångar"},
+    "7770": {"name": "Återföring av nedskrivningar av byggnader och mark"},
+    "7780": {"name": "Återföring av nedskrivningar av maskiner och inventarier"},
+    "7790": {"name": "Återföring av nedskrivningar av vissa omsättningstillgångar"},
+    "7810": {"name": "Avskrivningar på immateriella anläggningstillgångar"},
+    "7811": {"name": "Avskrivningar på balanserade utgifter"},
+    "7812": {"name": "Avskrivningar på koncessioner m.m."},
+    "7813": {"name": "Avskrivningar på patent"},
+    "7814": {"name": "Avskrivningar på licenser"},
+    "7815": {"name": "Avskrivningar på varumärken"},
+    "7816": {"name": "Avskrivningar på hyresrätter"},
+    "7817": {"name": "Avskrivningar på goodwill"},
+    "7819": {"name": "Avskrivningar på övriga immateriella anläggningstillgångar"},
+    "7820": {"name": "Avskrivningar på byggnader och markanläggningar"},
+    "7821": {"name": "Avskrivningar på byggnader"},
+    "7824": {"name": "Avskrivningar på markanläggningar"},
+    "7829": {"name": "Avskrivningar på övriga byggnader"},
+    "7830": {"name": "Avskrivningar på maskiner och inventarier"},
+    "7831": {"name": "Avskrivningar på maskiner och andra tekniska anläggningar"},
+    "7832": {"name": "Avskrivningar på inventarier och verktyg"},
+    "7833": {"name": "Avskrivningar på installationer"},
+    "7834": {"name": "Avskrivningar på bilar och andra transportmedel"},
+    "7835": {"name": "Avskrivningar på datorer"},
+    "7836": {"name": "Avskrivningar på leasade tillgångar"},
+    "7839": {"name": "Avskrivningar på övriga maskiner och inventarier"},
+    "7840": {"name": "Avskrivningar på förbättringsutgifter på annans fastighet"},
+    "7940": {"name": "Orealiserade positiva/negativa värdeförändringar på säkringsinstrument"},
+    "7960": {"name": "Valutakursförluster på fordringar och skulder av rörelsekaraktär"},
+    "7970": {"name": "Förlust vid avyttring av immateriella och materiella anläggningstillgångar"},
+    "7971": {"name": "Förlust vid avyttring av immateriella anläggningstillgångar"},
+    "7972": {"name": "Förlust vid avyttring av byggnader och mark"},
+    "7973": {"name": "Förlust vid avyttring av maskiner och inventarier"},
+    "7990": {"name": "Övriga rörelsekostnader"},
+    "8010": {"name": "Utdelning på andelar i koncernföretag"},
+    "8012": {"name": "Utdelning på andelar i dotterföretag"},
+    "8016": {"name": "Emissionsinsats, koncernföretag"},
+    "8020": {"name": "Resultat vid försäljning av andelar i koncernföretag"},
+    "8022": {"name": "Resultat vid försäljning av andelar i dotterföretag"},
+    "8030": {"name": "Resultatandelar från handelsbolag (dotterföretag)"},
+    "8070": {"name": "Nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag"},
+    "8072": {"name": "Nedskrivningar av andelar i dotterföretag"},
+    "8076": {"name": "Nedskrivningar av långfristiga fordringar hos moderföretag"},
+    "8077": {"name": "Nedskrivningar av långfristiga fordringar hos dotterföretag"},
+    "8080": {"name": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos koncernföretag"},
+    "8082": {"name": "Återföringar av nedskrivningar av andelar i dotterföretag"},
+    "8086": {"name": "Återföringar av nedskrivningar av långfristiga fordringar hos moderföretag"},
+    "8087": {"name": "Återföringar av nedskrivningar av långfristiga fordringar hos dotterföretag"},
+    "8110": {"name": "Utdelningar på andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "8111": {"name": "Utdelningar på andelar i intresseföretag"},
+    "8112": {"name": "Utdelningar på andelar i gemensamt styrda företag"},
+    "8113": {"name": "Utdelningar på andelar i övriga företag som det finns ett ägarintresse i"},
+    "8116": {"name": "Emissionsinsats, intresseföretag"},
+    "8117": {"name": "Emissionsinsats, gemensamt styrda företag"},
+    "8118": {"name": "Emissionsinsats, övriga företag som det finns ett ägarintresse i"},
+    "8120": {"name": "Resultat vid försäljning av andelar i intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "8121": {"name": "Resultat vid försäljning av andelar i intresseföretag"},
+    "8122": {"name": "Resultat vid försäljning av andelar i gemensamt styrda företag"},
+    "8123": {"name": "Resultat vid försäljning av andelar i övriga företag som det finns ett ägarintresse i"},
+    "8130": {"name": "Resultatandelar från handelsbolag (intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i)"},
+    "8131": {"name": "Resultatandelar från handelsbolag (intresseföretag)"},
+    "8132": {"name": "Resultatandelar från handelsbolag (gemensamt styrda företag)"},
+    "8133": {"name": "Resultatandelar från handelsbolag (övriga företag som det finns ett ägarintresse i)"},
+    "8170": {"name": "Nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag, gemensamt styrda företag och övriga företag som det finns ett ägarintresse i"},
+    "8171": {"name": "Nedskrivningar av andelar i intresseföretag"},
+    "8172": {"name": "Nedskrivningar av långfristiga fordringar hos intresseföretag"},
+    "8173": {"name": "Nedskrivningar av andelar i gemensamt styrda företag"},
+    "8174": {"name": "Nedskrivningar av långfristiga fordringar hos gemensamt styrda företag"},
+    "8176": {"name": "Nedskrivningar av andelar i övriga företag som det finns ett ägarintresse i"},
+    "8177": {"name": "Nedskrivningar av långfristiga fordringar hos övriga företag som det finns ett ägarintresse i"},
+    "8180": {"name": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos intresseföretag"},
+    "8181": {"name": "Återföringar av nedskrivningar av andelar i intresseföretag"},
+    "8182": {"name": "Återföringar av nedskrivningar av långfristiga fordringar hos intresseföretag"},
+    "8183": {"name": "Återföringar av nedskrivningar av andelar i gemensamt styrda företag"},
+    "8184": {"name": "Återföringar av nedskrivningar av långfristiga fordringar hos gemensamt styrda företag"},
+    "8186": {"name": "Återföringar av nedskrivningar av andelar i övriga företag som det finns ett ägarintresse i"},
+    "8187": {"name": "Återföringar av nedskrivningar av långfristiga fordringar hos övriga företag som det finns ett ägarintresse i"},
+    "8210": {"name": "Utdelningar på andelar i andra företag"},
+    "8212": {"name": "Utdelningar, övriga företag"},
+    "8216": {"name": "Insatsemissioner, övriga företag"},
+    "8220": {"name": "Resultat vid försäljning av värdepapper i och långfristiga fordringar hos andra företag"},
+    "8221": {"name": "Resultat vid försäljning av andelar i andra företag"},
+    "8222": {"name": "Resultat vid försäljning av långfristiga fordringar hos andra företag"},
+    "8223": {"name": "Resultat vid försäljning av derivat (långfristiga värdepappersinnehav)"},
+    "8230": {"name": "Valutakursdifferenser på långfristiga fordringar"},
+    "8231": {"name": "Valutakursvinster på långfristiga fordringar"},
+    "8236": {"name": "Valutakursförluster på långfristiga fordringar"},
+    "8240": {"name": "Resultatandelar från handelsbolag (andra företag)"},
+    "8250": {"name": "Ränteintäkter från långfristiga fordringar hos och värdepapper i andra företag"},
+    "8251": {"name": "Ränteintäkter från långfristiga fordringar"},
+    "8252": {"name": "Ränteintäkter från övriga värdepapper"},
+    "8254": {"name": "Skattefria ränteintäkter, långfristiga tillgångar"},
+    "8255": {"name": "Avkastningsskatt kapitalplacering"},
+    "8260": {"name": "Ränteintäkter från långfristiga fordringar hos koncernföretag"},
+    "8261": {"name": "Ränteintäkter från långfristiga fordringar hos moderföretag"},
+    "8262": {"name": "Ränteintäkter från långfristiga fordringar hos dotterföretag"},
+    "8263": {"name": "Ränteintäkter från långfristiga fordringar hos andra koncernföretag"},
+    "8270": {"name": "Nedskrivningar av innehav av andelar i och långfristiga fordringar hos andra företag"},
+    "8271": {"name": "Nedskrivningar av andelar i andra företag"},
+    "8272": {"name": "Nedskrivningar av långfristiga fordringar hos andra företag"},
+    "8273": {"name": "Nedskrivningar av övriga värdepapper hos andra företag"},
+    "8280": {"name": "Återföringar av nedskrivningar av andelar i och långfristiga fordringar hos andra företag"},
+    "8281": {"name": "Återföringar av nedskrivningar av andelar i andra företag"},
+    "8282": {"name": "Återföringar av nedskrivningar av långfristiga fordringar hos andra företag"},
+    "8283": {"name": "Återföringar av nedskrivningar av övriga värdepapper i andra företag"},
+    "8290": {"name": "Värdering till verkligt värde, anläggningstillgångar"},
+    "8291": {"name": "Orealiserade värdeförändringar på anläggningstillgångar"},
+    "8295": {"name": "Orealiserade värdeförändringar på derivatinstrument"},
+    "8310": {"name": "Ränteintäkter från omsättningstillgångar"},
+    "8311": {"name": "Ränteintäkter från bank"},
+    "8312": {"name": "Ränteintäkter från kortfristiga placeringar"},
+    "8313": {"name": "Ränteintäkter från kortfristiga fordringar"},
+    "8314": {"name": "Skattefria ränteintäkter"},
+    "8317": {"name": "Ränteintäkter för dold räntekompensation"},
+    "8319": {"name": "Övriga ränteintäkter från omsättningstillgångar"},
+    "8320": {"name": "Värdering till verkligt värde, omsättningstillgångar"},
+    "8321": {"name": "Orealiserade värdeförändringar på omsättningstillgångar"},
+    "8325": {"name": "Orealiserade värdeförändringar på derivatinstrument (oms.-tillg.)"},
+    "8330": {"name": "Valutakursdifferenser på kortfristiga fordringar och placeringar"},
+    "8331": {"name": "Valutakursvinster på kortfristiga fordringar och placeringar"},
+    "8336": {"name": "Valutakursförluster på kortfristiga fordringar och placeringar"},
+    "8340": {"name": "Utdelningar på kortfristiga placeringar"},
+    "8350": {"name": "Resultat vid försäljning av kortfristiga placeringar"},
+    "8360": {"name": "Övriga ränteintäkter från koncernföretag"},
+    "8361": {"name": "Övriga ränteintäkter från moderföretag"},
+    "8362": {"name": "Övriga ränteintäkter från dotterföretag"},
+    "8363": {"name": "Övriga ränteintäkter från andra koncernföretag"},
+    "8370": {"name": "Nedskrivningar av kortfristiga placeringar"},
+    "8380": {"name": "Återföringar av nedskrivningar av kortfristiga placeringar"},
+    "8390": {"name": "Övriga finansiella intäkter"},
+    "8400": {"name": "Räntekostnader (gruppkonto)"},
+    "8410": {"name": "Räntekostnader för långfristiga skulder"},
+    "8411": {"name": "Räntekostnader för obligations-, förlags- och konvertibla lån"},
+    "8412": {"name": "Räntedel i årets pensionskostnad"},
+    "8413": {"name": "Räntekostnader för checkräkningskredit"},
+    "8415": {"name": "Räntekostnader för andra skulder till kreditinstitut"},
+    "8417": {"name": "Räntekostnader för dold räntekompensation m.m."},
+    "8418": {"name": "Avdragspost för räntesubventioner"},
+    "8419": {"name": "Övriga räntekostnader för långfristiga skulder"},
+    "8420": {"name": "Räntekostnader för kortfristiga skulder"},
+    "8421": {"name": "Räntekostnader till kreditinstitut"},
+    "8422": {"name": "Dröjsmålsräntor för leverantörsskulder"},
+    "8423": {"name": "Räntekostnader för skatter och avgifter"},
+    "8424": {"name": "Räntekostnader byggnadskreditiv"},
+    "8429": {"name": "Övriga räntekostnader för kortfristiga skulder"},
+    "8430": {"name": "Valutakursdifferenser på skulder"},
+    "8431": {"name": "Valutakursvinster på skulder"},
+    "8436": {"name": "Valutakursförluster på skulder"},
+    "8440": {"name": "Erhållna räntebidrag"},
+    "8450": {"name": "Orealiserade värdeförändringar på skulder"},
+    "8451": {"name": "Orealiserade värdeförändringar på skulder"},
+    "8455": {"name": "Orealiserade värdeförändringar på säkringsinstrument"},
+    "8460": {"name": "Räntekostnader till koncernföretag"},
+    "8461": {"name": "Räntekostnader till moderföretag"},
+    "8462": {"name": "Räntekostnader till dotterföretag"},
+    "8463": {"name": "Räntekostnader till andra koncernföretag"},
+    "8480": {"name": "Aktiverade ränteutgifter"},
+    "8490": {"name": "Övriga skuldrelaterade poster"},
+    "8491": {"name": "Erhållet ackord på skulder till kreditinstitut m.m."},
+    "8810": {"name": "Förändring av periodiseringsfond"},
+    "8811": {"name": "Avsättning till periodiseringsfond"},
+    "8819": {"name": "Återföring från periodiseringsfond"},
+    "8820": {"name": "Mottagna koncernbidrag"},
+    "8830": {"name": "Lämnade koncernbidrag"},
+    "8840": {"name": "Lämnade gottgörelser"},
+    "8850": {"name": "Förändring av överavskrivningar"},
+    "8851": {"name": "Förändring av överavskrivningar, immateriella anläggningstillgångar"},
+    "8852": {"name": "Förändring av överavskrivningar, byggnader och markanläggningar"},
+    "8853": {"name": "Förändring av överavskrivningar, maskiner och inventarier"},
+    "8860": {"name": "Förändring av ersättningsfond"},
+    "8861": {"name": "Avsättning till ersättningsfond för inventarier"},
+    "8862": {"name": "Avsättning till ersättningsfond för byggnader och markanläggningar"},
+    "8864": {"name": "Avsättning till ersättningsfond för djurlager i jordbruk och renskötsel"},
+    "8865": {"name": "Ianspråktagande av ersättningsfond för avskrivningar"},
+    "8866": {"name": "Ianspråktagande av ersättningsfond för annat än avskrivningar"},
+    "8869": {"name": "Återföring från ersättningsfond"},
+    "8890": {"name": "Övriga bokslutsdispositioner"},
+    "8892": {"name": "Nedskrivningar av konsolideringskaraktär av anläggningstillgångar"},
+    "8896": {"name": "Förändring av lagerreserv"},
+    "8899": {"name": "Övriga bokslutsdispositioner"},
+    "8910": {"name": "Skatt som belastar årets resultat"},
+    "8920": {"name": "Skatt på grund av ändrad beskattning"},
+    "8930": {"name": "Restituerad skatt"},
+    "8940": {"name": "Uppskjuten skatt"},
+    "8980": {"name": "Övriga skatter"},
+    "8990": {"name": "Resultat"},
+    "8999": {"name": "Årets resultat"},
 }

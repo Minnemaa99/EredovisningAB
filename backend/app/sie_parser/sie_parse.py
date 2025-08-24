@@ -1,7 +1,6 @@
 import sys
 import shlex
-from .accounting_data import SieData, Verification, Transaction, DataField, SieIO
-
+from .accounting_data import SieData, Verification, Transaction, DataField
 class SieParser:
     """Parser för ekonomifiler i .si-format"""
 
