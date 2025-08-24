@@ -1,7 +1,6 @@
 import sys
 import shlex
-from .accounting_data import SieData, Verification, Transaction, DataField, SieIO
-
+from .accounting_data import SieData, Verification, Transaction, DataField
 class SieParser:
     """Parser för ekonomifiler i .si-format"""
 
@@ -71,3 +70,5 @@ class SieParser:
         transtext = rest_tokens[2] if len(rest_tokens) > 2 else ''
 
         return Transaction(kontonr, objekt, belopp, transdat, transtext)
+
+

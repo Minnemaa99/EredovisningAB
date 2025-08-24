@@ -9,6 +9,7 @@ import Step5_Forvaltningsberattelse from "./Step5_Forvaltningsberattelse";
 import Step6_Foretradare from "./Step6_Foretradare";
 import Step7_LamnaIn from "./Step7_LamnaIn";
 
+
 export default function Wizard() {
   const steps = [
     "Räkenskapsår",
@@ -24,6 +25,7 @@ export default function Wizard() {
   const [detailedAccounts, setDetailedAccounts] = useState([]);
   const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
   const [finalReportId, setFinalReportId] = useState(null);
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export default function Wizard() {
   const nextStep = () => {
     if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1);
   };
+
   const prevStep = () => {
     if (stepIndex > 0) setStepIndex(stepIndex - 1);
   };
@@ -79,27 +82,64 @@ export default function Wizard() {
 
   const handlePreview = () => {
     if (finalReportId) {
-      window.open(
-        `/api/annual-reports/${finalReportId}/preview`,
-        "_blank"
-      );
+      window.open(`/api/annual-reports/${finalReportId}/preview`, "_blank");
     } else {
-      alert(
-        "Du måste spara rapporten först för att kunna förhandsgranska den."
-      );
+      alert("Du måste spara rapporten först för att kunna förhandsgranska den.");
     }
   };
 
   const renderStep = () => {
     switch (stepIndex) {
-      case 0: return (<Step1_Rakenskapsar reportDates={reportDates} setReportDates={setReportDates} onUploadSuccess={handleUploadSuccess} />);
-      case 1: return (<Step2_Resultatrakning accounts={detailedAccounts} onAccountChange={handleAccountChange} onNext={nextStep} onBack={prevStep} />);
-      case 2: return (<Step3_Balansrakning accounts={detailedAccounts} onAccountChange={handleAccountChange} onNext={nextStep} onBack={prevStep} />);
-      case 3: return <Step4_Noter onNext={nextStep} onBack={prevStep} />;
-      case 4: return (<Step5_Forvaltningsberattelse onNext={nextStep} onBack={prevStep} />);
-      case 5: return <Step6_Foretradare onNext={nextStep} onBack={prevStep} />;
-      case 6: return (<Step7_LamnaIn reportId={finalReportId} onSave={handleSaveAndContinue} onPreview={handlePreview} onBack={prevStep} />);
-      default: return null;
+      case 0:
+        return (
+          <Step1_Rakenskapsar
+            reportDates={reportDates}
+            setReportDates={setReportDates}
+            onUploadSuccess={(data) => {
+              console.log("Upload success:", data);
+              setDetailedAccounts(data.accounts || []); // spara uppladdade konton i state
+            }}
+            onNext={nextStep}
+          />
+
+        );
+      case 1:
+        return (
+          <Step2_Resultatrakning
+            formData={formData}
+            accounts={detailedAccounts}
+            onNext={nextStep}
+            onBack={prevStep}
+          />
+        );
+      case 2:
+        return (
+          <Step3_Balansrakning
+            formData={formData}
+            accounts={detailedAccounts}
+            onNext={nextStep}
+            onBack={prevStep}
+          />
+        );
+      case 3:
+        return <Step4_Noter onNext={nextStep} onBack={prevStep} />;
+      case 4:
+        return (
+          <Step5_Forvaltningsberattelse onNext={nextStep} onBack={prevStep} />
+        );
+      case 5:
+        return <Step6_Foretradare onNext={nextStep} onBack={prevStep} />;
+      case 6:
+        return (
+          <Step7_LamnaIn
+            reportId={finalReportId}
+            onSave={handleSaveAndContinue}
+            onPreview={handlePreview}
+            onBack={prevStep}
+          />
+        );
+      default:
+        return null;
     }
   };
 

@@ -6,13 +6,42 @@ import io
 import json
 from datetime import date
 from contextlib import asynccontextmanager
-
+from app.sie_parser import SieParser
 from . import crud, models, schemas, pdf_generator, k2_calculator
 from .sie_parser.sie_parse import SieParser
 from .sie_parser.accounting_data import SieData
 from .database import engine, SessionLocal, Base
 from . import chart_of_accounts_data
+from fastapi import FastAPI, UploadFile, File, HTTPException
+import traceback
+from app.sie_parser import SieParser
 
+app = FastAPI()
+@app.post("/api/annual-reports/upload-sie", response_model=schemas.SieParseResult)
+async def parse_sie_file(file: UploadFile = File(...)):
+    """
+    Parses an uploaded SIE file and returns the detailed account balances without saving.
+    """
+    if not file.filename.lower().endswith(('.se', '.si', '.sie')):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a .si, .se, or .sie file.")
+
+    try:
+        file_contents = await file.read()
+        try:
+            sie_lines = file_contents.decode('cp437').splitlines()
+        except UnicodeDecodeError:
+            sie_lines = file_contents.decode('utf-8').splitlines()
+
+        parser = SieParser(file_contents=sie_lines)
+        parser.parse()
+
+        detailed_result = _parse_sie_to_details(parser.result, chart_of_accounts)
+        return detailed_result
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()           # 👈 Skriver ut full stacktrace i konsolen
+        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
 # This will hold the loaded chart of accounts
 chart_of_accounts = {}
 
@@ -61,43 +90,86 @@ def get_db():
     finally:
         db.close()
 
+        
 def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas.SieParseResult:
-    """
-    Parses SIE data to extract detailed account balances.
-    """
-    # 1. Extract dates
-    rar_data = sie_data.get_data("#RAR")
-    if not rar_data:
-        raise HTTPException(status_code=400, detail="Could not find fiscal year (#RAR tag) in the SIE file.")
-    rar_line = rar_data[0]
-    start_date_str = rar_line.data[1]
-    end_date_str = rar_line.data[2]
+    import traceback
+    from dateutil.parser import parse as parse_date
+
     try:
-        start_date = date.fromisoformat(f"{start_date_str[:4]}-{start_date_str[4:6]}-{start_date_str[6:]}")
-        end_date = date.fromisoformat(f"{end_date_str[:4]}-{end_date_str[4:6]}-{end_date_str[6:]}")
-    except (ValueError, IndexError):
-        raise HTTPException(status_code=400, detail="Could not parse dates from the #RAR tag. Ensure they are in YYYYMMDD format.")
+        # 1. Datum från #RAR
+        rar_data = sie_data.get_data("#RAR")
+        if not rar_data:
+            raise HTTPException(status_code=400, detail="Could not find fiscal year (#RAR tag) in the SIE file.")
 
-    # 2. Extract balances
-    accounts = []
-    ub_entries = sie_data.get_data("#UB")
-    for entry in ub_entries:
-        account_num_str = str(entry.data[1]).strip()
-        balance = float(entry.data[2])
+        rar_line = rar_data[0]
+        start_date_str = str(rar_line.data[2]).strip()
+        end_date_str = str(rar_line.data[3]).strip()
+        start_date = parse_date(start_date_str).date()
+        end_date = parse_date(end_date_str).date()
+        res_entries = sie_data.get_data("#RES")
+        konto_entries = sie_data.get_data("#KONTO")
+        # 2. Summera alla saldon
+        balances = {}
 
-        # Look up account name from the chart of accounts, provide a default if not found.
-        account_name = chart_of_accounts.get(account_num_str, {}).get("name", f"Okänt konto ({account_num_str})")
+        # --- #IB (ingående balans) ---
+        for entry in sie_data.get_data("#IB"):
+            if len(entry.data) >= 4:
+                account_num_str = str(entry.data[2]).strip()
+                balance = float(entry.data[3])
+                balances[account_num_str] = balances.get(account_num_str, 0.0) + balance
 
-        accounts.append(
-            schemas.AccountBalance(
-                account_number=account_num_str,
-                account_name=account_name,
-                balance=balance
+        # --- #UB (utgående balans) ---
+        for entry in sie_data.get_data("#UB"):
+            if len(entry.data) >= 4:
+                account_num_str = str(entry.data[2]).strip()
+                balance = float(entry.data[3])
+                balances[account_num_str] = balances.get(account_num_str, 0.0) + balance
+
+        # --- #TRANS (transaktioner) ---
+        for ver in sie_data.verifications:
+            for trans in ver.transactions:
+                account_num_str = str(trans.kontonr).strip()
+                balances[account_num_str] = balances.get(account_num_str, 0.0) + trans.belopp
+
+        # --- #RES (resultatdisposition) ---
+        
+        for entry in res_entries:
+            if len(entry.data) >= 4:
+                account_num_str = str(entry.data[2]).strip()
+                balance = float(entry.data[3])
+                balances[account_num_str] = balances.get(account_num_str, 0.0) + balance
+        
+        # Lägg till saknade konton från #KONTO med saldo 0
+        
+        for konto in konto_entries:
+            if len(konto.data) >= 3:
+                account_num_str = str(konto.data[1]).strip()
+                if account_num_str not in balances:
+                    balances[account_num_str] = 0.0
+        
+        # 3. Bygg resultatlista
+        accounts = []
+        for account_num_str, balance in balances.items():
+            account_name = chart_of_accounts.get(account_num_str, {}).get("name", f"Okänt konto ({account_num_str})")
+            accounts.append(
+                schemas.AccountBalance(
+                    account_number=account_num_str,
+                    account_name=account_name,
+                    balance=balance
+                )
             )
-        )
 
-    return schemas.SieParseResult(start_date=start_date, end_date=end_date, accounts=accounts)
+        return schemas.SieParseResult(start_date=start_date, end_date=end_date, accounts=accounts)
 
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
 
 @app.post("/api/annual-reports/upload-sie", response_model=schemas.SieParseResult)
 async def parse_sie_file(file: UploadFile = File(...)):
@@ -238,3 +310,5 @@ def get_report_preview(report_id: int, db: Session = Depends(get_db)):
 
     pdf_bytes = pdf_generator.generate_pdf(report, is_preview=True)
     return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")
+
+
