@@ -59,6 +59,7 @@ class AccountBalance(BaseModel):
     account_number: str
     account_name: str
     balance: float
+    previous_balance: Optional[float] = 0.0
 
 class SieParseResult(BaseModel):
     start_date: date

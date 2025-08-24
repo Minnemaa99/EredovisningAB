@@ -63,13 +63,14 @@ def get_db():
 
 def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas.SieParseResult:
     """
-    Parses SIE data to extract detailed account balances.
+    Parses SIE data to extract detailed account balances for the current and previous year.
     """
     # 1. Extract dates
     rar_data = sie_data.get_data("#RAR")
     if not rar_data:
         raise HTTPException(status_code=400, detail="Could not find fiscal year (#RAR tag) in the SIE file.")
     rar_line = rar_data[0]
+    # Format for #RAR is: #RAR 0 20230101 20231231
     start_date_str = rar_line.data[1]
     end_date_str = rar_line.data[2]
     try:
@@ -78,21 +79,36 @@ def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas
     except (ValueError, IndexError):
         raise HTTPException(status_code=400, detail="Could not parse dates from the #RAR tag. Ensure they are in YYYYMMDD format.")
 
-    # 2. Extract balances
+    # 2. Extract previous year balances from #RES tags
+    previous_year_balances = {}
+    res_entries = sie_data.get_data("#RES")
+    for entry in res_entries:
+        # Format: #RES year account_num balance
+        if len(entry.data) >= 3 and entry.data[0] == '-1':
+            account_num_str = str(entry.data[1]).strip()
+            balance = float(entry.data[2])
+            previous_year_balances[account_num_str] = balance
+
+    # 3. Extract current year balances from #UB tags and combine with previous year
     accounts = []
     ub_entries = sie_data.get_data("#UB")
     for entry in ub_entries:
-        account_num_str = str(entry.data[1]).strip()
-        balance = float(entry.data[2])
+        # Format: #UB account_num balance
+        account_num_str = str(entry.data[0]).strip()
+        balance = float(entry.data[1])
 
         # Look up account name from the chart of accounts, provide a default if not found.
         account_name = chart_of_accounts.get(account_num_str, {}).get("name", f"Okänt konto ({account_num_str})")
+
+        # Get the previous year's balance for this account, if it exists.
+        previous_balance = previous_year_balances.get(account_num_str, 0.0)
 
         accounts.append(
             schemas.AccountBalance(
                 account_number=account_num_str,
                 account_name=account_name,
-                balance=balance
+                balance=balance,
+                previous_balance=previous_balance
             )
         )
 
