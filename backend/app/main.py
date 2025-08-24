@@ -69,14 +69,32 @@ def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas
     rar_data = sie_data.get_data("#RAR")
     if not rar_data:
         raise HTTPException(status_code=400, detail="Could not find fiscal year (#RAR tag) in the SIE file.")
-    rar_line = rar_data[0]
-    # Format for #RAR is: #RAR 0 20230101 20231231
-    start_date_str = rar_line.data[1]
-    end_date_str = rar_line.data[2]
+
+    rar_line_data = rar_data[0].data
+    start_date = None
+    end_date = None
+
+    def parse_dates(d1, d2):
+        if not (d1.isdigit() and len(d1) == 8 and d2.isdigit() and len(d2) == 8):
+            raise ValueError("Invalid date format or length")
+        return (
+            date.fromisoformat(f"{d1[:4]}-{d1[4:6]}-{d1[6:]}"),
+            date.fromisoformat(f"{d2[:4]}-{d2[4:6]}-{d2[6:]}")
+        )
+
     try:
-        start_date = date.fromisoformat(f"{start_date_str[:4]}-{start_date_str[4:6]}-{start_date_str[6:]}")
-        end_date = date.fromisoformat(f"{end_date_str[:4]}-{end_date_str[4:6]}-{end_date_str[6:]}")
+        # Try standard format first: #RAR 0 YYYYMMDD YYYYMMDD
+        if len(rar_line_data) >= 3:
+            start_date, end_date = parse_dates(rar_line_data[1], rar_line_data[2])
+        # Try alternative format if standard fails or is not applicable
+        elif len(rar_line_data) >= 2:
+            start_date, end_date = parse_dates(rar_line_data[0], rar_line_data[1])
+
+        if not start_date or not end_date:
+             raise ValueError("Could not find valid dates in #RAR tag")
+
     except (ValueError, IndexError):
+        # If all attempts fail, raise the exception
         raise HTTPException(status_code=400, detail="Could not parse dates from the #RAR tag. Ensure they are in YYYYMMDD format.")
 
     # 2. Extract previous year balances from #RES tags
@@ -139,9 +157,12 @@ async def parse_sie_file(file: UploadFile = File(...)):
 
         return detailed_result
 
+    except HTTPException as e:
+        # Re-raise HTTPException to preserve the original status code and detail
+        raise e
     except Exception as e:
-        # Broad exception to catch parsing errors, file read errors, etc.
-        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
+        # Broad exception to catch other parsing errors, file read errors, etc.
+        raise HTTPException(status_code=500, detail=f"An unexpected error occurred while processing the SIE file: {e}")
 
 
 @app.get("/")
