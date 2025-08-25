@@ -9,6 +9,8 @@ import Step5_Forvaltningsberattelse from "./Step5_Forvaltningsberattelse";
 import Step6_Foretradare from "./Step6_Foretradare";
 import Step7_LamnaIn from "./Step7_LamnaIn";
 
+const API_URL = "http://127.0.0.1:8000/api";
+
 export default function Wizard() {
   const steps = [
     "Räkenskapsår",
@@ -72,11 +74,19 @@ export default function Wizard() {
     }
   };
 
-  const handlePreview = () => {
-    if (finalReportId) {
-      window.open(`/api/annual-reports/${finalReportId}/preview`, "_blank");
-    } else {
-      alert("Du måste spara rapporten först för att kunna förhandsgranska den.");
+  const handlePreview = async () => {
+    if (!detailedAccounts.length) {
+      alert("Ingen rapportdata att förhandsgranska.");
+      return;
+    }
+    try {
+      const response = await axios.post(`${API_URL}/annual-reports/preview-pdf`, { accounts: detailedAccounts, reportDates }, { responseType: "blob" });
+      const file = new Blob([response.data], { type: "application/pdf" });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, "_blank");
+    } catch (err) {
+      console.error("Failed to generate preview:", err);
+      alert("Kunde inte generera förhandsgranskning.");
     }
   };
 
@@ -143,13 +153,13 @@ export default function Wizard() {
       default:
         // KORRIGERING: Fallback till första steget
         return (
-            <Step1_Rakenskapsar
-              reportDates={reportDates}
-              setReportDates={setReportDates}
-              onUploadSuccess={handleUploadSuccess}
-              onBack={() => console.log("Gå tillbaka från start")}
-            />
-          );
+          <Step1_Rakenskapsar
+            reportDates={reportDates}
+            setReportDates={setReportDates}
+            onUploadSuccess={handleUploadSuccess}
+            onBack={() => console.log("Gå tillbaka från start")}
+          />
+        );
     }
   };
 

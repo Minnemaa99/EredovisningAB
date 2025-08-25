@@ -1,87 +1,39 @@
 from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-import io
+import os
+import tempfile
 import json
-from datetime import date
-from contextlib import asynccontextmanager
-from app.sie_parser import SieParser
-from . import crud, models, schemas, pdf_generator, k2_calculator
+import traceback
+from datetime import datetime
+from io import BytesIO
+
+# Importerar från din befintliga mapp 'sie_parser'
 from .sie_parser.sie_parse import SieParser
 from .sie_parser.accounting_data import SieData
-from .database import engine, SessionLocal, Base
-from . import chart_of_accounts_data
-from fastapi import FastAPI, UploadFile, File, HTTPException
-import traceback
-from app.sie_parser import SieParser
+from . import crud, models, schemas, pdf_generator, k2_calculator, chart_of_accounts_data
+from .database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-@app.post("/api/annual-reports/upload-sie", response_model=schemas.SieParseResult)
-async def parse_sie_file(file: UploadFile = File(...)):
-    """
-    Parses an uploaded SIE file and returns the detailed account balances without saving.
-    """
-    if not file.filename.lower().endswith(('.se', '.si', '.sie')):
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a .si, .se, or .sie file.")
 
-    try:
-        file_contents = await file.read()
-        try:
-            sie_lines = file_contents.decode('cp437').splitlines()
-        except UnicodeDecodeError:
-            sie_lines = file_contents.decode('utf-8').splitlines()
+origins = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
 
-        parser = SieParser(file_contents=sie_lines)
-        parser.parse()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-        detailed_result = _parse_sie_to_details(parser.result, chart_of_accounts)
-        return detailed_result
-
-    except Exception as e:
-        import traceback
-        traceback.print_exc()           # 👈 Skriver ut full stacktrace i konsolen
-        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
-# This will hold the loaded chart of accounts
-chart_of_accounts = {}
-
-def _seed_database():
-    """Ensures a default company exists in the database."""
-    db = SessionLocal()
-    try:
-        company = db.query(models.Company).filter(models.Company.id == 1).first()
-        if not company:
-            default_company = schemas.CompanyCreate(
-                name="Testbolaget AB",
-                orgnummer="555555-5555"
-            )
-            crud.create_company(db=db, company=default_company)
-    finally:
-        db.close()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Runs on startup
-    global chart_of_accounts
-    # Load the chart of accounts directly from the Python module.
-    chart_of_accounts = chart_of_accounts_data.CHART_OF_ACCOUNTS
-
-    Base.metadata.create_all(bind=engine)
-    _seed_database()
-    yield
-    # Runs on shutdown
-    pass
-
-app = FastAPI(title="Eredovisning API", lifespan=lifespan)
-
-# CORS
-origins = ["http://localhost:3000"]
-app.add_middleware(CORSMiddleware, allow_origins=origins, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
-
-@app.get("/api/kontoplan")
-def get_kontoplan():
-    """Returns the entire chart of accounts."""
-    return chart_of_accounts
+def load_chart_of_accounts():
+    return chart_of_accounts_data.CHART_OF_ACCOUNTS
 
 def get_db():
     db = SessionLocal()
@@ -90,225 +42,233 @@ def get_db():
     finally:
         db.close()
 
-        
+# --- ERSÄTT DENNA FUNKTION ---
 def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas.SieParseResult:
-    import traceback
-    from dateutil.parser import parse as parse_date
+    """
+    UPPDATERAD funktion som läser både #UB (balanskonton) och #RES (resultatkonton)
+    för att få en komplett uppsättning konton.
+    """
+    # Hämta företagsnamn
+    fnamn_fields = sie_data.get_data('#FNAMN')
+    company_name = fnamn_fields[0].data[1] if fnamn_fields and len(fnamn_fields[0].data) > 1 else "Företagsnamn saknas"
 
-    try:
-        # 1. Datum från #RAR
-        rar_data = sie_data.get_data("#RAR")
-        if not rar_data:
-            raise HTTPException(status_code=400, detail="Could not find fiscal year (#RAR tag) in the SIE file.")
+    # Hämta organisationsnummer
+    orgnr_fields = sie_data.get_data('#ORGNR')
+    org_nr = orgnr_fields[0].data[1] if orgnr_fields and len(orgnr_fields[0].data) > 1 else "Org.nr saknas"
 
-        rar_line = rar_data[0]
-        start_date_str = str(rar_line.data[2]).strip()
-        end_date_str = str(rar_line.data[3]).strip()
-        start_date = parse_date(start_date_str).date()
-        end_date = parse_date(end_date_str).date()
-        res_entries = sie_data.get_data("#RES")
-        konto_entries = sie_data.get_data("#KONTO")
-        # 2. Summera alla saldon
-        balances = {}
+    # 1. Läs in ALLA räkenskapsår från filen
+    rar_fields = sie_data.get_data('#RAR')
+    if not rar_fields:
+        raise HTTPException(status_code=400, detail="SIE-filen saknar räkenskapsår (#RAR-taggar).")
 
-        # --- #IB (ingående balans) ---
-        for entry in sie_data.get_data("#IB"):
-            if len(entry.data) >= 4:
-                account_num_str = str(entry.data[2]).strip()
-                balance = float(entry.data[3])
-                balances[account_num_str] = balances.get(account_num_str, 0.0) + balance
+    parsed_years = []
+    for field in rar_fields:
+        try:
+            parsed_years.append({
+                "id": field.data[1],
+                "start": datetime.strptime(field.data[2], '%Y%m%d').date(),
+                "end": datetime.strptime(field.data[3], '%Y%m%d').date()
+            })
+        except (ValueError, IndexError):
+            continue
 
-        # --- #UB (utgående balans) ---
-        for entry in sie_data.get_data("#UB"):
-            if len(entry.data) >= 4:
-                account_num_str = str(entry.data[2]).strip()
-                balance = float(entry.data[3])
-                balances[account_num_str] = balances.get(account_num_str, 0.0) + balance
-
-        # --- #TRANS (transaktioner) ---
-        for ver in sie_data.verifications:
-            for trans in ver.transactions:
-                account_num_str = str(trans.kontonr).strip()
-                balances[account_num_str] = balances.get(account_num_str, 0.0) + trans.belopp
-
-        # --- #RES (resultatdisposition) ---
+    # 2. Sortera åren efter slutdatum för att hitta det senaste
+    if not parsed_years:
+        raise HTTPException(status_code=400, detail="Kunde inte tolka några giltiga #RAR-taggar.")
         
-        for entry in res_entries:
-            if len(entry.data) >= 4:
-                account_num_str = str(entry.data[2]).strip()
-                balance = float(entry.data[3])
-                balances[account_num_str] = balances.get(account_num_str, 0.0) + balance
-        
-        # Lägg till saknade konton från #KONTO med saldo 0
-        
-        for konto in konto_entries:
-            if len(konto.data) >= 3:
-                account_num_str = str(konto.data[1]).strip()
-                if account_num_str not in balances:
-                    balances[account_num_str] = 0.0
-        
-        # 3. Bygg resultatlista
-        accounts = []
-        for account_num_str, balance in balances.items():
-            account_name = chart_of_accounts.get(account_num_str, {}).get("name", f"Okänt konto ({account_num_str})")
-            accounts.append(
-                schemas.AccountBalance(
-                    account_number=account_num_str,
-                    account_name=account_name,
-                    balance=balance
-                )
-            )
+    sorted_years = sorted(parsed_years, key=lambda y: y['end'], reverse=True)
 
-        return schemas.SieParseResult(start_date=start_date, end_date=end_date, accounts=accounts)
+    # 3. Definiera aktuellt och föregående år
+    current_year = sorted_years[0]
+    previous_year = sorted_years[1] if len(sorted_years) > 1 else None
 
-    except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
-    except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
-    except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
+    current_year_id = current_year['id']
+    previous_year_id = previous_year['id'] if previous_year else None
+
+    # Hämta både Utgående Balans (#UB) och Resultat (#RES)
+    ub_fields = sie_data.get_data('#UB')
+    res_fields = sie_data.get_data('#RES')
+    all_balance_fields = ub_fields + res_fields
+
+    # 4. Fyll på konton baserat på de dynamiskt funna ID:na
+    accounts = []
+    prev_accounts = []
+
+    for field in all_balance_fields:
+        try:
+            year_id = field.data[1]
+            acc_num = field.data[2]
+            balance = float(field.data[3])
+            account_name = chart_of_accounts.get(acc_num, {}).get("name", f"Okänt konto ({acc_num})")
+
+            if year_id == current_year_id:
+                accounts.append(schemas.AccountBalance(account_number=acc_num, account_name=account_name, balance=balance))
+            elif year_id == previous_year_id:
+                prev_accounts.append(schemas.AccountBalance(account_number=acc_num, account_name=account_name, balance=balance))
+        except (ValueError, IndexError):
+            continue
+
+    return schemas.SieParseResult(
+        company_name=company_name,
+        org_nr=org_nr,
+        start_date=current_year['start'],
+        end_date=current_year['end'],
+        accounts=accounts,
+        prev_accounts=prev_accounts
+    )
+# --- SLUT PÅ ERSÄTTNING ---
 
 @app.post("/api/annual-reports/upload-sie", response_model=schemas.SieParseResult)
 async def parse_sie_file(file: UploadFile = File(...)):
+    try:
+        contents_bytes = await file.read()
+        try:
+            contents_lines = contents_bytes.decode('cp437').splitlines()
+        except UnicodeDecodeError:
+            contents_lines = contents_bytes.decode('utf-8', errors='ignore').splitlines()
+
+        parser = SieParser(file_contents=contents_lines)
+        parser.parse()
+        sie_data = parser.result
+        
+        chart_of_accounts = load_chart_of_accounts()
+        parsed_data = _parse_sie_to_details(sie_data, chart_of_accounts)
+        return parsed_data
+    except Exception as e:
+        print("--- EN EXCEPTION INTRÄFFADE ---")
+        traceback.print_exc()
+        print("-------------------------------")
+        raise HTTPException(status_code=500, detail=f"Internt serverfel i parse_sie_file: {str(e)}")
+
+
+# --- LÄGG TILL DENNA NYA ENDPOINT ---
+@app.post("/api/annual-reports/preview-pdf")
+async def preview_annual_report(report_data: schemas.DetailedReportPayload):
     """
-    Parses an uploaded SIE file and returns the detailed account balances without saving.
+    Genererar en förhandsgranskning av årsredovisningen med vattenstämpel.
     """
-    if not file.filename.lower().endswith(('.se', '.si', '.sie')):
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a .si, .se, or .sie file.")
+    try:
+        accounts_data = [acc.model_dump() for acc in report_data.accounts]
+        representatives_data = [rep.model_dump() for rep in report_data.representatives]
+        k2_results = k2_calculator.calculate_k2_values(accounts_data)
+
+        pdf_buffer = pdf_generator.create_annual_report_pdf(
+            company_name=report_data.company_name, org_nr=report_data.org_nr,
+            start_date=report_data.start_date, end_date=report_data.end_date,
+            forvaltningsberattelse=report_data.forvaltningsberattelse,
+            signature_city=report_data.signature_city, signature_date=report_data.signature_date,
+            representatives_data=representatives_data, k2_results=k2_results,
+            is_preview=True  # Sätter flaggan för vattenstämpel
+        )
+        
+        return FileResponse(
+            BytesIO(pdf_buffer.getvalue()),
+            media_type='application/pdf',
+            filename="utkast_arsredovisning.pdf"
+        )
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Kunde inte generera förhandsgranskning: {str(e)}")
+# --- SLUT PÅ NY ENDPOINT ---
+
+
+@app.post("/api/annual-reports/generate-pdf")
+async def generate_annual_report(report_data: schemas.DetailedReportPayload, db: Session = Depends(get_db)):
+    db_company = crud.get_company(db, company_id=report_data.company_id)
+    if db_company is None:
+        db_company = crud.create_company(db=db, company=schemas.CompanyCreate(
+            name=report_data.company_name,
+            org_nr=report_data.org_nr
+        ))
+
+    db_annual_report = crud.create_annual_report(db=db, annual_report=report_data, company_id=db_company.id)
+
+    accounts_data = [acc.model_dump() for acc in report_data.accounts]
+    representatives_data = [rep.model_dump() for rep in report_data.representatives]
+
+    k2_results = k2_calculator.calculate_k2_values(accounts_data)
+
+    pdf_buffer = pdf_generator.create_annual_report_pdf(
+        company_name=report_data.company_name, org_nr=report_data.org_nr,
+        start_date=report_data.start_date, end_date=report_data.end_date,
+        accounts_data=accounts_data, prev_accounts_data=[acc.model_dump() for acc in report_data.prev_accounts],
+        forvaltningsberattelse=report_data.forvaltningsberattelse,
+        signature_city=report_data.signature_city, signature_date=report_data.signature_date,
+        representatives_data=representatives_data, k2_results=k2_results
+    )
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        tmp.write(pdf_buffer.getvalue())
+        return FileResponse(tmp.name, media_type='application/pdf', filename="arsredovisning.pdf")
+
+# --- ERSÄTT DENNA ENDPOINT ---
+@app.post("/api/annual-reports/from-details", response_model=schemas.AnnualReport)
+async def save_report_from_details(report_data: schemas.DetailedReportPayload, db: Session = Depends(get_db)):
+    """
+    Tar emot detaljerad data från wizarden, sparar den i databasen,
+    och returnerar den kompletta rapportposten inklusive dess nya ID.
+    """
+    try:
+        # Hitta eller skapa företaget
+        db_company = crud.get_company_by_org_nr(db, org_nr=report_data.org_nr)
+        if db_company is None:
+            db_company = crud.create_company(db=db, company=schemas.CompanyCreate(
+                name=report_data.company_name,
+                org_nr=report_data.org_nr
+            ))
+
+        # Skapa årsredovisningen i databasen
+        db_annual_report = crud.create_annual_report(db=db, annual_report=report_data, company_id=db_company.id)
+        
+        # Returnera den nyskapade rapporten (FastAPI konverterar den till JSON)
+        return db_annual_report
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Kunde inte spara rapporten: {str(e)}")
+
+
+# --- LÄGG TILL DENNA HELT NYA ENDPOINT ---
+@app.get("/api/annual-reports/{report_id}/preview")
+async def preview_saved_report(report_id: int, db: Session = Depends(get_db)):
+    """
+    Hämtar en sparad rapport via ID, genererar en PDF för förhandsgranskning
+    och returnerar den.
+    """
+    db_report = crud.get_annual_report(db, report_id=report_id)
+    if db_report is None:
+        raise HTTPException(status_code=404, detail="Rapporten kunde inte hittas.")
 
     try:
-        file_contents = await file.read()
-        # Use cp437 encoding as it's common for SIE files, with fallback to utf-8
-        try:
-            sie_lines = file_contents.decode('cp437').splitlines()
-        except UnicodeDecodeError:
-            sie_lines = file_contents.decode('utf-8').splitlines()
+        # Konvertera JSON-data från databasen tillbaka till listor av dicts
+        accounts_data = json.loads(db_report.accounts_data)
+        prev_accounts_data = json.loads(db_report.prev_accounts_data)
+        representatives_data = json.loads(db_report.representatives_data)
 
-        parser = SieParser(file_contents=sie_lines)
-        parser.parse()
+        # Beräkna K2-värden
+        k2_results = k2_calculator.calculate_k2_values(accounts_data)
 
-        # The global chart_of_accounts dictionary is loaded at startup.
-        detailed_result = _parse_sie_to_details(parser.result, chart_of_accounts)
-
-        return detailed_result
-
+        # Skapa PDF med preview-flaggan satt till True
+        pdf_buffer = pdf_generator.create_annual_report_pdf(
+            company_name=db_report.company.name,
+            org_nr=db_report.company.org_nr,
+            start_date=db_report.start_date,
+            end_date=db_report.end_date,
+            forvaltningsberattelse=db_report.forvaltningsberattelse,
+            signature_city=db_report.signature_city,
+            signature_date=db_report.signature_date,
+            representatives_data=representatives_data,
+            k2_results=k2_results,
+            is_preview=True
+        )
+        
+        return FileResponse(
+            BytesIO(pdf_buffer.getvalue()),
+            media_type='application/pdf',
+            filename=f"utkast_{db_report.company.org_nr}.pdf"
+        )
     except Exception as e:
-        # Broad exception to catch parsing errors, file read errors, etc.
-        raise HTTPException(status_code=500, detail=f"Failed to process SIE file: {e}")
-
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the Eredovisning API"}
-
-@app.post("/api/annual-reports", response_model=schemas.AnnualReport)
-def create_annual_report(report_in: schemas.AnnualReportCreate, company_id: int, db: Session = Depends(get_db)):
-    # This endpoint now creates the report with all its data at once.
-    return crud.create_report(db=db, company_id=company_id, report_data=report_in)
-
-@app.put("/api/annual-reports/{report_id}", response_model=schemas.AnnualReport)
-def update_annual_report(report_id: int, report_in: schemas.AnnualReportCreate, db: Session = Depends(get_db)):
-    # This endpoint updates an existing report with new data.
-    return crud.update_report(db=db, report_id=report_id, report_data=report_in)
-
-@app.post("/api/annual-reports/from-details", response_model=schemas.AnnualReport)
-def create_report_from_details(payload: schemas.DetailedReportPayload, db: Session = Depends(get_db)):
-    """
-    Creates and saves an annual report from a detailed list of account balances.
-    This is used after the frontend has allowed the user to review/edit the parsed SIE data.
-    """
-    report_data = {
-        "start_date": payload.start_date,
-        "end_date": payload.end_date,
-    }
-    # Initialize all fields to 0.0
-    for field in schemas.AnnualReportBase.__annotations__:
-        report_data[field] = 0.0
-
-    # Aggregate balances from the detailed list
-    for account in payload.accounts:
-        try:
-            account_num = int(str(account.account_number).strip())
-            balance = float(account.balance)
-        except (ValueError, TypeError):
-            continue # Skip if account number or balance is not a valid number
-
-        schema_field = None
-        # Balance Sheet Accounts (1xxx, 2xxx)
-        if 1200 <= account_num < 1300: schema_field = "bs_materiella_anlaggningstillgangar"
-        elif 1300 <= account_num < 1400: schema_field = "bs_finansiella_anlaggningstillgangar"
-        elif 1400 <= account_num < 1500: schema_field = "bs_varulager"
-        elif 1500 <= account_num < 1600: schema_field = "bs_kundfordringar"
-        elif 1600 <= account_num < 1700: schema_field = "bs_ovriga_fordringar"
-        elif 1700 <= account_num < 1800: schema_field = "bs_forutbetalda_kostnader"
-        elif 1900 <= account_num < 2000: schema_field = "bs_kassa_bank"
-        elif 2000 <= account_num < 2080: schema_field = "bs_bundet_eget_kapital"
-        elif 2080 <= account_num < 2100: schema_field = "bs_fritt_eget_kapital"
-        elif 2100 <= account_num < 2200: schema_field = "bs_obeskattade_reserver"
-        elif 2300 <= account_num < 2500: schema_field = "bs_langfristiga_skulder"
-        elif 2500 <= account_num < 3000: schema_field = "bs_kortfristiga_skulder"
-        # Income Statement Accounts (3xxx-8xxx)
-        elif 3000 <= account_num < 4000: schema_field = "is_nettoomsattning"
-        elif 4000 <= account_num < 5000: schema_field = "is_kostnad_ravaror"
-        elif 5000 <= account_num < 7000: schema_field = "is_kostnad_externa"
-        elif 7000 <= account_num < 7700: schema_field = "is_kostnad_personal"
-        elif 7800 <= account_num < 7900: schema_field = "is_avskrivningar"
-        elif 8000 <= account_num < 8300: schema_field = "is_finansiella_intakter"
-        elif 8300 <= account_num < 8500: schema_field = "is_finansiella_kostnader"
-
-        if schema_field:
-            if schema_field.startswith("is_"):
-                if (3000 <= account_num < 4000) or (8000 <= account_num < 8300):
-                    report_data[schema_field] -= balance
-                else: # Costs
-                    report_data[schema_field] += balance
-            elif schema_field.startswith("bs_"):
-                if 2000 <= account_num < 3000: # Equity and liabilities
-                    report_data[schema_field] -= balance
-                else: # Assets
-                    report_data[schema_field] += balance
-
-    report_create_schema = schemas.AnnualReportCreate(**report_data)
-
-    # First, create the report with the aggregated data
-    db_report = crud.create_report(db=db, company_id=payload.company_id, report_data=report_create_schema)
-
-    # Now, perform the final calculations that link the income statement and balance sheet
-    calculated_report = k2_calculator.perform_calculations(db_report)
-
-    # The calculator modifies the object, but we should commit to be safe
-    db.commit()
-    db.refresh(calculated_report)
-
-    return calculated_report
-
-@app.post("/api/annual-reports/{report_id}/calculate", response_model=schemas.AnnualReport)
-def calculate_and_save_report(report_id: int, db: Session = Depends(get_db)):
-    """
-    Takes the saved report data, runs the K2 calculations, and saves the result.
-    """
-    db_report = crud.get_report(db, report_id)
-    if not db_report:
-        raise HTTPException(status_code=404, detail="Report not found")
-
-    # Run calculations
-    calculated_report = k2_calculator.perform_calculations(db_report)
-
-    # Save the calculated results back to the DB
-    db.commit()
-    db.refresh(calculated_report)
-    return calculated_report
-
-@app.get("/api/annual-reports/{report_id}/preview", response_class=StreamingResponse)
-def get_report_preview(report_id: int, db: Session = Depends(get_db)):
-    report = crud.get_report(db, report_id)
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-
-    pdf_bytes = pdf_generator.generate_pdf(report, is_preview=True)
-    return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Kunde inte generera förhandsgranskning: {str(e)}")
+# --- SLUT PÅ NY ENDPOINT ---
 
 
