@@ -9,7 +9,6 @@ import Step5_Forvaltningsberattelse from "./Step5_Forvaltningsberattelse";
 import Step6_Foretradare from "./Step6_Foretradare";
 import Step7_LamnaIn from "./Step7_LamnaIn";
 
-
 export default function Wizard() {
   const steps = [
     "Räkenskapsår",
@@ -23,9 +22,9 @@ export default function Wizard() {
 
   const [stepIndex, setStepIndex] = useState(0);
   const [detailedAccounts, setDetailedAccounts] = useState([]);
+  const [prevAccounts, setPrevAccounts] = useState([]);
   const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
-  const [finalReportId, setFinalReportId] = useState(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [finalReportId, setFinalReportId] = useState(null); // KORRIGERING: Lade till saknat state
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -41,7 +40,12 @@ export default function Wizard() {
   };
 
   const handleUploadSuccess = (sieParseResult) => {
+    console.log("API Response Received in Wizard:", sieParseResult);
+
+    const previousAccounts = sieParseResult.prev_accounts || sieParseResult.prevAccounts || [];
+
     setDetailedAccounts(sieParseResult.accounts || []);
+    setPrevAccounts(previousAccounts);
     setReportDates({
       start_date: sieParseResult.start_date,
       end_date: sieParseResult.end_date,
@@ -49,28 +53,16 @@ export default function Wizard() {
     nextStep();
   };
 
-  const handleAccountChange = (index, newBalance) => {
-    const updatedAccounts = [...detailedAccounts];
-    updatedAccounts[index] = {
-      ...updatedAccounts[index],
-      balance: parseFloat(newBalance) || 0,
-    };
-    setDetailedAccounts(updatedAccounts);
-  };
-
   const handleSaveAndContinue = async () => {
     const payload = {
-      company_id: 1,
+      company_id: 1, // Detta bör hämtas dynamiskt senare
       start_date: reportDates.start_date,
       end_date: reportDates.end_date,
       accounts: detailedAccounts,
     };
 
     try {
-      const response = await axios.post(
-        "/api/annual-reports/from-details",
-        payload
-      );
+      const response = await axios.post("/api/annual-reports/from-details", payload);
       setFinalReportId(response.data.id);
       alert("Rapporten har sparats!");
       nextStep();
@@ -95,19 +87,15 @@ export default function Wizard() {
           <Step1_Rakenskapsar
             reportDates={reportDates}
             setReportDates={setReportDates}
-            onUploadSuccess={(data) => {
-              console.log("Upload success:", data);
-              setDetailedAccounts(data.accounts || []); // spara uppladdade konton i state
-            }}
-            onNext={nextStep}
+            onUploadSuccess={handleUploadSuccess}
+            onBack={() => console.log("Gå tillbaka från start")}
           />
-
         );
       case 1:
         return (
           <Step2_Resultatrakning
-            formData={formData}
             accounts={detailedAccounts}
+            prevAccounts={prevAccounts}
             onNext={nextStep}
             onBack={prevStep}
           />
@@ -115,17 +103,31 @@ export default function Wizard() {
       case 2:
         return (
           <Step3_Balansrakning
-            formData={formData}
             accounts={detailedAccounts}
+            prevAccounts={prevAccounts}
             onNext={nextStep}
             onBack={prevStep}
           />
         );
       case 3:
-        return <Step4_Noter onNext={nextStep} onBack={prevStep} />;
-      case 4:
+        // KORRIGERING: Använde rätt state-variabler
         return (
-          <Step5_Forvaltningsberattelse onNext={nextStep} onBack={prevStep} />
+          <Step4_Noter
+            accounts={detailedAccounts}
+            prevAccounts={prevAccounts}
+            onBack={prevStep}
+            onNext={nextStep}
+          />
+        );
+      case 4:
+        // KORRIGERING: Använde rätt state-variabler och tog bort syntaxfel
+        return (
+          <Step5_Forvaltningsberattelse
+            accounts={detailedAccounts}
+            prevAccounts={prevAccounts}
+            onBack={prevStep}
+            onNext={nextStep}
+          />
         );
       case 5:
         return <Step6_Foretradare onNext={nextStep} onBack={prevStep} />;
@@ -139,7 +141,15 @@ export default function Wizard() {
           />
         );
       default:
-        return null;
+        // KORRIGERING: Fallback till första steget
+        return (
+            <Step1_Rakenskapsar
+              reportDates={reportDates}
+              setReportDates={setReportDates}
+              onUploadSuccess={handleUploadSuccess}
+              onBack={() => console.log("Gå tillbaka från start")}
+            />
+          );
     }
   };
 
