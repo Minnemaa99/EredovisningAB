@@ -30,3 +30,12 @@ def create_report(db: Session, company_id: int, report_data: schemas.AnnualRepor
     db.commit()
     db.refresh(db_report)
     return db_report
+
+def get_company(db: Session, company_id: int):
+    return db.query(models.Company).filter(models.Company.id == company_id).first()
+
+def get_company_by_org_nr(db: Session, org_nr: str):
+    return db.query(models.Company).filter(models.Company.org_nr == org_nr).first()
+
+def get_annual_report(db: Session, report_id: int):
+    return db.query(models.AnnualReport).filter(models.AnnualReport.id == report_id).first()

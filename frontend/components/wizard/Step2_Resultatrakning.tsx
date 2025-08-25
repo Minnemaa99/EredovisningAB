@@ -1,5 +1,7 @@
 // Step2_Resultatrakning.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from 'react';
+
+// --- Typer och hjälpfunktioner ---
 
 export interface Account {
   account_number: string;
@@ -7,118 +9,191 @@ export interface Account {
   balance: number;
 }
 
-export interface ResultatPost {
-  label: string;
-  accountRanges: [number, number];
-  editable?: boolean;
-}
-
 interface Props {
   accounts: Account[];
-  onNext: (accounts: Account[]) => void;
+  prevAccounts: Account[];
+  onNext: () => void;
   onBack: () => void;
 }
 
-interface YearResult {
-  label: string;
-  value: number;
-}
+const calculateSum = (accountList: Account[], start: number, end: number): number => {
+  if (!accountList) return 0;
+  return accountList
+    .filter(a => {
+      const accNum = parseInt(a.account_number);
+      return accNum >= start && accNum <= end;
+    })
+    .reduce((sum, acc) => sum + acc.balance, 0);
+};
+
+const formatNumber = (num: number) => {
+    if (num === 0) return '0';
+    // I SIE är intäkter negativa och kostnader positiva. Vi vänder på det för visning.
+    const displayNum = num * -1;
+    return Math.round(displayNum).toLocaleString('sv-SE');
+};
+
+// --- Huvudkomponenten ---
 
 const Step2_Resultatrakning: React.FC<Props> = ({
   accounts = [],
+  prevAccounts = [],
   onNext,
   onBack,
 }) => {
-  const [year0, setYear0] = useState<YearResult[]>([]);
-  const [year1, setYear1] = useState<YearResult[]>([]);
+  const [showAllPosts, setShowAllPosts] = useState(false);
 
-  // Definiera poster enligt K2
-  const posts: ResultatPost[] = [
-    { label: "Nettoomsättning", accountRanges: [3000, 3799] },
-    { label: "Förändring av lager", accountRanges: [4900, 4999], editable: true },
-    { label: "Övriga rörelseintäkter", accountRanges: [8000, 8099] },
-    { label: "Råvaror och förnödenheter", accountRanges: [4000, 4099] },
-    { label: "Handelsvaror", accountRanges: [4100, 4199] },
-    { label: "Övriga externa kostnader", accountRanges: [6000, 6999] },
-    { label: "Personalkostnader", accountRanges: [7000, 7099] },
-    { label: "Av- och nedskrivningar", accountRanges: [7800, 7899] },
-    { label: "Övriga rörelsekostnader", accountRanges: [7700, 7799] },
-    { label: "Övriga ränteintäkter", accountRanges: [8300, 8399] },
-    { label: "Räntekostnader", accountRanges: [8400, 8499] },
-  ];
+  const reportData = useMemo(() => {
+    const calculateRow = (start: number, end: number) => ({
+      current: calculateSum(accounts, start, end),
+      previous: calculateSum(prevAccounts, start, end),
+    });
 
-  // Summera per intervall
-  const sum = (range: [number, number]) =>
-    accounts
-      .filter((a) => {
-        const n = parseInt(a.account_number, 10);
-        return n >= range[0] && n <= range[1];
-      })
-      .reduce((t, a) => t + a.balance, 0);
+    // --- RÖRELSEINTÄKTER ---
+    const nettoomsattning = calculateRow(3000, 3799);
+    const forandringLager = calculateRow(3960, 3969);
+    const aktiveratArbete = calculateRow(3970, 3979);
+    const ovrigaRorelseintakter = calculateRow(3800, 3999); // Exkl. 396x, 397x
+    const totalaRorelseintakter = { current: nettoomsattning.current + forandringLager.current + aktiveratArbete.current + ovrigaRorelseintakter.current, previous: nettoomsattning.previous + forandringLager.previous + aktiveratArbete.previous + ovrigaRorelseintakter.previous };
 
-  useEffect(() => {
-    setYear0(posts.map((p) => ({ label: p.label, value: sum(p.accountRanges) })));
-    setYear1(posts.map((p) => ({ label: p.label, value: 0 }))); // ← läs in föregående år från #RES -1 eller separat fil
-  }, [accounts]);
+    // --- RÖRELSEKOSTNADER ---
+    const ravaror = calculateRow(4000, 4599);
+    const handelsvaror = calculateRow(4600, 4999);
+    const ovrigaExternaKostnader = calculateRow(5000, 6999);
+    const personalkostnader = calculateRow(7000, 7699);
+    const avskrivningar = calculateRow(7700, 7899);
+    const nedskrivningarOmsattning = calculateRow(7960, 7969); // Exempelintervall
+    const ovrigaRoresekostnader = calculateRow(7900, 7999); // Exkl. 796x
+    const totalaRoresekostnader = { current: ravaror.current + handelsvaror.current + ovrigaExternaKostnader.current + personalkostnader.current + avskrivningar.current + nedskrivningarOmsattning.current + ovrigaRoresekostnader.current, previous: ravaror.previous + handelsvaror.previous + ovrigaExternaKostnader.previous + personalkostnader.previous + avskrivningar.previous + nedskrivningarOmsattning.previous + ovrigaRoresekostnader.previous };
+    
+    const rorelseresultat = { current: totalaRorelseintakter.current + totalaRoresekostnader.current, previous: totalaRorelseintakter.previous + totalaRoresekostnader.previous };
 
-  // Summering
-  const total = (arr: YearResult[]) => arr.reduce((t, r) => t + r.value, 0);
+    // --- FINANSIELLA POSTER ---
+    const finansiellaIntakter = calculateRow(8000, 8399);
+    const finansiellaKostnader = calculateRow(8400, 8799);
+    const totalaFinansiellaPoster = { current: finansiellaIntakter.current + finansiellaKostnader.current, previous: finansiellaIntakter.previous + finansiellaKostnader.previous };
+    
+    const resultatEfterFinans = { current: rorelseresultat.current + totalaFinansiellaPoster.current, previous: rorelseresultat.previous + totalaFinansiellaPoster.previous };
 
-  // Ändringar
-  const handleChange = (index: number, year: 0 | 1, val: number) => {
-    const arr = year === 0 ? [...year0] : [...year1];
-    arr[index].value = val;
-    year === 0 ? setYear0(arr) : setYear1(arr);
+    // --- BOKSLUTSDISPOSITIONER & SKATT ---
+    const bokslutsdispositioner = calculateRow(8800, 8899);
+    const resultatForeSkatt = { current: resultatEfterFinans.current + bokslutsdispositioner.current, previous: resultatEfterFinans.previous + bokslutsdispositioner.previous };
+    const skatt = calculateRow(8900, 8999);
+    const aretsResultat = { current: resultatForeSkatt.current + skatt.current, previous: resultatForeSkatt.previous + skatt.previous };
+
+    return [
+      { label: 'Rörelseintäkter, lagerförändringar m.m.', type: 'main', values: totalaRorelseintakter, show: 'always' },
+      { label: 'Nettoomsättning', type: 'sub', values: nettoomsattning, show: 'expanded' },
+      { label: 'Förändring av lager av produkter i arbete...', type: 'sub', values: forandringLager, show: 'expanded' },
+      { label: 'Aktiverat arbete för egen räkning', type: 'sub', values: aktiveratArbete, show: 'expanded' },
+      { label: 'Övriga rörelseintäkter', type: 'sub', values: ovrigaRorelseintakter, show: 'expanded' },
+      
+      { label: 'Rörelsekostnader', type: 'main', values: totalaRoresekostnader, show: 'always' },
+      { label: 'Råvaror och förnödenheter', type: 'sub', values: ravaror, show: 'expanded' },
+      { label: 'Handelsvaror', type: 'sub', values: handelsvaror, show: 'expanded' },
+      { label: 'Övriga externa kostnader', type: 'sub', values: ovrigaExternaKostnader, show: 'expanded' },
+      { label: 'Personalkostnader', type: 'sub', values: personalkostnader, show: 'expanded' },
+      { label: 'Av- och nedskrivningar av materiella och immateriella anl.tillg.', type: 'sub', values: avskrivningar, show: 'expanded' },
+      { label: 'Nedskrivningar av omsättningstillgångar...', type: 'sub', values: nedskrivningarOmsattning, show: 'expanded' },
+      { label: 'Övriga rörelsekostnader', type: 'sub', values: ovrigaRoresekostnader, show: 'expanded' },
+      
+      { label: 'Rörelseresultat', type: 'total', values: rorelseresultat, show: 'always' },
+      
+      { label: 'Finansiella poster', type: 'main', values: totalaFinansiellaPoster, show: 'always' },
+      { label: 'Resultat från andelar i koncernföretag', type: 'sub', values: calculateRow(8010, 8019), show: 'expanded' },
+      { label: 'Resultat från andelar i intresseföretag...', type: 'sub', values: calculateRow(8020, 8029), show: 'expanded' },
+      { label: 'Resultat från övriga finansiella anl.tillg.', type: 'sub', values: calculateRow(8000, 8199), show: 'expanded' },
+      { label: 'Övriga ränteintäkter och liknande resultatposter', type: 'sub', values: calculateRow(8300, 8399), show: 'expanded' },
+      { label: 'Nedskrivningar av finansiella anl.tillg...', type: 'sub', values: calculateRow(8200, 8299), show: 'expanded' },
+      { label: 'Räntekostnader och liknande resultatposter', type: 'sub', values: calculateRow(8400, 8499), show: 'expanded' },
+      
+      { label: 'Resultat efter finansiella poster', type: 'total', values: resultatEfterFinans, show: 'always' },
+      
+      { label: 'Bokslutsdispositioner', type: 'main', values: bokslutsdispositioner, show: 'always' },
+      { label: 'Erhållna koncernbidrag', type: 'sub', values: calculateRow(8810, 8819), show: 'expanded' },
+      { label: 'Lämnade koncernbidrag', type: 'sub', values: calculateRow(8820, 8829), show: 'expanded' },
+      { label: 'Förändring av periodiseringsfonder', type: 'sub', values: calculateRow(8830, 8849), show: 'expanded' },
+      { label: 'Förändring av överavskrivningar', type: 'sub', values: calculateRow(8850, 8859), show: 'expanded' },
+      { label: 'Övriga bokslutsdispositioner', type: 'sub', values: calculateRow(8860, 8899), show: 'expanded' },
+
+      { label: 'Resultat före skatt', type: 'total', values: resultatForeSkatt, show: 'always' },
+      
+      { label: 'Skatt på årets resultat', type: 'main', values: skatt, show: 'always' },
+      { label: 'Övriga skatter', type: 'sub', values: calculateRow(8920, 8999), show: 'expanded' },
+
+      { label: 'Årets resultat', type: 'grand-total', values: aretsResultat, show: 'always' },
+    ];
+  }, [accounts, prevAccounts]);
+
+  const getRowStyle = (type: string) => {
+    switch (type) {
+      case 'main': return 'font-semibold text-gray-700';
+      case 'sub': return 'pl-8 text-gray-600';
+      case 'total': return 'font-bold bg-gray-50';
+      case 'grand-total': return 'font-extrabold text-lg border-t-2 border-black';
+      default: return '';
+    }
   };
-
-  const handleNext = () => {
-    // Här kan du spara year0 och year1 till nästa steg
-    onNext(accounts); // eller skicka summerade värden
-  };
-
-  const renderYear = (year: YearResult[], label: string, setter: React.Dispatch<React.SetStateAction<YearResult[]>>) => (
-    <div className="mb-8">
-      <h3 className="text-lg font-semibold mb-2">{label}</h3>
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="py-2 px-4 text-left">Post</th>
-            <th className="py-2 px-4 text-right">Belopp (kr)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {year.map((row, i) => (
-            <tr key={row.label} className="border-b">
-              <td className="py-2 px-4">{row.label}</td>
-              <td className="py-2 px-4 text-right">
-                <input
-                  type="number"
-                  value={row.value}
-                  onChange={(e) => handleChange(i, label.includes("2023") ? 0 : 1, parseFloat(e.target.value) || 0)}
-                  className="w-32 border rounded px-2 text-right"
-                />
-              </td>
-            </tr>
-          ))}
-          <tr className="font-bold bg-gray-50">
-            <td>Resultat före skatt</td>
-            <td className="text-right">{total(year).toLocaleString("sv-SE")} kr</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">Resultaträkning (K2)</h2>
+    <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl">
+      <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Resultaträkning</h2>
+      <p className="text-center text-gray-500 mb-6">En sammanställning av företagets intäkter och kostnader.</p>
+      
+      <div className="flex justify-between items-center mb-4 p-2 rounded-lg bg-gray-50">
+        <div className="flex items-center">
+          <label htmlFor="showAllPostsToggle" className="mr-3 text-sm font-medium text-gray-700">Visa alla poster</label>
+          <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+            <input 
+              type="checkbox" 
+              name="showAllPostsToggle" 
+              id="showAllPostsToggle" 
+              checked={showAllPosts}
+              onChange={() => setShowAllPosts(!showAllPosts)}
+              className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:bg-blue-600"
+            />
+            <label htmlFor="showAllPostsToggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+          </div>
+        </div>
+        <div className="text-right text-xs text-gray-500 font-mono">
+            <div>Aktuellt år</div>
+            <div>Föregående år</div>
+        </div>
+      </div>
 
-      {renderYear(year0, "2023-10-01 – 2024-09-30", setYear0)}
-      {renderYear(year1, "2022-10-01 – 2023-09-30", setYear1)}
+      <div className="overflow-x-auto">
+        <table className="min-w-full">
+          <thead>
+            <tr>
+              <th className="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beskrivning</th>
+              <th className="py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">SEK</th>
+              <th className="py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">SEK</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reportData.map((row, index) => {
+              // Dölj raden om den är en detaljrad OCH "Visa alla poster" är avstängd
+              if (row.show === 'expanded' && !showAllPosts) return null;
 
-      <div className="flex justify-between mt-8">
-        <button onClick={onBack} className="bg-gray-500 text-white px-6 py-2 rounded">Tillbaka</button>
-        <button onClick={handleNext} className="bg-blue-500 text-white px-6 py-2 rounded">Nästa (Balansräkning)</button>
+              return (
+                <tr key={index} className={`${getRowStyle(row.type)} border-b border-gray-100 last:border-b-0`}>
+                  <td className="px-2 py-3 whitespace-nowrap">{row.label}</td>
+                  <td className="px-2 py-3 whitespace-nowrap text-right font-mono">{row.values ? formatNumber(row.values.current) : ''}</td>
+                  <td className="px-2 py-3 whitespace-nowrap text-right font-mono text-gray-500">{row.values ? formatNumber(row.values.previous) : ''}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-between mt-10">
+        <button onClick={onBack} className="px-6 py-2 border-2 border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 hover:border-gray-400 transition-all duration-200">
+          Tillbaka
+        </button>
+        <button onClick={onNext} className="px-8 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+          Spara & Gå vidare
+        </button>
       </div>
     </div>
   );
