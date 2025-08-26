@@ -1,5 +1,6 @@
 // Step2_Resultatrakning.tsx
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
+import { EditableRow } from './EditableRow'; // Importera den nya komponenten
 
 // --- Typer och hjälpfunktioner ---
 const formatNumber = (num: number) => {
@@ -30,19 +31,20 @@ const ReportRow = ({ label, values, type, show }) => {
 };
 
 // --- Huvudkomponenten ---
-const Step2_Resultatrakning = ({ k2Results, onNext, onBack }) => {
+const Step2_Resultatrakning = ({ k2Results, onNext, onBack, onValueChange }) => { // Lägg till onValueChange
   const [showAllPosts, setShowAllPosts] = useState(false);
   const { income_statement, profit_loss } = k2Results;
 
+  // Lägg till accountRange för varje rad som ska vara redigerbar
   const reportData = [
-      { label: 'Rörelsens intäkter', type: 'main', values: income_statement.net_sales, show: 'always' },
-      { label: 'Nettoomsättning', type: 'sub', values: income_statement.net_sales, show: 'expanded' },
+      { label: 'Rörelsens intäkter', type: 'main', values: income_statement.net_sales, show: 'always', accountRange: { start: 3000, end: 3799 } },
+      { label: 'Nettoomsättning', type: 'sub', values: income_statement.net_sales, show: 'expanded', accountRange: { start: 3000, end: 3799 } },
       
       { label: 'Rörelsekostnader', type: 'main', values: income_statement.total_operating_expenses, show: 'always' },
-      { label: 'Handelsvaror', type: 'sub', values: income_statement.cost_of_goods, show: 'expanded' },
-      { label: 'Övriga externa kostnader', type: 'sub', values: income_statement.other_external_costs, show: 'expanded' },
-      { label: 'Personalkostnader', type: 'sub', values: income_statement.personnel_costs, show: 'expanded' },
-      { label: 'Av- och nedskrivningar', type: 'sub', values: income_statement.depreciation, show: 'expanded' },
+      { label: 'Handelsvaror', type: 'sub', values: income_statement.cost_of_goods, show: 'expanded', accountRange: { start: 4000, end: 4999 } },
+      { label: 'Övriga externa kostnader', type: 'sub', values: income_statement.other_external_costs, show: 'expanded', accountRange: { start: 5000, end: 6999 } },
+      { label: 'Personalkostnader', type: 'sub', values: income_statement.personnel_costs, show: 'expanded', accountRange: { start: 7000, end: 7699 } },
+      { label: 'Av- och nedskrivningar', type: 'sub', values: income_statement.depreciation, show: 'expanded', accountRange: { start: 7700, end: 7899 } },
       
       { label: 'Rörelseresultat', type: 'total', values: income_statement.operating_profit, show: 'always' },
       
@@ -50,7 +52,7 @@ const Step2_Resultatrakning = ({ k2Results, onNext, onBack }) => {
       
       { label: 'Resultat efter finansiella poster', type: 'total', values: income_statement.profit_after_financial_items, show: 'always' },
       
-      { label: 'Skatt på årets resultat', type: 'main', values: income_statement.tax, show: 'always' },
+      { label: 'Skatt på årets resultat', type: 'main', values: income_statement.tax, show: 'always', accountRange: { start: 8900, end: 8999 } },
 
       { label: 'Årets resultat', type: 'grand-total', values: profit_loss, show: 'always' },
   ];
@@ -58,7 +60,7 @@ const Step2_Resultatrakning = ({ k2Results, onNext, onBack }) => {
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl">
       <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Resultaträkning</h2>
-      <p className="text-center text-gray-500 mb-6">En sammanställning av företagets intäkter och kostnader.</p>
+      <p className="text-center text-gray-500 mb-6">Klicka på en siffra i kolumnen "Aktuellt år" för att redigera.</p>
       
       <div className="flex justify-between items-center mb-4 p-2 rounded-lg bg-gray-50">
         <div className="flex items-center">
@@ -88,12 +90,14 @@ const Step2_Resultatrakning = ({ k2Results, onNext, onBack }) => {
           </thead>
           <tbody>
             {reportData.map((row, index) => (
-              <ReportRow 
+              <EditableRow 
                 key={index}
                 label={row.label}
                 values={row.values}
                 type={row.type}
                 show={row.show === 'always' || showAllPosts}
+                accountRange={row.accountRange}
+                onValueChange={onValueChange}
               />
             ))}
           </tbody>

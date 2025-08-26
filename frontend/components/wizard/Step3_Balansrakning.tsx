@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FiAlertTriangle } from 'react-icons/fi';
+import { EditableRow } from './EditableRow'; // Importera den nya komponenten
 
 // --- Typer och hjälpfunktioner ---
 const formatNumber = (num: number) => {
@@ -7,58 +8,36 @@ const formatNumber = (num: number) => {
     return Math.round(num).toLocaleString('sv-SE');
 };
 
-const ReportRow = ({ label, values, type, show }) => {
-    if (!show) return null;
-
-    const getRowStyle = (type: string) => {
-        switch (type) {
-          case 'header': return 'font-bold text-lg pt-6 text-gray-800';
-          case 'main': return 'font-semibold text-gray-700';
-          case 'sub': return 'pl-8 text-gray-600';
-          case 'grand-total': return 'font-extrabold text-lg border-t-2 border-b-4 border-black bg-gray-50';
-          default: return '';
-        }
-    };
-
-    return (
-        <tr className={`${getRowStyle(type)} border-b border-gray-100 last:border-b-0`}>
-            <td className="px-2 py-3 whitespace-nowrap">{label}</td>
-            <td className="px-2 py-3 whitespace-nowrap text-right font-mono">{values ? formatNumber(values.current) : ''}</td>
-            <td className="px-2 py-3 whitespace-nowrap text-right font-mono text-gray-500">{values ? formatNumber(values.previous) : ''}</td>
-        </tr>
-    );
-};
-
 // --- Huvudkomponenten ---
-const Step3_Balansrakning = ({ k2Results, onNext, onBack }) => {
+const Step3_Balansrakning = ({ k2Results, onNext, onBack, onValueChange }) => { // Lägg till onValueChange
   const [showAllPosts, setShowAllPosts] = useState(false);
   
   // Plocka ut den färdigberäknade datan från props
   const { balance_sheet, total_assets, total_equity, total_equity_and_liabilities, balance_check } = k2Results;
 
-  // Definiera raderna statiskt med datan från k2Results
+  // Definiera raderna statiskt med accountRange för redigering
   const reportData = {
       rows: [
         { label: 'TILLGÅNGAR', type: 'header', show: 'always' },
         { label: 'Anläggningstillgångar', type: 'main', values: balance_sheet.total_fixed_assets, show: 'always' },
-        { label: 'Materiella anläggningstillgångar', type: 'sub', values: balance_sheet.fixed_assets_tangible, show: 'expanded' },
+        { label: 'Materiella anläggningstillgångar', type: 'sub', values: balance_sheet.fixed_assets_tangible, show: 'expanded', accountRange: { start: 1100, end: 1299 } },
         
         { label: 'Omsättningstillgångar', type: 'main', values: balance_sheet.total_current_assets, show: 'always' },
-        { label: 'Varulager m.m.', type: 'sub', values: balance_sheet.inventory, show: 'expanded' },
-        { label: 'Kortfristiga fordringar', type: 'sub', values: balance_sheet.current_receivables, show: 'expanded' },
-        { label: 'Kassa och bank', type: 'sub', values: balance_sheet.cash_and_bank, show: 'expanded' },
+        { label: 'Varulager m.m.', type: 'sub', values: balance_sheet.inventory, show: 'expanded', accountRange: { start: 1400, end: 1499 } },
+        { label: 'Kortfristiga fordringar', type: 'sub', values: balance_sheet.current_receivables, show: 'expanded', accountRange: { start: 1500, end: 1799 } },
+        { label: 'Kassa och bank', type: 'sub', values: balance_sheet.cash_and_bank, show: 'expanded', accountRange: { start: 1900, end: 1999 } },
         
         { label: 'SUMMA TILLGÅNGAR', type: 'grand-total', values: total_assets, show: 'always' },
         
         { label: 'EGET KAPITAL OCH SKULDER', type: 'header', show: 'always' },
         { label: 'Eget kapital', type: 'main', values: total_equity, show: 'always' },
-        { label: 'Bundet eget kapital', type: 'sub', values: balance_sheet.restricted_equity, show: 'expanded' },
+        { label: 'Bundet eget kapital', type: 'sub', values: balance_sheet.restricted_equity, show: 'expanded', accountRange: { start: 2000, end: 2089 } },
         
-        { label: 'Obeskattade reserver', type: 'main', values: balance_sheet.untaxed_reserves, show: 'always' },
+        { label: 'Obeskattade reserver', type: 'main', values: balance_sheet.untaxed_reserves, show: 'always', accountRange: { start: 2100, end: 2199 } },
         
-        { label: 'Långfristiga skulder', type: 'main', values: balance_sheet.long_term_liabilities, show: 'always' },
+        { label: 'Långfristiga skulder', type: 'main', values: balance_sheet.long_term_liabilities, show: 'always', accountRange: { start: 2300, end: 2399 } },
         
-        { label: 'Kortfristiga skulder', type: 'main', values: balance_sheet.current_liabilities, show: 'always' },
+        { label: 'Kortfristiga skulder', type: 'main', values: balance_sheet.current_liabilities, show: 'always', accountRange: { start: 2400, end: 2999 } },
         
         { label: 'SUMMA EGET KAPITAL OCH SKULDER', type: 'grand-total', values: total_equity_and_liabilities, show: 'always' },
       ],
@@ -68,7 +47,7 @@ const Step3_Balansrakning = ({ k2Results, onNext, onBack }) => {
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl">
       <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Balansräkning</h2>
-      <p className="text-center text-gray-500 mb-6">En ögonblicksbild av företagets finansiella ställning.</p>
+      <p className="text-center text-gray-500 mb-6">Klicka på en siffra i kolumnen "Aktuellt år" för att redigera.</p>
       
       <div className="flex justify-between items-center mb-4 p-2 rounded-lg bg-gray-50">
         <div className="flex items-center">
@@ -85,10 +64,6 @@ const Step3_Balansrakning = ({ k2Results, onNext, onBack }) => {
             <label htmlFor="showAllPostsToggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
           </div>
         </div>
-        <div className="text-right text-xs text-gray-500 font-mono">
-            <div>Aktuellt år</div>
-            <div>Föregående år</div>
-        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -102,12 +77,14 @@ const Step3_Balansrakning = ({ k2Results, onNext, onBack }) => {
           </thead>
           <tbody>
             {reportData.rows.map((row, index) => (
-              <ReportRow 
+              <EditableRow 
                 key={index}
                 label={row.label}
                 values={row.values}
                 type={row.type}
                 show={row.show === 'always' || showAllPosts}
+                accountRange={row.accountRange}
+                onValueChange={onValueChange}
               />
             ))}
           </tbody>
