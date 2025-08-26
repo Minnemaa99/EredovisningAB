@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, File, UploadFile
+from fastapi import FastAPI, Depends, HTTPException, File, UploadFile, Response
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -119,7 +119,7 @@ def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas
 # --- SLUT PÅ ERSÄTTNING ---
 
 @app.post("/api/annual-reports/upload-sie", response_model=schemas.SieParseResult)
-async def parse_sie_file(file: UploadFile = File(...)):
+async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict = Depends(load_chart_of_accounts)):
     try:
         contents_bytes = await file.read()
         try:
@@ -131,7 +131,6 @@ async def parse_sie_file(file: UploadFile = File(...)):
         parser.parse()
         sie_data = parser.result
         
-        chart_of_accounts = load_chart_of_accounts()
         parsed_data = _parse_sie_to_details(sie_data, chart_of_accounts)
         return parsed_data
     except Exception as e:
@@ -141,35 +140,47 @@ async def parse_sie_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Internt serverfel i parse_sie_file: {str(e)}")
 
 
-# --- LÄGG TILL DENNA NYA ENDPOINT ---
+# --- KONTROLLERA OCH UPPDATERA DENNA ENDPOINT ---
 @app.post("/api/annual-reports/preview-pdf")
-async def preview_annual_report(report_data: schemas.DetailedReportPayload):
+async def preview_annual_report_from_details(report_data: schemas.DetailedReportPayload):
     """
-    Genererar en förhandsgranskning av årsredovisningen med vattenstämpel.
+    Genererar en PDF-förhandsgranskning direkt från detaljerad data
+    utan att spara den i databasen.
     """
     try:
-        accounts_data = [acc.model_dump() for acc in report_data.accounts]
-        representatives_data = [rep.model_dump() for rep in report_data.representatives]
-        k2_results = k2_calculator.calculate_k2_values(accounts_data)
+        # Skapa ett "falskt" rapportobjekt som liknar databasmodellen
+        # så att pdf_generator kan använda det.
+        class FakeCompany:
+            def __init__(self, name, org_nr):
+                self.name = name
+                self.org_nr = org_nr
 
-        pdf_buffer = pdf_generator.create_annual_report_pdf(
-            company_name=report_data.company_name, org_nr=report_data.org_nr,
-            start_date=report_data.start_date, end_date=report_data.end_date,
-            forvaltningsberattelse=report_data.forvaltningsberattelse,
-            signature_city=report_data.signature_city, signature_date=report_data.signature_date,
-            representatives_data=representatives_data, k2_results=k2_results,
-            is_preview=True  # Sätter flaggan för vattenstämpel
-        )
-        
-        return FileResponse(
-            BytesIO(pdf_buffer.getvalue()),
-            media_type='application/pdf',
-            filename="utkast_arsredovisning.pdf"
-        )
+        class FakeReport:
+            def __init__(self, data):
+                self.company = FakeCompany(data.company_name, data.org_nr)
+                self.start_date = data.start_date
+                self.end_date = data.end_date
+                # VIKTIGT: Se till att accounts_data är en dict, inte en Pydantic-modell
+                self.accounts_data = data.accounts_data.model_dump() 
+                self.forvaltningsberattelse = data.forvaltningsberattelse
+                self.signature_city = data.signature_city
+                self.signature_date = data.signature_date
+                # VIKTIGT: Konvertera representanter till en lista av dicts
+                self.representatives = [rep.model_dump() for rep in data.representatives]
+
+        fake_report_obj = FakeReport(report_data)
+
+        pdf_bytes = pdf_generator.create_annual_report_pdf(fake_report_obj, is_preview=True)
+        return Response(content=pdf_bytes, media_type="application/pdf")
     except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Kunde inte generera förhandsgranskning: {str(e)}")
-# --- SLUT PÅ NY ENDPOINT ---
+        # Logga felet för felsökning
+        print(f"Error generating PDF preview from details: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Kunde inte generera förhandsgranskning: {e}"
+        )
+
+# --- SLUT PÅ UPPDATERING ---
 
 
 @app.post("/api/annual-reports/generate-pdf")
@@ -227,7 +238,7 @@ async def save_report_from_details(report_data: schemas.DetailedReportPayload, d
         raise HTTPException(status_code=500, detail=f"Kunde inte spara rapporten: {str(e)}")
 
 
-# --- LÄGG TILL DENNA HELT NYA ENDPOINT ---
+# --- ERSÄTT DENNA HELA ENDPOINT ---
 @app.get("/api/annual-reports/{report_id}/preview")
 async def preview_saved_report(report_id: int, db: Session = Depends(get_db)):
     """
@@ -239,36 +250,16 @@ async def preview_saved_report(report_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Rapporten kunde inte hittas.")
 
     try:
-        # Konvertera JSON-data från databasen tillbaka till listor av dicts
-        accounts_data = json.loads(db_report.accounts_data)
-        prev_accounts_data = json.loads(db_report.prev_accounts_data)
-        representatives_data = json.loads(db_report.representatives_data)
-
-        # Beräkna K2-värden
-        k2_results = k2_calculator.calculate_k2_values(accounts_data)
-
-        # Skapa PDF med preview-flaggan satt till True
-        pdf_buffer = pdf_generator.create_annual_report_pdf(
-            company_name=db_report.company.name,
-            org_nr=db_report.company.org_nr,
-            start_date=db_report.start_date,
-            end_date=db_report.end_date,
-            forvaltningsberattelse=db_report.forvaltningsberattelse,
-            signature_city=db_report.signature_city,
-            signature_date=db_report.signature_date,
-            representatives_data=representatives_data,
-            k2_results=k2_results,
-            is_preview=True
-        )
+        # Anropa pdf_generator med hela databasobjektet.
+        # pdf_generator kommer själv att hantera kalkylering och datahantering.
+        pdf_bytes = pdf_generator.create_annual_report_pdf(db_report, is_preview=True)
         
-        return FileResponse(
-            BytesIO(pdf_buffer.getvalue()),
-            media_type='application/pdf',
-            filename=f"utkast_{db_report.company.org_nr}.pdf"
-        )
+        # FastAPI 2024: Använd Response direkt istället för FileResponse med BytesIO
+        return Response(content=pdf_bytes, media_type="application/pdf")
+
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Kunde inte generera förhandsgranskning: {str(e)}")
-# --- SLUT PÅ NY ENDPOINT ---
+# --- SLUT PÅ ERSÄTTNING ---
 
 
