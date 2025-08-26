@@ -24,10 +24,14 @@ export default function Wizard() {
 
   const [stepIndex, setStepIndex] = useState(0);
   
+  // --- NY STATE-HANTERING ---
   const [companyInfo, setCompanyInfo] = useState({ name: "", org_nr: "" });
   const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
-  const [detailedAccounts, setDetailedAccounts] = useState([]);
-  const [prevAccounts, setPrevAccounts] = useState([]);
+  // Rådata för konton, detta är vår "source of truth" för att kunna göra omberäkningar
+  const [accountsData, setAccountsData] = useState({ current_year: [], previous_year: [] });
+  // Det färdigberäknade resultatet från backend
+  const [calculationResult, setCalculationResult] = useState(null);
+
   const [forvaltningsberattelse, setForvaltningsberattelse] = useState("");
   const [representatives, setRepresentatives] = useState([]);
   const [signatureInfo, setSignatureInfo] = useState({ city: "", date: new Date().toISOString().split('T')[0] });
@@ -40,13 +44,12 @@ export default function Wizard() {
   const nextStep = () => { if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1); };
   const prevStep = () => { if (stepIndex > 0) setStepIndex(stepIndex - 1); };
 
-  // --- FÖRENKLAD FUNKTION ---
-  const handleUploadSuccess = (sieParseResult) => {
-    console.log("API Response Received in Wizard:", sieParseResult);
-    setCompanyInfo({ name: sieParseResult.company_name, org_nr: sieParseResult.org_nr });
-    setReportDates({ start_date: sieParseResult.start_date, end_date: sieParseResult.end_date });
-    setDetailedAccounts(sieParseResult.accounts || []);
-    setPrevAccounts(sieParseResult.prev_accounts || []);
+  const handleUploadSuccess = (fullPayload) => {
+    console.log("Full Payload Received in Wizard:", fullPayload);
+    setCompanyInfo(fullPayload.company_info);
+    setReportDates(fullPayload.report_dates);
+    setAccountsData(fullPayload.accounts_data);
+    setCalculationResult(fullPayload.k2_results);
     
     nextStep();
   };
@@ -68,10 +71,7 @@ export default function Wizard() {
       org_nr: companyInfo.org_nr,
       start_date: reportDates.start_date,
       end_date: reportDates.end_date,
-      accounts_data: {
-        current_year: detailedAccounts,
-        previous_year: prevAccounts,
-      },
+      accounts_data: accountsData, // Skicka den sparade rådatan
       forvaltningsberattelse: forvaltningsberattelse,
       signature_city: signatureInfo.city,
       signature_date: signatureInfo.date,
@@ -99,6 +99,11 @@ export default function Wizard() {
   };
 
   const renderStep = () => {
+    // Säkerställ att vi har data innan vi renderar stegen som behöver den
+    if (stepIndex > 0 && !calculationResult) {
+        return <div>Laddar data...</div>;
+    }
+
     switch (stepIndex) {
       case 0:
         return (
@@ -112,8 +117,7 @@ export default function Wizard() {
       case 1:
         return (
           <Step2_Resultatrakning
-            accounts={detailedAccounts}
-            prevAccounts={prevAccounts}
+            k2Results={calculationResult}
             onNext={nextStep}
             onBack={prevStep}
           />
@@ -121,8 +125,7 @@ export default function Wizard() {
       case 2:
         return (
           <Step3_Balansrakning
-            accounts={detailedAccounts}
-            prevAccounts={prevAccounts}
+            k2Results={calculationResult}
             onNext={nextStep}
             onBack={prevStep}
           />
@@ -130,19 +133,16 @@ export default function Wizard() {
       case 3:
         return (
           <Step4_Noter
-            accounts={detailedAccounts}
-            prevAccounts={prevAccounts}
+            k2Results={calculationResult} // Skicka färdigberäknad data
             onBack={prevStep}
             onNext={nextStep}
           />
         );
       case 4:
-        // --- KORRIGERADE PROPS FÖR ATT MATCHA DIN Step5 ---
         return (
           <Step5_Forvaltningsberattelse
-            accounts={detailedAccounts}
-            prevAccounts={prevAccounts}
-            onNext={nextStep}
+            k2Results={calculationResult} // Skicka färdigberäknad data
+            onSave={handleForvaltningsberattelseSave} // Behöver en onSave-prop
             onBack={prevStep}
           />
         );

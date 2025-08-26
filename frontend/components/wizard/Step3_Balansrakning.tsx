@@ -1,147 +1,69 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { FiAlertTriangle } from 'react-icons/fi';
 
 // --- Typer och hjälpfunktioner ---
-
-export interface Account {
-  account_number: string;
-  account_name: string;
-  balance: number;
-}
-
-interface Props {
-  accounts: Account[];
-  prevAccounts: Account[];
-  onNext: () => void;
-  onBack: () => void;
-}
-
-const calculateSum = (accountList: Account[], start: number, end: number): number => {
-  if (!accountList) return 0;
-  return accountList
-    .filter(a => {
-      const accNum = parseInt(a.account_number);
-      return accNum >= start && accNum <= end;
-    })
-    .reduce((sum, acc) => sum + acc.balance, 0);
-};
-
 const formatNumber = (num: number) => {
     if (num === 0) return '0';
     return Math.round(num).toLocaleString('sv-SE');
 };
 
-// --- Huvudkomponenten ---
+const ReportRow = ({ label, values, type, show }) => {
+    if (!show) return null;
 
-const Step3_Balansrakning: React.FC<Props> = ({
-  accounts = [],
-  prevAccounts = [],
-  onNext,
-  onBack,
-}) => {
-  const [showAllPosts, setShowAllPosts] = useState(false);
-
-  const reportData = useMemo(() => {
-    const calculateRow = (start: number, end: number) => ({
-      current: calculateSum(accounts, start, end),
-      previous: calculateSum(prevAccounts, start, end),
-    });
-
-    // --- TILLGÅNGAR ---
-    const anlaggningstillgangar = calculateRow(1000, 1399);
-    const materiellaAnl = calculateRow(1100, 1299);
-    const finansiellaAnl = calculateRow(1300, 1399);
-    const omsattningstillgangar = calculateRow(1400, 1999);
-    const varulager = calculateRow(1400, 1499);
-    const kortfristigaFordringar = calculateRow(1500, 1799);
-    const kassaBank = calculateRow(1900, 1999);
-    const summaTillgangar = { current: anlaggningstillgangar.current + omsattningstillgangar.current, previous: anlaggningstillgangar.previous + omsattningstillgangar.previous };
-
-    // --- EGET KAPITAL OCH SKULDER ---
-    const egetKapital = calculateRow(2000, 2099);
-    const bundetEK = calculateRow(2080, 2089);
-    const frittEK = calculateRow(2090, 2099);
-    const obeskattadeReserver = calculateRow(2100, 2199);
-    const avsattningar = calculateRow(2200, 2299);
-    const langsiktigaSkulder = calculateRow(2300, 2399);
-    const kortfristigaSkulder = calculateRow(2400, 2999);
-    const summaEKochSkulder = { current: egetKapital.current + obeskattadeReserver.current + avsattningar.current + langsiktigaSkulder.current + kortfristigaSkulder.current, previous: egetKapital.previous + obeskattadeReserver.previous + avsattningar.previous + langsiktigaSkulder.previous + kortfristigaSkulder.previous };
-    
-    const balanceCheck = { current: Math.round(summaTillgangar.current - summaEKochSkulder.current), previous: Math.round(summaTillgangar.previous - summaEKochSkulder.previous) };
-
-    return {
-      rows: [
-        { label: 'TILLGÅNGAR', type: 'header' },
-        { label: 'Anläggningstillgångar', type: 'main', values: anlaggningstillgangar, show: 'always' },
-        { label: 'Materiella anläggningstillgångar', type: 'sub', values: materiellaAnl, show: 'expanded' },
-        { label: 'Byggnader och mark', type: 'sub-sub', values: calculateRow(1100, 1129), show: 'expanded' },
-        { label: 'Maskiner och andra tekniska anläggningar', type: 'sub-sub', values: calculateRow(1200, 1219), show: 'expanded' },
-        { label: 'Inventarier, verktyg och installationer', type: 'sub-sub', values: calculateRow(1220, 1229), show: 'expanded' },
-        { label: 'Finansiella anläggningstillgångar', type: 'sub', values: finansiellaAnl, show: 'expanded' },
-        { label: 'Andelar i koncernföretag', type: 'sub-sub', values: calculateRow(1310, 1319), show: 'expanded' },
-        { label: 'Lån till delägare eller närstående', type: 'sub-sub', values: calculateRow(1383, 1383), show: 'expanded' },
-        { label: 'Andra långfristiga fordringar', type: 'sub-sub', values: calculateRow(1300, 1389), show: 'expanded' },
-        
-        { label: 'Omsättningstillgångar', type: 'main', values: omsattningstillgangar, show: 'always' },
-        { label: 'Varulager m.m.', type: 'sub', values: varulager, show: 'expanded' },
-        { label: 'Råvaror och förnödenheter', type: 'sub-sub', values: calculateRow(1410, 1419), show: 'expanded' },
-        { label: 'Varor under tillverkning', type: 'sub-sub', values: calculateRow(1420, 1439), show: 'expanded' },
-        { label: 'Färdiga varor och handelsvaror', type: 'sub-sub', values: calculateRow(1440, 1459), show: 'expanded' },
-        { label: 'Pågående arbete för annans räkning', type: 'sub-sub', values: calculateRow(1470, 1479), show: 'expanded' },
-        { label: 'Förskott till leverantörer', type: 'sub-sub', values: calculateRow(1480, 1489), show: 'expanded' },
-        { label: 'Kortfristiga fordringar', type: 'sub', values: kortfristigaFordringar, show: 'expanded' },
-        { label: 'Kundfordringar', type: 'sub-sub', values: calculateRow(1510, 1519), show: 'expanded' },
-        { label: 'Fordringar hos koncernföretag', type: 'sub-sub', values: calculateRow(1530, 1539), show: 'expanded' },
-        { label: 'Övriga fordringar', type: 'sub-sub', values: calculateRow(1600, 1699), show: 'expanded' },
-        { label: 'Förutbetalda kostnader och upplupna intäkter', type: 'sub-sub', values: calculateRow(1700, 1799), show: 'expanded' },
-        { label: 'Kassa och bank', type: 'sub', values: kassaBank, show: 'expanded' },
-        { label: 'Kassa och bank', type: 'sub-sub', values: calculateRow(1900, 1999), show: 'expanded' },
-        { label: 'SUMMA TILLGÅNGAR', type: 'grand-total', values: summaTillgangar, show: 'always' },
-        
-        { label: 'EGET KAPITAL OCH SKULDER', type: 'header' },
-        { label: 'Eget kapital', type: 'main', values: egetKapital, show: 'always' },
-        { label: 'Bundet eget kapital', type: 'sub', values: bundetEK, show: 'expanded' },
-        { label: 'Aktiekapital', type: 'sub-sub', values: calculateRow(2081, 2081), show: 'expanded' },
-        { label: 'Reservfond', type: 'sub-sub', values: calculateRow(2085, 2085), show: 'expanded' },
-        { label: 'Fritt eget kapital', type: 'sub', values: frittEK, show: 'expanded' },
-        { label: 'Balanserat resultat', type: 'sub-sub', values: calculateRow(2091, 2098), show: 'expanded' },
-        { label: 'Årets resultat', type: 'sub-sub', values: calculateRow(2099, 2099), show: 'expanded' },
-        
-        { label: 'Obeskattade reserver', type: 'main', values: obeskattadeReserver, show: 'always' },
-        { label: 'Periodiseringsfonder', type: 'sub', values: calculateRow(2110, 2149), show: 'expanded' },
-        { label: 'Ackumulerade överavskrivningar', type: 'sub', values: calculateRow(2150, 2159), show: 'expanded' },
-        
-        { label: 'Avsättningar', type: 'main', values: avsattningar, show: 'always' },
-        { label: 'Avsättningar för pensioner', type: 'sub', values: calculateRow(2210, 2239), show: 'expanded' },
-        { label: 'Övriga avsättningar', type: 'sub', values: calculateRow(2240, 2299), show: 'expanded' },
-        
-        { label: 'Långfristiga skulder', type: 'main', values: langsiktigaSkulder, show: 'always' },
-        { label: 'Checkräkningskredit', type: 'sub', values: calculateRow(2330, 2339), show: 'expanded' },
-        { label: 'Skulder till kreditinstitut', type: 'sub', values: calculateRow(2350, 2359), show: 'expanded' },
-        { label: 'Övriga skulder', type: 'sub', values: calculateRow(2390, 2399), show: 'expanded' },
-        
-        { label: 'Kortfristiga skulder', type: 'main', values: kortfristigaSkulder, show: 'always' },
-        { label: 'Leverantörsskulder', type: 'sub', values: calculateRow(2440, 2449), show: 'expanded' },
-        { label: 'Skulder till koncernföretag', type: 'sub', values: calculateRow(2460, 2469), show: 'expanded' },
-        { label: 'Skatteskulder', type: 'sub', values: calculateRow(2510, 2519), show: 'expanded' },
-        { label: 'Övriga skulder', type: 'sub', values: calculateRow(2600, 2899), show: 'expanded' },
-        { label: 'Upplupna kostnader och förutbetalda intäkter', type: 'sub', values: calculateRow(2900, 2999), show: 'expanded' },
-        { label: 'SUMMA EGET KAPITAL OCH SKULDER', type: 'grand-total', values: summaEKochSkulder, show: 'always' },
-      ],
-      balanceCheck,
+    const getRowStyle = (type: string) => {
+        switch (type) {
+          case 'header': return 'font-bold text-lg pt-6 text-gray-800';
+          case 'main': return 'font-semibold text-gray-700';
+          case 'sub': return 'pl-8 text-gray-600';
+          case 'grand-total': return 'font-extrabold text-lg border-t-2 border-b-4 border-black bg-gray-50';
+          default: return '';
+        }
     };
-  }, [accounts, prevAccounts]);
 
-  const getRowStyle = (type: string) => {
-    switch (type) {
-      case 'header': return 'font-bold text-lg pt-6 text-gray-800';
-      case 'main': return 'font-semibold text-gray-700';
-      case 'sub': return 'pl-8 text-gray-600';
-      case 'sub-sub': return 'pl-16 text-gray-500';
-      case 'grand-total': return 'font-extrabold text-lg border-t-2 border-b-4 border-black bg-gray-50';
-      default: return '';
-    }
-  };
+    return (
+        <tr className={`${getRowStyle(type)} border-b border-gray-100 last:border-b-0`}>
+            <td className="px-2 py-3 whitespace-nowrap">{label}</td>
+            <td className="px-2 py-3 whitespace-nowrap text-right font-mono">{values ? formatNumber(values.current) : ''}</td>
+            <td className="px-2 py-3 whitespace-nowrap text-right font-mono text-gray-500">{values ? formatNumber(values.previous) : ''}</td>
+        </tr>
+    );
+};
+
+// --- Huvudkomponenten ---
+const Step3_Balansrakning = ({ k2Results, onNext, onBack }) => {
+  const [showAllPosts, setShowAllPosts] = useState(false);
+  
+  // Plocka ut den färdigberäknade datan från props
+  const { balance_sheet, total_assets, total_equity, total_equity_and_liabilities, balance_check } = k2Results;
+
+  // Definiera raderna statiskt med datan från k2Results
+  const reportData = {
+      rows: [
+        { label: 'TILLGÅNGAR', type: 'header', show: 'always' },
+        { label: 'Anläggningstillgångar', type: 'main', values: balance_sheet.total_fixed_assets, show: 'always' },
+        { label: 'Materiella anläggningstillgångar', type: 'sub', values: balance_sheet.fixed_assets_tangible, show: 'expanded' },
+        
+        { label: 'Omsättningstillgångar', type: 'main', values: balance_sheet.total_current_assets, show: 'always' },
+        { label: 'Varulager m.m.', type: 'sub', values: balance_sheet.inventory, show: 'expanded' },
+        { label: 'Kortfristiga fordringar', type: 'sub', values: balance_sheet.current_receivables, show: 'expanded' },
+        { label: 'Kassa och bank', type: 'sub', values: balance_sheet.cash_and_bank, show: 'expanded' },
+        
+        { label: 'SUMMA TILLGÅNGAR', type: 'grand-total', values: total_assets, show: 'always' },
+        
+        { label: 'EGET KAPITAL OCH SKULDER', type: 'header', show: 'always' },
+        { label: 'Eget kapital', type: 'main', values: total_equity, show: 'always' },
+        { label: 'Bundet eget kapital', type: 'sub', values: balance_sheet.restricted_equity, show: 'expanded' },
+        
+        { label: 'Obeskattade reserver', type: 'main', values: balance_sheet.untaxed_reserves, show: 'always' },
+        
+        { label: 'Långfristiga skulder', type: 'main', values: balance_sheet.long_term_liabilities, show: 'always' },
+        
+        { label: 'Kortfristiga skulder', type: 'main', values: balance_sheet.current_liabilities, show: 'always' },
+        
+        { label: 'SUMMA EGET KAPITAL OCH SKULDER', type: 'grand-total', values: total_equity_and_liabilities, show: 'always' },
+      ],
+      balanceCheck: balance_check,
+    };
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl">
@@ -179,18 +101,15 @@ const Step3_Balansrakning: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {reportData.rows.map((row, index) => {
-              // Dölj raden om den är en detaljrad OCH "Visa alla poster" är avstängd
-              if (row.show === 'expanded' && !showAllPosts) return null;
-
-              return (
-                <tr key={index} className={`${getRowStyle(row.type)} border-b border-gray-100 last:border-b-0`}>
-                  <td className="px-2 py-3 whitespace-nowrap">{row.label}</td>
-                  <td className="px-2 py-3 whitespace-nowrap text-right font-mono">{row.values ? formatNumber(row.values.current) : ''}</td>
-                  <td className="px-2 py-3 whitespace-nowrap text-right font-mono text-gray-500">{row.values ? formatNumber(row.values.previous) : ''}</td>
-                </tr>
-              );
-            })}
+            {reportData.rows.map((row, index) => (
+              <ReportRow 
+                key={index}
+                label={row.label}
+                values={row.values}
+                type={row.type}
+                show={row.show === 'always' || showAllPosts}
+              />
+            ))}
           </tbody>
         </table>
       </div>

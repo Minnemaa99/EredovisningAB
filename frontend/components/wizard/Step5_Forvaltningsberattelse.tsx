@@ -1,27 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiFileText, FiTrendingUp, FiDollarSign, FiInfo } from 'react-icons/fi';
 
 // --- Typer och hjälpfunktioner ---
-
-export interface Account {
-  account_number: string;
-  account_name: string;
-  balance: number;
-}
-
 interface Props {
-  accounts: Account[];
-  prevAccounts: Account[];
-  onNext: () => void;
+  k2Results: any; // Ta emot det färdigberäknade objektet
+  onSave: (text: string) => void; // Ändrad från onNext
   onBack: () => void;
 }
-
-const calculateSum = (accountList: Account[], start: number, end: number): number => {
-  if (!accountList) return 0;
-  return accountList
-    .filter(a => parseInt(a.account_number) >= start && parseInt(a.account_number) <= end)
-    .reduce((sum, acc) => sum + acc.balance, 0);
-};
 
 const formatNumber = (num: number, decimals = 0) => {
     if (isNaN(num)) return '0';
@@ -40,7 +25,7 @@ const ToggleSwitch = ({ label, enabled, setEnabled }) => (
 
 // --- Huvudkomponenten ---
 
-const Step5_Forvaltningsberattelse: React.FC<Props> = ({ accounts, prevAccounts, onNext, onBack }) => {
+const Step5_Forvaltningsberattelse: React.FC<Props> = ({ k2Results, onSave, onBack }) => {
   const [allmantText, setAllmantText] = useState('Bolaget har sitt säte i [STAD]. Verksamheten består av...');
   const [handelserText, setHandelserText] = useState('');
   const [kommentarFlerar, setKommentarFlerar] = useState('');
@@ -48,27 +33,26 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({ accounts, prevAccounts,
   const [showHandelser, setShowHandelser] = useState(false);
   const [showForandringarEK, setShowForandringarEK] = useState(false);
 
-  const data = useMemo(() => {
-    const calcForYear = (yearAccounts: Account[]) => {
-      const nettoomsattning = calculateSum(yearAccounts, 3000, 3799) * -1;
-      const resultatEfterFinans = calculateSum(yearAccounts, 3000, 8799) * -1;
-      const egetKapital = calculateSum(yearAccounts, 2000, 2099);
-      const obeskattadeReserver = calculateSum(yearAccounts, 2100, 2199);
-      const summaTillgangar = calculateSum(yearAccounts, 1000, 1999);
-      const justeratEK = egetKapital + (obeskattadeReserver * (1 - 0.206));
-      const soliditet = summaTillgangar > 0 ? (justeratEK / summaTillgangar) * 100 : 0;
-      const balanseratResultat = calculateSum(yearAccounts, 2091, 2098);
-      const aretsResultat = calculateSum(yearAccounts, 2099, 2099);
-      return { nettoomsattning, resultatEfterFinans, soliditet, balanseratResultat, aretsResultat };
-    };
-    
-    const current = calcForYear(accounts);
-    const previous = calcForYear(prevAccounts);
-    const tillDisposition = current.balanseratResultat + current.aretsResultat;
-    const balanserasNyRakning = tillDisposition - utdelning;
+  // Data hämtas nu direkt från k2Results, ingen useMemo behövs för beräkningar
+  const { income_statement, balance_sheet, total_assets, profit_loss } = k2Results;
+  
+  // Beräkna resultatdisposition
+  // Not: Dessa värden behöver läggas till i k2_calculator om de ska vara exakta.
+  // Vi gör en förenkling här för att visa principen.
+  const balanseratResultat = k2Results.free_equity.current - k2Results.profit_loss.current;
+  const aretsResultat = k2Results.profit_loss.current;
+  const tillDisposition = balanseratResultat + aretsResultat;
+  const balanserasNyRakning = tillDisposition - utdelning;
 
-    return { current, previous, tillDisposition, balanserasNyRakning };
-  }, [accounts, prevAccounts, utdelning]);
+  const handleSaveAndContinue = () => {
+    // Bygg ihop den kompletta texten för förvaltningsberättelsen
+    let fullText = `<h3>Allmänt om verksamheten</h3><p>${allmantText}</p>`;
+    if (showHandelser && handelserText) {
+      fullText += `<h3>Väsentliga händelser</h3><p>${handelserText}</p>`;
+    }
+    // ... lägg till fler sektioner här ...
+    onSave(fullText);
+  };
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl space-y-8">
@@ -98,18 +82,18 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({ accounts, prevAccounts,
           <tbody>
             <tr className="border-b border-gray-100">
               <td className="p-2">Nettoomsättning</td>
-              <td className="p-2 text-right font-mono">{formatNumber(data.current.nettoomsattning)} kr</td>
-              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(data.previous.nettoomsattning)} kr</td>
+              <td className="p-2 text-right font-mono">{formatNumber(income_statement.net_sales.current)} kr</td>
+              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(income_statement.net_sales.previous)} kr</td>
             </tr>
             <tr className="border-b border-gray-100 bg-gray-50">
               <td className="p-2">Resultat efter finansiella poster</td>
-              <td className="p-2 text-right font-mono">{formatNumber(data.current.resultatEfterFinans)} kr</td>
-              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(data.previous.resultatEfterFinans)} kr</td>
+              <td className="p-2 text-right font-mono">{formatNumber(income_statement.profit_after_financial_items.current)} kr</td>
+              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(income_statement.profit_after_financial_items.previous)} kr</td>
             </tr>
             <tr>
               <td className="p-2">Soliditet</td>
-              <td className="p-2 text-right font-mono">{formatNumber(data.current.soliditet, 1)} %</td>
-              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(data.previous.soliditet, 1)} %</td>
+              <td className="p-2 text-right font-mono">{/* Soliditet behöver beräknas i backend */} %</td>
+              <td className="p-2 text-right font-mono text-gray-500">{/* Soliditet behöver beräknas i backend */} %</td>
             </tr>
           </tbody>
         </table>
@@ -120,17 +104,17 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({ accounts, prevAccounts,
       <SectionCard icon={<FiDollarSign />} title="Resultatdisposition">
         <p className="text-sm mb-4">Styrelsen föreslår att till förfogande stående vinstmedel disponeras enligt följande:</p>
         <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-            <DispositionRow label="Balanserat resultat" value={data.current.balanseratResultat} />
-            <DispositionRow label="Årets resultat" value={data.current.aretsResultat} />
+            <DispositionRow label="Balanserat resultat" value={balanseratResultat} />
+            <DispositionRow label="Årets resultat" value={aretsResultat} />
             <hr className="my-2"/>
-            <DispositionRow label="Till förfogande" value={data.tillDisposition} isTotal={true} />
+            <DispositionRow label="Till förfogande" value={tillDisposition} isTotal={true} />
         </div>
         <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700">Utdelning till aktieägare</label>
             <input type="number" value={utdelning} onChange={e => setUtdelning(Number(e.target.value))} className="w-full p-2 border rounded-md mt-1" />
         </div>
         <div className="mt-4 p-4 bg-blue-50 border-t-4 border-blue-500 rounded-b-lg">
-            <DispositionRow label="Balanseras i ny räkning" value={data.balanserasNyRakning} isTotal={true} />
+            <DispositionRow label="Balanseras i ny räkning" value={balanserasNyRakning} isTotal={true} />
         </div>
       </SectionCard>
 
@@ -140,7 +124,7 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({ accounts, prevAccounts,
 
       <div className="flex justify-between pt-6">
         <button onClick={onBack} className="px-6 py-2 border-2 border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 hover:border-gray-400 transition-all duration-200">Tillbaka</button>
-        <button onClick={onNext} className="px-8 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">Nästa</button>
+        <button onClick={handleSaveAndContinue} className="px-8 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">Nästa</button>
       </div>
     </div>
   );

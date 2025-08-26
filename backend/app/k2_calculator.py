@@ -65,57 +65,104 @@ def _sum_accounts(accounts: List[Dict], start_range: int, end_range: int) -> flo
 
 def calculate_k2_values(accounts: List[Dict], prev_accounts: List[Dict]) -> Dict[str, float]:
     """
-    Beräknar K2-nyckeltal från råa kontolistor och returnerar dem som en dictionary.
-    Detta är funktionen som crud.py förväntar sig att hitta.
+    Beräknar K2-nyckeltal från råa kontolistor och returnerar dem som en PLATT dictionary.
+    Denna funktion är nu en intern hjälpfunktion.
     """
-    results = {}
+    # --- HJÄLPFUNKTION FÖR ATT HANTERA BÅDA ÅREN ---
+    def calculate_for_year(accs):
+        res = {}
+        # Resultaträkning (Intäkter är negativa i SIE, kostnader positiva)
+        res['net_sales'] = _sum_accounts(accs, 3000, 3799) * -1
+        res['cost_raw_materials'] = _sum_accounts(accs, 4000, 4999)
+        res['cost_external_services'] = _sum_accounts(accs, 5000, 6999)
+        res['cost_personnel'] = _sum_accounts(accs, 7000, 7699)
+        res['depreciation'] = _sum_accounts(accs, 7700, 7899)
+        res['net_financial_items'] = (_sum_accounts(accs, 8000, 8399) * -1) - _sum_accounts(accs, 8400, 8799)
+        res['tax'] = _sum_accounts(accs, 8900, 8999)
+        
+        # Balansräkning (Tillgångar är positiva, Eget Kapital/Skulder är negativa i SIE)
+        res['fixed_assets_material'] = _sum_accounts(accs, 1100, 1299)
+        res['inventory'] = _sum_accounts(accs, 1400, 1499)
+        res['total_current_receivables'] = _sum_accounts(accs, 1500, 1799)
+        res['cash_and_bank'] = _sum_accounts(accs, 1900, 1999)
+        res['restricted_equity'] = _sum_accounts(accs, 2000, 2089) * -1
+        res['non_restricted_equity'] = _sum_accounts(accs, 2090, 2098) * -1 # Exkl. årets resultat
+        res['untaxed_reserves'] = _sum_accounts(accs, 2100, 2199) * -1
+        res['long_term_liabilities'] = _sum_accounts(accs, 2300, 2399) * -1
+        res['short_term_liabilities'] = _sum_accounts(accs, 2400, 2999) * -1
+        
+        # Summeringar
+        res['total_operating_expenses'] = res['cost_raw_materials'] + res['cost_external_services'] + res['cost_personnel'] + res['depreciation']
+        res['operating_profit'] = res['net_sales'] - res['total_operating_expenses']
+        res['profit_after_financial_items'] = res['operating_profit'] + res['net_financial_items']
+        res['profit_loss'] = res['profit_after_financial_items'] - res['tax']
+        
+        res['total_fixed_assets'] = res['fixed_assets_material'] # Förenkling för nu
+        res['total_current_assets'] = res['inventory'] + res['total_current_receivables'] + res['cash_and_bank']
+        res['total_assets'] = res['total_fixed_assets'] + res['total_current_assets']
+        
+        res['total_equity'] = res['restricted_equity'] + res['non_restricted_equity'] + res['profit_loss']
+        res['total_liabilities'] = res['long_term_liabilities'] + res['short_term_liabilities']
+        res['total_equity_and_liabilities'] = res['total_equity'] + res['untaxed_reserves'] + res['total_liabilities']
+        
+        return res
 
-    # --- Resultaträkning (Income Statement) ---
-    # Intäkter (kontogrupp 3xxx)
-    results['revenue_sales'] = _sum_accounts(accounts, 3000, 3999)
-    # Förändring av lager (kontogrupp 49xx)
-    results['revenue_inventory_change'] = _sum_accounts(accounts, 4900, 4999)
-    # Övriga rörelseintäkter (kontogrupp 3xxx, exklusive nettoomsättning)
-    # Denna är ofta mer komplex, vi håller den enkel för nu.
-    results['revenue_other'] = 0 
+    current_results = calculate_for_year(accounts)
+    prev_results = calculate_for_year(prev_accounts)
 
-    # Kostnader
-    results['costs_raw_materials'] = _sum_accounts(accounts, 4000, 4999)
-    results['costs_external'] = _sum_accounts(accounts, 5000, 6999)
-    results['costs_personnel'] = _sum_accounts(accounts, 7000, 7699)
-    results['costs_depreciation'] = _sum_accounts(accounts, 7700, 7899)
-    
-    # Finansiella poster
-    results['financial_income'] = _sum_accounts(accounts, 8000, 8399)
-    results['financial_costs'] = _sum_accounts(accounts, 8400, 8999)
+    # Kombinera resultaten till en platt dictionary
+    flat_results = {}
+    for key, value in current_results.items():
+        flat_results[key] = value
+    for key, value in prev_results.items():
+        flat_results[f"prev_{key}"] = value
+        
+    return flat_results
 
-    # Bokslutsdispositioner & Skatt
-    results['appropriations'] = _sum_accounts(accounts, 2100, 2199) # Ofta från balans, men påverkar resultat
-    results['tax'] = _sum_accounts(accounts, 2500, 2599) # Ofta från balans, men påverkar resultat
+def get_structured_k2_results(accounts: List[Dict], prev_accounts: List[Dict]) -> Dict:
+    """
+    HUVUDFUNKTION: Tar råa konton och returnerar den nästlade datastrukturen
+    som frontend och PDF-generatorn behöver.
+    """
+    flat_results = calculate_k2_values(accounts, prev_accounts)
 
-    # --- Balansräkning (Balance Sheet) ---
-    # Tillgångar
-    results['fixed_assets_material'] = _sum_accounts(accounts, 1100, 1299)
-    results['fixed_assets_financial'] = _sum_accounts(accounts, 1300, 1399)
-    results['current_assets_inventory'] = _sum_accounts(accounts, 1400, 1499)
-    results['current_assets_receivables'] = _sum_accounts(accounts, 1500, 1699)
-    results['current_assets_other_receivables'] = _sum_accounts(accounts, 1700, 1799)
-    results['current_assets_prepaid'] = _sum_accounts(accounts, 1700, 1799) # Ofta samma som ovan
-    results['current_assets_cash_bank'] = _sum_accounts(accounts, 1900, 1999)
+    def get_section(key: str) -> Dict[str, float]:
+        return {"current": flat_results.get(key, 0), "previous": flat_results.get(f"prev_{key}", 0)}
 
-    # Eget kapital och skulder
-    results['restricted_equity'] = _sum_accounts(accounts, 2080, 2089)
-    results['free_equity'] = _sum_accounts(accounts, 2090, 2099)
-    results['untaxed_reserves'] = _sum_accounts(accounts, 2100, 2199)
-    results['long_term_liabilities'] = _sum_accounts(accounts, 2300, 2399)
-    results['short_term_liabilities'] = _sum_accounts(accounts, 2400, 2999)
-
-    # Årets resultat (beräknas från resultaträkningen)
-    total_revenue = results['revenue_sales'] + results['revenue_inventory_change'] + results['revenue_other']
-    total_costs = results['costs_raw_materials'] + results['costs_external'] + results['costs_personnel'] + results['costs_depreciation']
-    profit_before_financial = total_revenue - total_costs
-    profit_after_financial = profit_before_financial + results['financial_income'] - results['financial_costs']
-    # Not: Förenklad beräkning
-    results['profit_loss'] = profit_after_financial - results['tax']
-
-    return results
+    structured_results = {
+        "profit_loss": get_section("profit_loss"),
+        "free_equity": get_section("non_restricted_equity"),
+        "total_assets": get_section("total_assets"),
+        "total_equity": get_section("total_equity"),
+        "total_equity_and_liabilities": get_section("total_equity_and_liabilities"),
+        "balance_check": {
+            "current": flat_results.get("total_assets", 0) - flat_results.get("total_equity_and_liabilities", 0),
+            "previous": flat_results.get("prev_total_assets", 0) - flat_results.get("prev_total_equity_and_liabilities", 0)
+        },
+        "income_statement": {
+            "net_sales": get_section("net_sales"),
+            "cost_of_goods": get_section("cost_raw_materials"),
+            "other_external_costs": get_section("cost_external_services"),
+            "personnel_costs": get_section("cost_personnel"),
+            "depreciation": get_section("depreciation"),
+            "total_operating_expenses": get_section("total_operating_expenses"),
+            "operating_profit": get_section("operating_profit"),
+            "financial_items": get_section("net_financial_items"),
+            "profit_after_financial_items": get_section("profit_after_financial_items"),
+            "tax": get_section("tax"),
+        },
+        "balance_sheet": {
+            "fixed_assets_tangible": get_section("fixed_assets_material"),
+            "total_fixed_assets": get_section("total_fixed_assets"),
+            "inventory": get_section("inventory"),
+            "current_receivables": get_section("total_current_receivables"),
+            "cash_and_bank": get_section("cash_and_bank"),
+            "total_current_assets": get_section("total_current_assets"),
+            "restricted_equity": get_section("restricted_equity"),
+            "untaxed_reserves": get_section("untaxed_reserves"),
+            "long_term_liabilities": get_section("long_term_liabilities"),
+            "current_liabilities": get_section("short_term_liabilities"),
+            "total_liabilities": get_section("total_liabilities"),
+        }
+    }
+    return structured_results
