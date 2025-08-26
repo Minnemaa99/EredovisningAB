@@ -1,91 +1,55 @@
 // Step2_Resultatrakning.tsx
 import React, { useState } from 'react';
-import { EditableRow } from './EditableRow'; // Importera den nya komponenten
-
-// --- Typer och hjälpfunktioner ---
-const formatNumber = (num: number) => {
-    if (num === 0) return '0';
-    return Math.round(num).toLocaleString('sv-SE');
-};
-
-const ReportRow = ({ label, values, type, show }) => {
-    if (!show) return null;
-
-    const getRowStyle = (type: string) => {
-        switch (type) {
-          case 'main': return 'font-semibold text-gray-700';
-          case 'sub': return 'pl-8 text-gray-600';
-          case 'total': return 'font-bold bg-gray-50';
-          case 'grand-total': return 'font-extrabold text-lg border-t-2 border-black';
-          default: return '';
-        }
-    };
-
-    return (
-        <tr className={`${getRowStyle(type)} border-b border-gray-100 last:border-b-0`}>
-            <td className="px-2 py-3 whitespace-nowrap">{label}</td>
-            <td className="px-2 py-3 whitespace-nowrap text-right font-mono">{values ? formatNumber(values.current) : ''}</td>
-            <td className="px-2 py-3 whitespace-nowrap text-right font-mono text-gray-500">{values ? formatNumber(values.previous) : ''}</td>
-        </tr>
-    );
-};
+import { EditableRow } from './EditableRow';
 
 // --- Huvudkomponenten ---
-const Step2_Resultatrakning = ({ k2Results, onNext, onBack, onValueChange }) => { // Lägg till onValueChange
+const Step2_Resultatrakning = ({ k2Results, onNext, onBack, onValueChange }) => {
   const [showAllPosts, setShowAllPosts] = useState(false);
   const { income_statement, profit_loss } = k2Results;
 
-  // Lägg till accountRange för varje rad som ska vara redigerbar
+  // Ny datastruktur som matchar K2-schemat från den nya kalkylatorn
   const reportData = [
-      { label: 'Rörelsens intäkter', type: 'main', values: income_statement.net_sales, show: 'always', accountRange: { start: 3000, end: 3799 } },
-      { label: 'Nettoomsättning', type: 'sub', values: income_statement.net_sales, show: 'expanded', accountRange: { start: 3000, end: 3799 } },
+      { type: 'header', label: 'Rörelsens intäkter' },
+      { type: 'sub', label: 'Nettoomsättning', values: income_statement.net_sales, accountRange: { start: 3000, end: 3799 } },
+      { type: 'sub', label: 'Övriga rörelseintäkter', values: income_statement.other_operating_income, accountRange: { start: 3800, end: 3999 } },
+      { type: 'total', label: 'Summa rörelseintäkter', values: income_statement.total_operating_income },
       
-      { label: 'Rörelsekostnader', type: 'main', values: income_statement.total_operating_expenses, show: 'always' },
-      { label: 'Handelsvaror', type: 'sub', values: income_statement.cost_of_goods, show: 'expanded', accountRange: { start: 4000, end: 4999 } },
-      { label: 'Övriga externa kostnader', type: 'sub', values: income_statement.other_external_costs, show: 'expanded', accountRange: { start: 5000, end: 6999 } },
-      { label: 'Personalkostnader', type: 'sub', values: income_statement.personnel_costs, show: 'expanded', accountRange: { start: 7000, end: 7699 } },
-      { label: 'Av- och nedskrivningar', type: 'sub', values: income_statement.depreciation, show: 'expanded', accountRange: { start: 7700, end: 7899 } },
-      
-      { label: 'Rörelseresultat', type: 'total', values: income_statement.operating_profit, show: 'always' },
-      
-      { label: 'Finansiella poster', type: 'main', values: income_statement.financial_items, show: 'always' },
-      
-      { label: 'Resultat efter finansiella poster', type: 'total', values: income_statement.profit_after_financial_items, show: 'always' },
-      
-      { label: 'Skatt på årets resultat', type: 'main', values: income_statement.tax, show: 'always', accountRange: { start: 8900, end: 8999 } },
+      { type: 'header', label: 'Rörelsekostnader' },
+      { type: 'sub', label: 'Råvaror och förnödenheter', values: income_statement.raw_materials, accountRange: { start: 4000, end: 4999 } },
+      { type: 'sub', label: 'Övriga externa kostnader', values: income_statement.other_external_costs, accountRange: { start: 5000, end: 6999 } },
+      { type: 'sub', label: 'Personalkostnader', values: income_statement.personnel_costs, accountRange: { start: 7000, end: 7699 } },
+      { type: 'sub', label: 'Av- och nedskrivningar', values: income_statement.depreciation, accountRange: { start: 7700, end: 7899 } },
+      { type: 'sub', label: 'Övriga rörelsekostnader', values: income_statement.other_operating_expenses, accountRange: { start: 7900, end: 7999 } },
+      { type: 'total', label: 'Summa rörelsekostnader', values: income_statement.total_operating_expenses },
 
-      { label: 'Årets resultat', type: 'grand-total', values: profit_loss, show: 'always' },
+      { type: 'grand-total', label: 'Rörelseresultat', values: income_statement.operating_profit },
+
+      { type: 'header', label: 'Finansiella poster' },
+      { type: 'sub', label: 'Övriga ränteintäkter och liknande', values: income_statement.financial_income, accountRange: { start: 8200, end: 8299 } },
+      { type: 'sub', label: 'Räntekostnader och liknande', values: income_statement.financial_costs, accountRange: { start: 8300, end: 8499 } },
+      
+      { type: 'grand-total', label: 'Resultat efter finansiella poster', values: income_statement.profit_after_financial_items },
+
+      { type: 'sub', label: 'Bokslutsdispositioner', values: income_statement.appropriations, accountRange: { start: 8800, end: 8899 } },
+      { type: 'grand-total', label: 'Resultat före skatt', values: income_statement.profit_before_tax },
+
+      { type: 'sub', label: 'Skatt på årets resultat', values: income_statement.tax, accountRange: { start: 8900, end: 8999 } },
+      { type: 'grand-total', label: 'Årets resultat', values: profit_loss },
   ];
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl">
       <h2 className="text-3xl font-bold mb-4 text-center text-gray-800">Resultaträkning</h2>
-      <p className="text-center text-gray-500 mb-6">Klicka på en siffra i kolumnen "Aktuellt år" för att redigera.</p>
+      <p className="text-center text-gray-500 mb-6">Enligt K2-regelverket. Klicka på en siffra för att redigera.</p>
       
-      <div className="flex justify-between items-center mb-4 p-2 rounded-lg bg-gray-50">
-        <div className="flex items-center">
-          <label htmlFor="showAllPostsToggle" className="mr-3 text-sm font-medium text-gray-700">Visa alla poster</label>
-          <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-            <input 
-              type="checkbox" 
-              name="showAllPostsToggle" 
-              id="showAllPostsToggle" 
-              checked={showAllPosts}
-              onChange={() => setShowAllPosts(!showAllPosts)}
-              className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer checked:bg-blue-600"
-            />
-            <label htmlFor="showAllPostsToggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-          </div>
-        </div>
-      </div>
-
       <div className="overflow-x-auto">
         <table className="min-w-full">
           <thead>
             <tr>
-              <th className="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Beskrivning</th>
-              <th className="py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">SEK</th>
-              <th className="py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">SEK</th>
+              <th className="py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/4">Beskrivning</th>
+              <th className="py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Not</th>
+              <th className="py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aktuellt år (SEK)</th>
+              <th className="py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Föregående år (SEK)</th>
             </tr>
           </thead>
           <tbody>
@@ -95,7 +59,7 @@ const Step2_Resultatrakning = ({ k2Results, onNext, onBack, onValueChange }) => 
                 label={row.label}
                 values={row.values}
                 type={row.type}
-                show={row.show === 'always' || showAllPosts}
+                show={true} // Alltid visa alla rader i den nya strukturen
                 accountRange={row.accountRange}
                 onValueChange={onValueChange}
               />
