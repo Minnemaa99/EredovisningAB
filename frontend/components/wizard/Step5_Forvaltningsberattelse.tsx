@@ -36,11 +36,10 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({ k2Results, onSave, onBa
   // Data hämtas nu direkt från k2Results, ingen useMemo behövs för beräkningar
   const { income_statement, balance_sheet, total_assets, profit_loss } = k2Results;
   
-  // Beräkna resultatdisposition
-  // Not: Dessa värden behöver läggas till i k2_calculator om de ska vara exakta.
-  // Vi gör en förenkling här för att visa principen.
-  const balanseratResultat = k2Results.free_equity.current - k2Results.profit_loss.current;
-  const aretsResultat = k2Results.profit_loss.current;
+  // KORRIGERING: Hämta data från rätt plats i den nya nästlade strukturen.
+  // Detta löser kraschen.
+  const balanseratResultat = balance_sheet.free_equity_retained.current;
+  const aretsResultat = profit_loss.current;
   const tillDisposition = balanseratResultat + aretsResultat;
   const balanserasNyRakning = tillDisposition - utdelning;
 
