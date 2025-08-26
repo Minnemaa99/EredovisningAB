@@ -217,8 +217,8 @@ async def save_report_from_details(report_data: schemas.DetailedReportPayload, d
                 org_nr=report_data.org_nr
             ))
 
-        # Skapa årsredovisningen i databasen
-        db_annual_report = crud.create_annual_report(db=db, annual_report=report_data, company_id=db_company.id)
+        # Skapa årsredovisningen i databasen - HÄR ÄR ÄNDRINGEN
+        db_annual_report = crud.create_annual_report(db=db, report=report_data, company_id=db_company.id)
         
         # Returnera den nyskapade rapporten (FastAPI konverterar den till JSON)
         return db_annual_report

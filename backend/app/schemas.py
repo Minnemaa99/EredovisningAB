@@ -44,14 +44,14 @@ class AnnualReport(AnnualReportBase):
 
 class CompanyBase(BaseModel):
     name: str
-    orgnummer: str
+    org_nr: str  # <-- ÄNDRAD FRÅN 'orgnummer'
 
 class CompanyCreate(CompanyBase):
     pass
 
 class Company(CompanyBase):
     id: int
-    annual_reports: List[AnnualReport] = []
+    
     class Config:
         from_attributes = True
 
@@ -132,14 +132,14 @@ class AnnualReport(AnnualReportBase):
 
 class CompanyBase(BaseModel):
     name: str
-    orgnummer: str
+    org_nr: str  # <-- ÄNDRAD FRÅN 'orgnummer'
 
 class CompanyCreate(CompanyBase):
     pass
 
 class Company(CompanyBase):
     id: int
-    annual_reports: List[AnnualReport] = []
+    
     class Config:
         from_attributes = True
 
