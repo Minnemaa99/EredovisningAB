@@ -23,71 +23,77 @@ export default function Wizard() {
   ];
 
   const [stepIndex, setStepIndex] = useState(0);
+  
+  const [companyInfo, setCompanyInfo] = useState({ name: "", org_nr: "" });
+  const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
   const [detailedAccounts, setDetailedAccounts] = useState([]);
   const [prevAccounts, setPrevAccounts] = useState([]);
-  const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
-  const [finalReportId, setFinalReportId] = useState(null); // KORRIGERING: Lade till saknat state
+  const [forvaltningsberattelse, setForvaltningsberattelse] = useState("");
+  const [representatives, setRepresentatives] = useState([]);
+  const [signatureInfo, setSignatureInfo] = useState({ city: "", date: new Date().toISOString().split('T')[0] });
+  
+  const [finalReportId, setFinalReportId] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  useEffect(() => { setIsClient(true); }, []);
 
-  const nextStep = () => {
-    if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1);
-  };
+  const nextStep = () => { if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1); };
+  const prevStep = () => { if (stepIndex > 0) setStepIndex(stepIndex - 1); };
 
-  const prevStep = () => {
-    if (stepIndex > 0) setStepIndex(stepIndex - 1);
-  };
-
+  // --- FÖRENKLAD FUNKTION ---
   const handleUploadSuccess = (sieParseResult) => {
     console.log("API Response Received in Wizard:", sieParseResult);
-
-    const previousAccounts = sieParseResult.prev_accounts || sieParseResult.prevAccounts || [];
-
+    setCompanyInfo({ name: sieParseResult.company_name, org_nr: sieParseResult.org_nr });
+    setReportDates({ start_date: sieParseResult.start_date, end_date: sieParseResult.end_date });
     setDetailedAccounts(sieParseResult.accounts || []);
-    setPrevAccounts(previousAccounts);
-    setReportDates({
-      start_date: sieParseResult.start_date,
-      end_date: sieParseResult.end_date,
-    });
+    setPrevAccounts(sieParseResult.prev_accounts || []);
+    
+    nextStep();
+  };
+
+  const handleForvaltningsberattelseSave = (text) => {
+    setForvaltningsberattelse(text);
+    nextStep();
+  };
+
+  const handleForetradareSave = (reps, sigInfo) => {
+    setRepresentatives(reps);
+    setSignatureInfo(sigInfo);
     nextStep();
   };
 
   const handleSaveAndContinue = async () => {
     const payload = {
-      company_id: 1, // Detta bör hämtas dynamiskt senare
+      company_name: companyInfo.name,
+      org_nr: companyInfo.org_nr,
       start_date: reportDates.start_date,
       end_date: reportDates.end_date,
       accounts: detailedAccounts,
+      prev_accounts: prevAccounts,
+      forvaltningsberattelse: forvaltningsberattelse, // Detta kommer vara tomt, vi behöver hämta det från Step5
+      signature_city: signatureInfo.city,
+      signature_date: signatureInfo.date,
+      representatives: representatives,
     };
 
+    console.log("Sending complete payload to backend:", payload);
+
     try {
-      const response = await axios.post("/api/annual-reports/from-details", payload);
+      const response = await axios.post(`${API_URL}/annual-reports/from-details`, payload);
       setFinalReportId(response.data.id);
-      alert("Rapporten har sparats!");
-      nextStep();
+      alert("Rapporten har sparats! ID: " + response.data.id + ". Du kan nu förhandsgranska.");
     } catch (error) {
-      console.error("Failed to save the report", error);
-      alert("Kunde inte spara rapporten.");
+      console.error("Failed to save the report", error.response ? error.response.data : error);
+      alert("Kunde inte spara rapporten. Kontrollera konsolen för felmeddelanden.");
     }
   };
 
-  const handlePreview = async () => {
-    if (!detailedAccounts.length) {
-      alert("Ingen rapportdata att förhandsgranska.");
+  const handlePreview = () => {
+    if (!finalReportId) {
+      alert("Du måste spara rapporten först innan du kan förhandsgranska.");
       return;
     }
-    try {
-      const response = await axios.post(`${API_URL}/annual-reports/preview-pdf`, { accounts: detailedAccounts, reportDates }, { responseType: "blob" });
-      const file = new Blob([response.data], { type: "application/pdf" });
-      const fileURL = URL.createObjectURL(file);
-      window.open(fileURL, "_blank");
-    } catch (err) {
-      console.error("Failed to generate preview:", err);
-      alert("Kunde inte generera förhandsgranskning.");
-    }
+    window.open(`${API_URL}/annual-reports/${finalReportId}/preview`, "_blank");
   };
 
   const renderStep = () => {
@@ -98,7 +104,7 @@ export default function Wizard() {
             reportDates={reportDates}
             setReportDates={setReportDates}
             onUploadSuccess={handleUploadSuccess}
-            onBack={() => console.log("Gå tillbaka från start")}
+            onBack={prevStep}
           />
         );
       case 1:
@@ -120,7 +126,6 @@ export default function Wizard() {
           />
         );
       case 3:
-        // KORRIGERING: Använde rätt state-variabler
         return (
           <Step4_Noter
             accounts={detailedAccounts}
@@ -130,34 +135,32 @@ export default function Wizard() {
           />
         );
       case 4:
-        // KORRIGERING: Använde rätt state-variabler och tog bort syntaxfel
+        // --- KORRIGERADE PROPS FÖR ATT MATCHA DIN Step5 ---
         return (
           <Step5_Forvaltningsberattelse
             accounts={detailedAccounts}
             prevAccounts={prevAccounts}
-            onBack={prevStep}
             onNext={nextStep}
+            onBack={prevStep}
           />
         );
       case 5:
-        return <Step6_Foretradare onNext={nextStep} onBack={prevStep} />;
+        return <Step6_Foretradare onSave={handleForetradareSave} onBack={prevStep} />;
       case 6:
         return (
           <Step7_LamnaIn
-            reportId={finalReportId}
             onSave={handleSaveAndContinue}
             onPreview={handlePreview}
             onBack={prevStep}
           />
         );
       default:
-        // KORRIGERING: Fallback till första steget
         return (
           <Step1_Rakenskapsar
             reportDates={reportDates}
             setReportDates={setReportDates}
             onUploadSuccess={handleUploadSuccess}
-            onBack={() => console.log("Gå tillbaka från start")}
+            onBack={prevStep}
           />
         );
     }
@@ -175,7 +178,7 @@ export default function Wizard() {
           </div>
         ))}
       </div>
-      {isClient && renderStep()}
+      {isClient ? renderStep() : <div>Laddar komponent...</div>}
     </div>
   );
 }
