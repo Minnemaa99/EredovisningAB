@@ -2,26 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { FiInfo, FiPlusCircle, FiAlertCircle } from 'react-icons/fi';
 
 // --- Typer och hjälpfunktioner ---
-
-export interface Account {
-  account_number: string;
-  account_name: string;
-  balance: number;
-}
-
 interface Props {
-  accounts: Account[];
-  prevAccounts: Account[];
+  k2Results: any; // Ta emot det färdigberäknade objektet
   onNext: () => void;
   onBack: () => void;
 }
-
-const calculateSum = (accountList: Account[], start: number, end: number): number => {
-  if (!accountList) return 0;
-  return accountList
-    .filter(a => parseInt(a.account_number) >= start && parseInt(a.account_number) <= end)
-    .reduce((sum, acc) => sum + acc.balance, 0);
-};
 
 const formatNumber = (num: number) => num.toLocaleString('sv-SE');
 
@@ -120,7 +105,7 @@ const SkulderNote = ({ totalValue }) => {
 
 // --- Huvudkomponenten ---
 
-const Step4_Noter: React.FC<Props> = ({ accounts, prevAccounts, onNext, onBack }) => {
+const Step4_Noter: React.FC<Props> = ({ k2Results, onNext, onBack }) => {
   const [medelantalAnstallda, setMedelantalAnstallda] = useState('');
   const [avskrivningstid, setAvskrivningstid] = useState('5');
   const [kommentar, setKommentar] = useState('');
@@ -129,9 +114,12 @@ const Step4_Noter: React.FC<Props> = ({ accounts, prevAccounts, onNext, onBack }
   const [showFordringar, setShowFordringar] = useState(true);
   const [showSkulder, setShowSkulder] = useState(true);
 
-  const inventarierTotal = useMemo(() => calculateSum(accounts, 1200, 1299), [accounts]);
-  const fordringarTotal = useMemo(() => calculateSum(accounts, 1300, 1399), [accounts]);
-  const skulderTotal = useMemo(() => calculateSum(accounts, 2300, 2399), [accounts]);
+  // Hämta totalerna direkt från det färdigberäknade resultatet
+  const inventarierTotal = k2Results.balance_sheet.fixed_assets_tangible.current;
+  // Not: Antar att "Andra långfristiga fordringar" inte finns som separat post i k2Results än.
+  // Vi sätter den till 0 för nu. Om den behövs måste den läggas till i kalkylatorn.
+  const fordringarTotal = 0; 
+  const skulderTotal = k2Results.balance_sheet.long_term_liabilities.current;
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-xl space-y-8">

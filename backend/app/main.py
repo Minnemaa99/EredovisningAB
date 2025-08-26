@@ -42,83 +42,9 @@ def get_db():
     finally:
         db.close()
 
-# --- ERSÄTT DENNA FUNKTION ---
-def _parse_sie_to_details(sie_data: SieData, chart_of_accounts: dict) -> schemas.SieParseResult:
-    """
-    UPPDATERAD funktion som läser både #UB (balanskonton) och #RES (resultatkonton)
-    för att få en komplett uppsättning konton.
-    """
-    # Hämta företagsnamn
-    fnamn_fields = sie_data.get_data('#FNAMN')
-    company_name = fnamn_fields[0].data[1] if fnamn_fields and len(fnamn_fields[0].data) > 1 else "Företagsnamn saknas"
+# Ta bort den gamla _parse_sie_to_details-funktionen helt.
 
-    # Hämta organisationsnummer
-    orgnr_fields = sie_data.get_data('#ORGNR')
-    org_nr = orgnr_fields[0].data[1] if orgnr_fields and len(orgnr_fields[0].data) > 1 else "Org.nr saknas"
-
-    # 1. Läs in ALLA räkenskapsår från filen
-    rar_fields = sie_data.get_data('#RAR')
-    if not rar_fields:
-        raise HTTPException(status_code=400, detail="SIE-filen saknar räkenskapsår (#RAR-taggar).")
-
-    parsed_years = []
-    for field in rar_fields:
-        try:
-            parsed_years.append({
-                "id": field.data[1],
-                "start": datetime.strptime(field.data[2], '%Y%m%d').date(),
-                "end": datetime.strptime(field.data[3], '%Y%m%d').date()
-            })
-        except (ValueError, IndexError):
-            continue
-
-    # 2. Sortera åren efter slutdatum för att hitta det senaste
-    if not parsed_years:
-        raise HTTPException(status_code=400, detail="Kunde inte tolka några giltiga #RAR-taggar.")
-        
-    sorted_years = sorted(parsed_years, key=lambda y: y['end'], reverse=True)
-
-    # 3. Definiera aktuellt och föregående år
-    current_year = sorted_years[0]
-    previous_year = sorted_years[1] if len(sorted_years) > 1 else None
-
-    current_year_id = current_year['id']
-    previous_year_id = previous_year['id'] if previous_year else None
-
-    # Hämta både Utgående Balans (#UB) och Resultat (#RES)
-    ub_fields = sie_data.get_data('#UB')
-    res_fields = sie_data.get_data('#RES')
-    all_balance_fields = ub_fields + res_fields
-
-    # 4. Fyll på konton baserat på de dynamiskt funna ID:na
-    accounts = []
-    prev_accounts = []
-
-    for field in all_balance_fields:
-        try:
-            year_id = field.data[1]
-            acc_num = field.data[2]
-            balance = float(field.data[3])
-            account_name = chart_of_accounts.get(acc_num, {}).get("name", f"Okänt konto ({acc_num})")
-
-            if year_id == current_year_id:
-                accounts.append(schemas.AccountBalance(account_number=acc_num, account_name=account_name, balance=balance))
-            elif year_id == previous_year_id:
-                prev_accounts.append(schemas.AccountBalance(account_number=acc_num, account_name=account_name, balance=balance))
-        except (ValueError, IndexError):
-            continue
-
-    return schemas.SieParseResult(
-        company_name=company_name,
-        org_nr=org_nr,
-        start_date=current_year['start'],
-        end_date=current_year['end'],
-        accounts=accounts,
-        prev_accounts=prev_accounts
-    )
-# --- SLUT PÅ ERSÄTTNING ---
-
-@app.post("/api/annual-reports/upload-sie", response_model=schemas.SieParseResult)
+@app.post("/api/annual-reports/upload-sie", response_model=schemas.FullCalculationPayload)
 async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict = Depends(load_chart_of_accounts)):
     try:
         contents_bytes = await file.read()
@@ -131,8 +57,48 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
         parser.parse()
         sie_data = parser.result
         
-        parsed_data = _parse_sie_to_details(sie_data, chart_of_accounts)
-        return parsed_data
+        # --- NY LOGIK HÄR ---
+        # 1. Extrahera rådata (liknande gamla _parse_sie_to_details)
+        fnamn_fields = sie_data.get_data('#FNAMN')
+        company_name = fnamn_fields[0].data[1] if fnamn_fields else "Okänt företag"
+        orgnr_fields = sie_data.get_data('#ORGNR')
+        org_nr = orgnr_fields[0].data[1] if orgnr_fields else "Okänt orgnr"
+        
+        rar_fields = sorted(sie_data.get_data('#RAR'), key=lambda x: x.data[3], reverse=True)
+        current_year_data = rar_fields[0].data
+        prev_year_data = rar_fields[1].data if len(rar_fields) > 1 else None
+
+        current_year_id = current_year_data[1]
+        prev_year_id = prev_year_data[1] if prev_year_data else None
+
+        all_balance_fields = sie_data.get_data('#UB') + sie_data.get_data('#RES')
+        
+        current_accounts = []
+        prev_accounts = []
+        for field in all_balance_fields:
+            year_id, acc_num, balance_str = field.data[1], field.data[2], field.data[3]
+            account_name = chart_of_accounts.get(acc_num, {}).get("name", f"Okänt konto {acc_num}")
+            balance = float(balance_str)
+            
+            if year_id == current_year_id:
+                current_accounts.append({"account_number": acc_num, "account_name": account_name, "balance": balance})
+            elif year_id == prev_year_id:
+                prev_accounts.append({"account_number": acc_num, "account_name": account_name, "balance": balance})
+
+        # 2. Anropa den nya centraliserade kalkylatorn
+        k2_results = k2_calculator.get_structured_k2_results(current_accounts, prev_accounts)
+
+        # 3. Bygg och returnera det kompletta paketet
+        return schemas.FullCalculationPayload(
+            company_info=schemas.CompanyBase(name=company_name, org_nr=org_nr),
+            report_dates={
+                "start_date": datetime.strptime(current_year_data[2], '%Y%m%d').date(),
+                "end_date": datetime.strptime(current_year_data[3], '%Y%m%d').date()
+            },
+            accounts_data=schemas.AccountsData(current_year=current_accounts, previous_year=prev_accounts),
+            k2_results=k2_results
+        )
+
     except Exception as e:
         print("--- EN EXCEPTION INTRÄFFADE ---")
         traceback.print_exc()
@@ -140,7 +106,24 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
         raise HTTPException(status_code=500, detail=f"Internt serverfel i parse_sie_file: {str(e)}")
 
 
-# --- KONTROLLERA OCH UPPDATERA DENNA ENDPOINT ---
+# --- NY ENDPOINT FÖR BERÄKNINGAR ---
+@app.post("/api/annual-reports/calculate", response_model=schemas.K2CalculatedResult)
+async def calculate_report_from_accounts(accounts_data: schemas.AccountsData):
+    """
+    Tar emot råa konton och returnerar ett fullständigt beräknat och
+    strukturerat K2-resultat.
+    """
+    try:
+        current_year_dicts = [acc.model_dump() for acc in accounts_data.current_year]
+        previous_year_dicts = [acc.model_dump() for acc in accounts_data.previous_year]
+        
+        structured_results = k2_calculator.get_structured_k2_results(current_year_dicts, previous_year_dicts)
+        return structured_results
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Kunde inte beräkna rapport: {str(e)}")
+
+
 @app.post("/api/annual-reports/preview-pdf")
 async def preview_annual_report_from_details(report_data: schemas.DetailedReportPayload):
     """
