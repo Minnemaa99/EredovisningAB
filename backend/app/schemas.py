@@ -73,17 +73,18 @@ class SieParseResult(BaseModel):
 class Representative(BaseModel):
     name: str
     role: str
-# --- SLUT PÅ NY KLASS ---
 
+class AccountsData(BaseModel):
+    current_year: List[AccountBalance]
+    previous_year: List[AccountBalance]
 
 class DetailedReportPayload(BaseModel):
     company_id: Optional[int] = None
     company_name: str
-    org_nr: str  # <-- LÄGG TILL DENNA RAD
+    org_nr: str
     start_date: date
     end_date: date
-    accounts: List[AccountBalance]
-    prev_accounts: List[AccountBalance]
+    accounts_data: AccountsData  # <-- ÄNDRAD RAD
     forvaltningsberattelse: str
     signature_city: str
     signature_date: date
@@ -161,17 +162,18 @@ class SieParseResult(BaseModel):
 class Representative(BaseModel):
     name: str
     role: str
-# --- SLUT PÅ NY KLASS ---
 
+class AccountsData(BaseModel):
+    current_year: List[AccountBalance]
+    previous_year: List[AccountBalance]
 
 class DetailedReportPayload(BaseModel):
     company_id: Optional[int] = None
     company_name: str
-    org_nr: str  # <-- LÄGG TILL DENNA RAD
+    org_nr: str
     start_date: date
     end_date: date
-    accounts: List[AccountBalance]
-    prev_accounts: List[AccountBalance]
+    accounts_data: AccountsData  # <-- ÄNDRAD RAD
     forvaltningsberattelse: str
     signature_city: str
     signature_date: date

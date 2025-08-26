@@ -68,9 +68,11 @@ export default function Wizard() {
       org_nr: companyInfo.org_nr,
       start_date: reportDates.start_date,
       end_date: reportDates.end_date,
-      accounts: detailedAccounts,
-      prev_accounts: prevAccounts,
-      forvaltningsberattelse: forvaltningsberattelse, // Detta kommer vara tomt, vi behöver hämta det från Step5
+      accounts_data: {
+        current_year: detailedAccounts,
+        previous_year: prevAccounts,
+      },
+      forvaltningsberattelse: forvaltningsberattelse,
       signature_city: signatureInfo.city,
       signature_date: signatureInfo.date,
       representatives: representatives,

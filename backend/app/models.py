@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Date, ForeignKey, Float, Text
 from sqlalchemy.orm import relationship
+from sqlalchemy.types import JSON
+
 from .database import Base
 
 class Company(Base):
@@ -11,12 +13,22 @@ class Company(Base):
 
     annual_reports = relationship("AnnualReport", back_populates="company")
 
+
 class AnnualReport(Base):
     __tablename__ = "annual_reports"
+
     id = Column(Integer, primary_key=True, index=True)
     company_id = Column(Integer, ForeignKey("companies.id"))
-    start_date = Column(Date)
-    end_date = Column(Date)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+
+    # Lägg till detta nya fält
+    accounts_data = Column(JSON)
+    
+    forvaltningsberattelse = Column(String, nullable=True)
+    signature_city = Column(String, nullable=True)
+    signature_date = Column(Date, nullable=True)
+    representatives = Column(JSON, nullable=True)
 
     # --- Balance Sheet (Balansräkning) ---
     # Anläggningstillgångar
