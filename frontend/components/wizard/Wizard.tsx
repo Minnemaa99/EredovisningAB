@@ -4,20 +4,20 @@ import axios from "axios";
 import Step1_Rakenskapsar from "./Step1_Rakenskapsar";
 import Step2_Resultatrakning from "./Step2_Resultatrakning";
 import Step3_Balansrakning from "./Step3_Balansrakning";
-import Step4_Noter from "./Step4_Noter";
-import Step5_Forvaltningsberattelse from "./Step5_Forvaltningsberattelse";
+// NYTT: Importera den nya container-komponenten
+import Step4_Arsredovisning from "./Step4_Arsredovisning";
 import Step6_Foretradare from "./Step6_Foretradare";
 import Step7_LamnaIn from "./Step7_LamnaIn";
 
 const API_URL = "http://127.0.0.1:8000/api";
 
 export default function Wizard() {
+  // KORRIGERING: Uppdatera listan med steg
   const steps = [
     "Räkenskapsår",
     "Resultaträkning",
     "Balansräkning",
-    "Noter",
-    "Förvaltningsberättelse",
+    "Årsredovisning", // Nytt samlat steg
     "Företrädare",
     "Lämna in",
   ];
@@ -102,7 +102,7 @@ export default function Wizard() {
 
   const handleForvaltningsberattelseSave = (text) => {
     setForvaltningsberattelse(text);
-    nextStep();
+    nextStep(); // Gå vidare till nästa steg efter att texten sparats
   };
 
   const handleForetradareSave = (reps, sigInfo) => {
@@ -154,6 +154,7 @@ export default function Wizard() {
         return <div>Laddar data...</div>;
     }
 
+    // KORRIGERING: Uppdatera switch-satsen med de nya stegen
     switch (stepIndex) {
       case 0:
         return (
@@ -170,7 +171,7 @@ export default function Wizard() {
             k2Results={calculationResult}
             onNext={nextStep}
             onBack={prevStep}
-            onValueChange={handleValueChange} // Skicka med den nya funktionen
+            onValueChange={handleValueChange}
           />
         );
       case 2:
@@ -179,28 +180,21 @@ export default function Wizard() {
             k2Results={calculationResult}
             onNext={nextStep}
             onBack={prevStep}
-            onValueChange={handleValueChange} // Skicka med den nya funktionen
+            onValueChange={handleValueChange}
           />
         );
-      case 3:
+      case 3: // Det nya steget "Årsredovisning"
         return (
-          <Step4_Noter
-            k2Results={calculationResult} // Skicka färdigberäknad data
+          <Step4_Arsredovisning
+            k2Results={calculationResult}
             onBack={prevStep}
-            onNext={nextStep}
+            onNext={nextStep} // Denna kommer anropas när allt är klart
+            onForvaltningsberattelseSave={handleForvaltningsberattelseSave}
           />
         );
-      case 4:
-        return (
-          <Step5_Forvaltningsberattelse
-            k2Results={calculationResult} // Skicka färdigberäknad data
-            onSave={handleForvaltningsberattelseSave} // Behöver en onSave-prop
-            onBack={prevStep}
-          />
-        );
-      case 5:
+      case 4: // Företrädare är nu steg 4
         return <Step6_Foretradare onSave={handleForetradareSave} onBack={prevStep} />;
-      case 6:
+      case 5: // Lämna in är nu steg 5
         return (
           <Step7_LamnaIn
             onSave={handleSaveAndContinue}
