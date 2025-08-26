@@ -31,6 +31,7 @@ export default function Wizard() {
   const [accountsData, setAccountsData] = useState({ current_year: [], previous_year: [] });
   // Det färdigberäknade resultatet från backend
   const [calculationResult, setCalculationResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Lägg till en loading state
 
   const [forvaltningsberattelse, setForvaltningsberattelse] = useState("");
   const [representatives, setRepresentatives] = useState([]);
@@ -52,6 +53,51 @@ export default function Wizard() {
     setCalculationResult(fullPayload.k2_results);
     
     nextStep();
+  };
+
+  // --- NY FUNKTION FÖR OMBERÄKNING ---
+  const handleValueChange = async (accountRange: { start: number; end: number }, newValue: number, oldValue: number) => {
+    const difference = newValue - oldValue;
+    if (difference === 0) return; // Ingen ändring, gör inget
+
+    setIsLoading(true);
+
+    // Skapa ett justeringskonto. Kontonummer baseras på intervallet.
+    // Intäkter (3xxx) och Skulder/EK (2xxx) har omvänt tecken i SIE.
+    const isRevenueOrLiability = accountRange.start.toString().startsWith('2') || accountRange.start.toString().startsWith('3');
+    const adjustmentBalance = isRevenueOrLiability ? -difference : difference;
+
+    const adjustmentAccount = {
+      account_number: `${accountRange.end}`, // Använd sista kontot i intervallet för justering
+      account_name: `Manuell justering - ${accountRange.start}`,
+      balance: adjustmentBalance,
+    };
+
+    // Skapa en ny, uppdaterad lista med konton
+    const updatedAccounts = {
+      ...accountsData,
+      current_year: [...accountsData.current_year, adjustmentAccount],
+    };
+
+    // Spara den nya rådatan
+    setAccountsData(updatedAccounts);
+
+    try {
+      // Anropa backend för att få ett nytt, beräknat resultat
+      const response = await axios.post(`${API_URL}/annual-reports/calculate`, {
+        current_year: updatedAccounts.current_year,
+        previous_year: updatedAccounts.previous_year,
+      });
+      // Uppdatera state med det nya resultatet från backend
+      setCalculationResult(response.data);
+    } catch (error) {
+      console.error("Failed to recalculate report", error.response ? error.response.data : error);
+      alert("Kunde inte räkna om rapporten. Återställer ändringen.");
+      // Om det misslyckas, återställ till föregående state (förenklad återställning)
+      setAccountsData(accountsData);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleForvaltningsberattelseSave = (text) => {
@@ -99,6 +145,10 @@ export default function Wizard() {
   };
 
   const renderStep = () => {
+    // Visa en laddningsindikator över hela wizarden vid omberäkning
+    if (isLoading) {
+        return <div className="text-center p-16">Räknar om...</div>;
+    }
     // Säkerställ att vi har data innan vi renderar stegen som behöver den
     if (stepIndex > 0 && !calculationResult) {
         return <div>Laddar data...</div>;
@@ -120,6 +170,7 @@ export default function Wizard() {
             k2Results={calculationResult}
             onNext={nextStep}
             onBack={prevStep}
+            onValueChange={handleValueChange} // Skicka med den nya funktionen
           />
         );
       case 2:
@@ -128,6 +179,7 @@ export default function Wizard() {
             k2Results={calculationResult}
             onNext={nextStep}
             onBack={prevStep}
+            onValueChange={handleValueChange} // Skicka med den nya funktionen
           />
         );
       case 3:
