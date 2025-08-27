@@ -14,6 +14,7 @@ from .sie_parser.sie_parse import SieParser
 # Ta bort onödig import av SieData
 from . import crud, models, schemas, pdf_generator, k2_calculator, chart_of_accounts_data
 from .database import SessionLocal, engine
+import sys # Importera sys
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -55,8 +56,6 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
         parser.parse()
         sie_data = parser.result
         
-        # --- NY LOGIK HÄR ---
-        # 1. Extrahera rådata (liknande gamla _parse_sie_to_details)
         fnamn_fields = sie_data.get_data('#FNAMN')
         company_name = fnamn_fields[0].data[1] if fnamn_fields else "Okänt företag"
         orgnr_fields = sie_data.get_data('#ORGNR')
@@ -79,13 +78,6 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
             account_name = chart_of_accounts.get(acc_num_str, {}).get("name", f"Okänt konto {acc_num_str}")
             balance = float(balance_str)
 
-            # SLUTGILTIG KORRIGERING: Denna logik hanterar nu alla kontotyper korrekt.
-            # Enligt SIE-standarden är kreditkonton (intäkter, skulder) negativa.
-            # Vi inverterar dem för att göra dem positiva.
-            # Detta gäller:
-            # - Klass 2: Eget kapital och skulder
-            # - Klass 3: Rörelseintäkter
-            # - Klass 8000-8399: Finansiella intäkter
             if (2000 <= acc_num <= 2999) or \
                (3000 <= acc_num <= 3999) or \
                (8000 <= acc_num <= 8399):
@@ -98,18 +90,13 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
             elif year_id == prev_year_id:
                 prev_accounts.append(account_data)
 
-        # DEBUG: Lägg till en print-sats för att verifiera datan
-        print("--- DEBUG: Parsed and Corrected Accounts Data ---")
-        # Skriv ut ett intäktskonto och ett kostnadskonto för att jämföra
-        print("Intäktskonto (bör vara positivt):", next((item for item in current_accounts if item['account_number'].startswith('3')), "Inget hittades"))
-        print("Kostnadskonto (bör vara positivt):", next((item for item in current_accounts if item['account_number'].startswith('4')), "Inget hittades"))
-        print("Föregående års resultat (8999, bör vara positivt):", next((item for item in prev_accounts if item['account_number'] == '8999'), "Inget hittades"))
-        print("-------------------------------------------------")
-
-        # 2. Anropa den nya centraliserade kalkylatorn
         k2_results = k2_calculator.get_structured_k2_results(current_accounts, prev_accounts)
 
-        # 3. Bygg och returnera det kompletta paketet
+        # --- TRACEBACK STEG 1: LOGGNING ---
+        print("\n--- TRACEBACK 1: Endpoint /upload-sie anropad ---", file=sys.stderr)
+        print(json.dumps(k2_results, indent=2, ensure_ascii=False), file=sys.stderr)
+        print("--- SLUT TRACEBACK 1 ---\n", file=sys.stderr)
+
         return schemas.FullCalculationPayload(
             company_info=schemas.CompanyBase(name=company_name, org_nr=org_nr),
             report_dates={
@@ -121,44 +108,36 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
         )
 
     except Exception as e:
-        print("--- EN EXCEPTION INTRÄFFADE ---")
         traceback.print_exc()
-        print("-------------------------------")
         raise HTTPException(status_code=500, detail=f"Internt serverfel i parse_sie_file: {str(e)}")
 
 
-# --- NY ENDPOINT FÖR BERÄKNINGAR ---
 @app.post("/api/annual-reports/calculate", response_model=schemas.K2CalculatedResult)
 async def calculate_report_from_accounts(accounts_data: schemas.AccountsData):
-    """
-    Tar emot råa konton och returnerar ett fullständigt beräknat och
-    strukturerat K2-resultat.
-    """
     try:
         current_year_dicts = [acc.model_dump() for acc in accounts_data.current_year]
         previous_year_dicts = [acc.model_dump() for acc in accounts_data.previous_year]
         
         structured_results = k2_calculator.get_structured_k2_results(current_year_dicts, previous_year_dicts)
+        
+        # --- TRACEBACK STEG 1: LOGGNING ---
+        print("\n--- TRACEBACK 1: Endpoint /calculate anropad ---", file=sys.stderr)
+        print(json.dumps(structured_results, indent=2, ensure_ascii=False), file=sys.stderr)
+        print("--- SLUT TRACEBACK 1 ---\n", file=sys.stderr)
+
         return structured_results
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Kunde inte beräkna rapport: {str(e)}")
 
 
-# --- UPPDATERAD PDF-FÖRHANDSGRANSKNING ---
 @app.post("/api/annual-reports/preview-pdf")
 async def preview_annual_report_from_details(report_data: schemas.DetailedReportPayload):
-    """
-    Genererar en PDF-förhandsgranskning direkt från detaljerad data
-    utan att spara den i databasen.
-    """
     try:
-        # Anropa kalkylatorn för att få de senaste, korrekta siffrorna
         current_year_dicts = [acc.model_dump() for acc in report_data.accounts_data.current_year]
         previous_year_dicts = [acc.model_dump() for acc in report_data.accounts_data.previous_year]
         k2_results = k2_calculator.get_structured_k2_results(current_year_dicts, previous_year_dicts)
 
-        # Skicka all data, inklusive de nyberäknade resultaten, till PDF-generatorn
         pdf_bytes = pdf_generator.create_annual_report_pdf(
             report_data=report_data, 
             k2_results=k2_results, 
@@ -166,25 +145,13 @@ async def preview_annual_report_from_details(report_data: schemas.DetailedReport
         )
         return Response(content=pdf_bytes, media_type="application/pdf")
     except Exception as e:
-        print(f"Error generating PDF preview from details: {e}")
         traceback.print_exc()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Kunde inte generera förhandsgranskning: {e}"
-        )
+        raise HTTPException(status_code=500, detail=f"Kunde inte generera förhandsgranskning: {e}")
 
-# --- TA BORT HELA DENNA ENDPOINT, DEN ÄR ERSATT AV /preview-pdf ---
-# @app.post("/api/annual-reports/generate-pdf") ...
 
-# --- UPPDATERAD ENDPOINT FÖR ATT SPARA RAPPORT ---
 @app.post("/api/annual-reports/from-details", response_model=schemas.AnnualReport)
 async def save_report_from_details(report_data: schemas.DetailedReportPayload, db: Session = Depends(get_db)):
-    """
-    Tar emot detaljerad data från wizarden, sparar den i databasen,
-    och returnerar den kompletta rapportposten inklusive dess nya ID.
-    """
     try:
-        # Hitta eller skapa företaget
         db_company = crud.get_company_by_org_nr(db, org_nr=report_data.org_nr)
         if db_company is None:
             db_company = crud.create_company(db=db, company=schemas.CompanyCreate(
@@ -192,38 +159,28 @@ async def save_report_from_details(report_data: schemas.DetailedReportPayload, d
                 org_nr=report_data.org_nr
             ))
 
-        # Skapa årsredovisningen i databasen - HÄR ÄR ÄNDRINGEN
         db_annual_report = crud.create_annual_report(db=db, report=report_data, company_id=db_company.id)
         
-        # Returnera den nyskapade rapporten (FastAPI konverterar den till JSON)
         return db_annual_report
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Kunde inte spara rapporten: {str(e)}")
 
 
-# --- UPPDATERAD ENDPOINT FÖR ATT FÖRHANDSGRANSKA SPARAD RAPPORT ---
 @app.get("/api/annual-reports/{report_id}/preview")
 async def preview_saved_report(report_id: int, db: Session = Depends(get_db)):
-    """
-    Hämtar en sparad rapport via ID, beräknar resultaten i realtid,
-    genererar en PDF och returnerar den.
-    """
     db_report = crud.get_annual_report(db, report_id=report_id)
     if db_report is None:
         raise HTTPException(status_code=404, detail="Rapporten kunde inte hittas.")
 
     try:
-        # Hämta rådata från databasen
         current_year_accounts = db_report.accounts_data.get('current_year', [])
         previous_year_accounts = db_report.accounts_data.get('previous_year', [])
 
-        # Anropa kalkylatorn för att få färska, korrekta siffror
         k2_results = k2_calculator.get_structured_k2_results(current_year_accounts, previous_year_accounts)
 
-        # Skicka all data till PDF-generatorn
         pdf_bytes = pdf_generator.create_annual_report_pdf(
-            report_data=db_report, # Skicka hela databasobjektet
+            report_data=db_report,
             k2_results=k2_results, 
             is_preview=True
         )

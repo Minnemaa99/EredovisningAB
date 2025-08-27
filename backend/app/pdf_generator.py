@@ -21,11 +21,46 @@ def create_annual_report_pdf(report_data, k2_results, is_preview: bool = False):
             company_name = report_data.company.name
             org_nr = report_data.company.org_nr
             representatives = report_data.representatives or []
+            # KORRIGERING: Hämta not-datan från databasobjektets 'notes'-fält.
+            notes_data = report_data.notes or {}
         else: # Detta är ett Pydantic-schema från frontend
             company_name = report_data.company_name
             org_nr = report_data.org_nr
             # Konvertera Pydantic-objekt till dicts för templaten
             representatives = [rep.model_dump() for rep in report_data.representatives]
+            # KORRIGERING: Hämta not-datan från Pydantic-schemats 'notes_data'-fält.
+            notes_data = report_data.notes_data or {}
+
+        # --- NYTT: Beräkna data för Resultatdisposition ---
+        balanserat_resultat = k2_results['balance_sheet']['free_equity_retained']['current']
+        arets_resultat = k2_results['profit_loss']['current']
+        # NYTT: Hämta utdelning från report_data
+        utdelning = report_data.dividend if hasattr(report_data, 'dividend') else 0
+        balanseras_i_ny_rakning = balanserat_resultat + arets_resultat - utdelning
+
+        resultatdisposition = {
+            "balanserat_resultat": balanserat_resultat,
+            "arets_resultat": arets_resultat,
+            "summa": balanserat_resultat + arets_resultat,
+            "utdelning": utdelning,
+            "balanseras_i_ny_rakning": balanseras_i_ny_rakning
+        }
+
+        # --- NYTT: Beräkna data för Förändringar i eget kapital ---
+        ing_fritt_ek = k2_results['balance_sheet']['free_equity_retained']['previous'] + k2_results['balance_sheet']['profit_loss_for_equity']['previous']
+        utg_fritt_ek = balanseras_i_ny_rakning
+        
+        forandringar_ek = {
+            "ing_bundet_ek": k2_results['balance_sheet']['restricted_equity']['previous'],
+            "utg_bundet_ek": k2_results['balance_sheet']['restricted_equity']['current'],
+            "ing_fritt_ek": ing_fritt_ek,
+            "arets_resultat": arets_resultat,
+            "utdelning": utdelning * -1, # Ska visas som negativt
+            "utg_fritt_ek": utg_fritt_ek,
+            "ing_totalt_ek": k2_results['balance_sheet']['total_equity']['previous'],
+            "utg_totalt_ek": k2_results['balance_sheet']['total_equity']['current'],
+        }
+        # --- SLUT PÅ NYTT ---
 
         template_context = {
             "company_name": company_name,
@@ -37,7 +72,11 @@ def create_annual_report_pdf(report_data, k2_results, is_preview: bool = False):
             "signature_date": report_data.signature_date,
             "representatives": representatives,
             "is_preview": is_preview,
-            "k2_results": k2_results, # Använd de färdigberäknade resultaten
+            "k2_results": k2_results,
+            "notes_data": notes_data,
+            "resultatdisposition": resultatdisposition,
+            # NYTT: Lägg till den nya datan i kontexten
+            "forandringar_ek": forandringar_ek,
         }
 
         template_loader = jinja2.FileSystemLoader(searchpath="./app/templates")

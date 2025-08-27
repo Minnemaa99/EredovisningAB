@@ -24,6 +24,8 @@ def create_annual_report(db: Session, report: schemas.DetailedReportPayload, com
     Skapar en ny årsredovisning och sparar ENDAST rådata.
     Beräknade värden sparas inte längre i databasen.
     """
+    # KORRIGERING: Se till att vi sparar rätt data i rätt fält enligt databasmodellen.
+    # 'notes' tas bort och 'representatives' tilldelas korrekt.
     db_report = models.AnnualReport(
         company_id=company_id,
         start_date=report.start_date,
@@ -31,9 +33,13 @@ def create_annual_report(db: Session, report: schemas.DetailedReportPayload, com
         
         # Spara den råa kontodatan och annan textdata
         accounts_data=report.accounts_data.model_dump(),
+        # KORRIGERING: Återinför logiken för att spara not-datan.
+        # Nu när modellen är fixad kommer detta att fungera.
+        notes=report.notes_data, 
         forvaltningsberattelse=report.forvaltningsberattelse,
         signature_city=report.signature_city,
         signature_date=report.signature_date,
+        # Säkerställ att listan med företrädare sparas korrekt.
         representatives=[rep.model_dump() for rep in report.representatives],
     )
     

@@ -1,143 +1,217 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <title>Årsredovisning för {{ company_name }}</title>
     <style>
         @page {
             size: A4;
-            margin: 2cm 1.5cm;
-            @bottom-center {
-                content: "Sida " counter(page);
-                font-size: 10pt;
-                color: #555;
-            }
+            margin: 2cm;
+            @top-left { content: element(header-left); }
+            @top-right { content: element(header-right); }
         }
-        body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.4; }
-        h1, h2, h3 { font-family: 'Helvetica', 'Arial', sans-serif; color: #000; font-weight: bold; }
-        h1 { font-size: 22pt; text-align: center; margin-bottom: 2cm; }
-        h2 { font-size: 14pt; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-top: 1.5cm; margin-bottom: 0.8cm; page-break-before: auto; page-break-after: avoid; }
-        h3 { font-size: 12pt; margin-top: 1cm; margin-bottom: 0.5cm; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 4px 6px; text-align: left; vertical-align: top; }
-        .report-table th { font-weight: bold; }
-        .report-table td:nth-child(2), .report-table th:nth-child(2) { text-align: right; }
-        .report-table td:nth-child(3), .report-table th:nth-child(3) { text-align: right; }
-        .header-row { border-bottom: 1px solid #333; }
-        .total-row td { font-weight: bold; border-top: 1px solid #333; border-bottom: 2px double #000; padding-top: 6px; }
-        .sub-total-row td { font-weight: bold; border-top: 1px solid #333; }
-        .indent { padding-left: 20px; }
-        .signatures { margin-top: 2cm; display: block; page-break-inside: avoid; }
-        .signature-block { display: inline-block; width: 45%; margin-right: 5%; margin-top: 1.5cm; }
-        .signature-line { border-bottom: 1px solid #000; margin-top: 2cm; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #333;
+        }
+        .header-left {
+            position: running(header-left);
+            font-size: 8pt;
+        }
+        .header-right {
+            position: running(header-right);
+            font-size: 8pt;
+        }
+        .header-right .page-num::after {
+            content: counter(page) " (" counter(pages) ")";
+        }
+        .page-break { page-break-before: always; }
+        .title-page { text-align: center; }
+        h1 { font-size: 22pt; font-weight: bold; margin-top: 4cm; margin-bottom: 1cm; }
+        h2 { font-size: 14pt; font-weight: bold; margin-bottom: 1cm; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        h3 { font-size: 11pt; font-weight: bold; margin-top: 1.5cm; margin-bottom: 0.5cm; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; vertical-align: top; padding: 5px 2px; }
+        .report-table th { font-weight: normal; border-bottom: 1px solid #000; }
+        .report-table .col-note { width: 5%; text-align: center; }
+        .report-table .col-amount { width: 22%; text-align: right; }
+        .report-table .indent { padding-left: 2em; }
+        .report-table .total-row td { border-top: 1px solid #000; border-bottom: 1px double #000; font-weight: bold; }
+        .report-table .sub-total-row td { border-top: 1px solid #000; font-weight: bold; }
+        .note-item { margin-bottom: 1cm; }
+        .note-table .col-amount { text-align: right; }
+        .signatures { margin-top: 2cm; }
+        .signature-block { margin-top: 2cm; padding-right: 2cm; display: inline-block; width: 200px; }
+        .signature-line { border-bottom: 1px solid #000; margin-bottom: 5px; padding-top: 1cm; }
         .watermark { position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 120px; color: rgba(128, 128, 128, 0.15); font-weight: bold; pointer-events: none; z-index: -1; }
     </style>
 </head>
 <body>
-    {% if is_preview %}
-    <div class="watermark">UTKAST</div>
-    {% endif %}
+    <div class="header-left">{{ company_name }}<br>Org.nr {{ org_nr }}</div>
+    <div class="header-right"><span class="page-num"></span></div>
+    {% if is_preview %}<div class="watermark">UTKAST</div>{% endif %}
 
-    <h1>Årsredovisning</h1>
-    <h2>{{ company_name }} ({{ org_nr }})</h2>
-    <p>för räkenskapsåret {{ start_date.strftime('%Y-%m-%d') }} - {{ end_date.strftime('%Y-%m-%d') }}</p>
+    <!-- Sida 1: Försättsblad -->
+    <div class="title-page">
+        <h1>Årsredovisning</h1>
+        <p style="font-size: 12pt; margin-top: 1cm;">för</p>
+        <h2 style="font-size: 16pt; border: none; text-align: center;">{{ company_name }}</h2>
+        <p style="font-size: 12pt;">{{ org_nr }}</p>
+        <p style="font-size: 12pt; margin-top: 2cm;">{{ start_date.strftime('%Y-%m-%d') }} - {{ end_date.strftime('%Y-%m-%d') }}</p>
+    </div>
 
-    <h2>Förvaltningsberättelse</h2>
-    <p>{{ forvaltningsberattelse | replace('\n', '<br>') | safe }}</p>
-    <h3>Resultatdisposition</h3>
-    <!-- KORRIGERING: Hämta data från rätt plats i den nya strukturen -->
-    <p>Styrelsen föreslår att till förfogande stående vinstmedel, {{ (k2_results.balance_sheet.free_equity_retained.current + k2_results.profit_loss.current) | format_number }} kr, disponeras enligt följande:</p>
-    <ul>
-        <li>Balanseras i ny räkning: {{ (k2_results.balance_sheet.free_equity_retained.current + k2_results.profit_loss.current) | format_number }} kr</li>
-    </ul>
+    <!-- Sida 2: Förvaltningsberättelse -->
+    <div class="page-break">
+        <h2>Förvaltningsberättelse</h2>
+        <div style="white-space: pre-wrap;">{{ forvaltningsberattelse }}</div>
+        
+        <h3>Flerårsöversikt</h3>
+        <p><em>Platshållare: Data för flerårsöversikt behöver implementeras i applikationen.</em></p>
 
-    <h2>Resultaträkning</h2>
-    <table class="report-table">
-        <tr class="header-row">
-            <th></th>
-            <th>{{ end_date.year }}<br>SEK</th>
-            <th>Föregående år<br>SEK</th>
-        </tr>
-        <!-- KORRIGERING: Hela resultaträkningen är ombyggd för att matcha K2-schemat -->
-        <tr><td colspan="3"><h3>Rörelsens intäkter</h3></td></tr>
-        <tr><td class="indent">Nettoomsättning</td><td>{{ k2_results.income_statement.net_sales.current | format_number }}</td><td>{{ k2_results.income_statement.net_sales.previous | format_number }}</td></tr>
-        <tr><td class="indent">Övriga rörelseintäkter</td><td>{{ k2_results.income_statement.other_operating_income.current | format_number }}</td><td>{{ k2_results.income_statement.other_operating_income.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td class="indent">Summa rörelseintäkter</td><td>{{ k2_results.income_statement.total_operating_income.current | format_number }}</td><td>{{ k2_results.income_statement.total_operating_income.previous | format_number }}</td></tr>
-        
-        <tr><td colspan="3"><h3>Rörelsekostnader</h3></td></tr>
-        <tr><td class="indent">Råvaror och förnödenheter</td><td>{{ k2_results.income_statement.raw_materials.current | format_number }}</td><td>{{ k2_results.income_statement.raw_materials.previous | format_number }}</td></tr>
-        <tr><td class="indent">Övriga externa kostnader</td><td>{{ k2_results.income_statement.other_external_costs.current | format_number }}</td><td>{{ k2_results.income_statement.other_external_costs.previous | format_number }}</td></tr>
-        <tr><td class="indent">Personalkostnader</td><td>{{ k2_results.income_statement.personnel_costs.current | format_number }}</td><td>{{ k2_results.income_statement.personnel_costs.previous | format_number }}</td></tr>
-        <tr><td class="indent">Av- och nedskrivningar</td><td>{{ k2_results.income_statement.depreciation.current | format_number }}</td><td>{{ k2_results.income_statement.depreciation.previous | format_number }}</td></tr>
-        <tr><td class="indent">Övriga rörelsekostnader</td><td>{{ k2_results.income_statement.other_operating_expenses.current | format_number }}</td><td>{{ k2_results.income_statement.other_operating_expenses.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td class="indent">Summa rörelsekostnader</td><td>{{ k2_results.income_statement.total_operating_expenses.current | format_number }}</td><td>{{ k2_results.income_statement.total_operating_expenses.previous | format_number }}</td></tr>
-        
-        <tr class="sub-total-row"><td><strong>Rörelseresultat</strong></td><td>{{ k2_results.income_statement.operating_profit.current | format_number }}</td><td>{{ k2_results.income_statement.operating_profit.previous | format_number }}</td></tr>
-        
-        <tr><td colspan="3"><h3>Finansiella poster</h3></td></tr>
-        <tr><td class="indent">Övriga ränteintäkter och liknande</td><td>{{ k2_results.income_statement.financial_income.current | format_number }}</td><td>{{ k2_results.income_statement.financial_income.previous | format_number }}</td></tr>
-        <tr><td class="indent">Räntekostnader och liknande</td><td>{{ k2_results.income_statement.financial_costs.current | format_number }}</td><td>{{ k2_results.income_statement.financial_costs.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td><strong>Resultat efter finansiella poster</strong></td><td>{{ k2_results.income_statement.profit_after_financial_items.current | format_number }}</td><td>{{ k2_results.income_statement.profit_after_financial_items.previous | format_number }}</td></tr>
-        
-        <tr><td class="indent">Bokslutsdispositioner</td><td>{{ k2_results.income_statement.appropriations.current | format_number }}</td><td>{{ k2_results.income_statement.appropriations.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td><strong>Resultat före skatt</strong></td><td>{{ k2_results.income_statement.profit_before_tax.current | format_number }}</td><td>{{ k2_results.income_statement.profit_before_tax.previous | format_number }}</td></tr>
-        
-        <tr><td>Skatt på årets resultat</td><td>{{ k2_results.income_statement.tax.current | format_number }}</td><td>{{ k2_results.income_statement.tax.previous | format_number }}</td></tr>
-        <tr class="total-row"><td><strong>ÅRETS RESULTAT</strong></td><td>{{ k2_results.profit_loss.current | format_number }}</td><td>{{ k2_results.profit_loss.previous | format_number }}</td></tr>
-    </table>
+        <h3>Förändringar i eget kapital</h3>
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th class="col-amount">Bundet eget kapital</th>
+                    <th class="col-amount">Fritt eget kapital</th>
+                    <th class="col-amount">Totalt eget kapital</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ingående eget kapital</td>
+                    <td class="col-amount">{{ forandringar_ek.ing_bundet_ek | format_number }}</td>
+                    <td class="col-amount">{{ forandringar_ek.ing_fritt_ek | format_number }}</td>
+                    <td class="col-amount">{{ forandringar_ek.ing_totalt_ek | format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Utdelning</td>
+                    <td class="col-amount"></td>
+                    <td class="col-amount">{{ forandringar_ek.utdelning | format_number }}</td>
+                    <td class="col-amount">{{ forandringar_ek.utdelning | format_number }}</td>
+                </tr>
+                <tr>
+                    <td>Årets resultat</td>
+                    <td class="col-amount"></td>
+                    <td class="col-amount">{{ forandringar_ek.arets_resultat | format_number }}</td>
+                    <td class="col-amount">{{ forandringar_ek.arets_resultat | format_number }}</td>
+                </tr>
+                <tr class="sub-total-row">
+                    <td>Utgående eget kapital</td>
+                    <td class="col-amount">{{ forandringar_ek.utg_bundet_ek | format_number }}</td>
+                    <td class="col-amount">{{ forandringar_ek.utg_fritt_ek | format_number }}</td>
+                    <td class="col-amount">{{ forandringar_ek.utg_totalt_ek | format_number }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <h2 style="page-break-before: always;">Balansräkning</h2>
-    <table class="report-table">
-        <tr class="header-row">
-            <th>TILLGÅNGAR</th>
-            <th>{{ end_date.strftime('%Y-%m-%d') }}<br>SEK</th>
-            <th>{{ (end_date.replace(year=end_date.year-1)).strftime('%Y-%m-%d') }}<br>SEK</th>
-        </tr>
-        <tr><td colspan="3"><h3>Anläggningstillgångar</h3></td></tr>
-        <tr><td class="indent">Materiella anläggningstillgångar</td><td>{{ k2_results.balance_sheet.fixed_assets_tangible.current | format_number }}</td><td>{{ k2_results.balance_sheet.fixed_assets_tangible.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td><strong>Summa anläggningstillgångar</strong></td><td>{{ k2_results.balance_sheet.total_fixed_assets.current | format_number }}</td><td>{{ k2_results.balance_sheet.total_fixed_assets.previous | format_number }}</td></tr>
-        <tr><td colspan="3"><h3>Omsättningstillgångar</h3></td></tr>
-        <tr><td class="indent">Varulager m.m.</td><td>{{ k2_results.balance_sheet.inventory.current | format_number }}</td><td>{{ k2_results.balance_sheet.inventory.previous | format_number }}</td></tr>
-        <tr><td class="indent">Kortfristiga fordringar</td><td>{{ k2_results.balance_sheet.current_receivables.current | format_number }}</td><td>{{ k2_results.balance_sheet.current_receivables.previous | format_number }}</td></tr>
-        <tr><td class="indent">Kassa och Bank</td><td>{{ k2_results.balance_sheet.cash_and_bank.current | format_number }}</td><td>{{ k2_results.balance_sheet.cash_and_bank.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td><strong>Summa omsättningstillgångar</strong></td><td>{{ k2_results.balance_sheet.total_current_assets.current | format_number }}</td><td>{{ k2_results.balance_sheet.total_current_assets.previous | format_number }}</td></tr>
-        <tr class="total-row"><td><strong>SUMMA TILLGÅNGAR</strong></td><td>{{ k2_results.total_assets.current | format_number }}</td><td>{{ k2_results.total_assets.previous | format_number }}</td></tr>
-    </table>
-    <table class="report-table" style="margin-top: 1cm;">
-        <tr class="header-row">
-            <th>EGET KAPITAL OCH SKULDER</th>
-            <th>{{ end_date.strftime('%Y-%m-%d') }}<br>SEK</th>
-            <th>{{ (end_date.replace(year=end_date.year-1)).strftime('%Y-%m-%d') }}<br>SEK</th>
-        </tr>
-        <!-- KORRIGERING: Hämta data från rätt plats i den nya strukturen -->
-        <tr><td colspan="3"><h3>Eget kapital</h3></td></tr>
-        <tr><td class="indent">Bundet eget kapital</td><td>{{ k2_results.balance_sheet.restricted_equity.current | format_number }}</td><td>{{ k2_results.balance_sheet.restricted_equity.previous | format_number }}</td></tr>
-        <tr><td class="indent">Balanserat resultat</td><td>{{ k2_results.balance_sheet.free_equity_retained.current | format_number }}</td><td>{{ k2_results.balance_sheet.free_equity_retained.previous | format_number }}</td></tr>
-        <tr><td class="indent">Årets resultat</td><td>{{ k2_results.balance_sheet.profit_loss_for_equity.current | format_number }}</td><td>{{ k2_results.balance_sheet.profit_loss_for_equity.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td><strong>Summa eget kapital</strong></td><td>{{ k2_results.balance_sheet.total_equity.current | format_number }}</td><td>{{ k2_results.balance_sheet.total_equity.previous | format_number }}</td></tr>
-        
-        <tr><td colspan="3"><h3>Obeskattade reserver</h3></td></tr>
-        <tr><td class="indent">Periodiseringsfonder</td><td>{{ k2_results.balance_sheet.untaxed_reserves.current | format_number }}</td><td>{{ k2_results.balance_sheet.untaxed_reserves.previous | format_number }}</td></tr>
-        
-        <tr><td colspan="3"><h3>Skulder</h3></td></tr>
-        <tr><td class="indent">Långfristiga skulder</td><td>{{ k2_results.balance_sheet.long_term_liabilities.current | format_number }}</td><td>{{ k2_results.balance_sheet.long_term_liabilities.previous | format_number }}</td></tr>
-        <tr><td class="indent">Kortfristiga skulder</td><td>{{ k2_results.balance_sheet.current_liabilities.current | format_number }}</td><td>{{ k2_results.balance_sheet.current_liabilities.previous | format_number }}</td></tr>
-        <tr class="sub-total-row"><td><strong>Summa skulder</strong></td><td>{{ k2_results.balance_sheet.total_liabilities.current | format_number }}</td><td>{{ k2_results.balance_sheet.total_liabilities.previous | format_number }}</td></tr>
-        <tr class="total-row"><td><strong>SUMMA EGET KAPITAL OCH SKULDER</strong></td><td>{{ k2_results.total_equity_and_liabilities.current | format_number }}</td><td>{{ k2_results.total_equity_and_liabilities.previous | format_number }}</td></tr>
-    </table>
+        <h3>Resultatdisposition</h3>
+        <p>Styrelsen föreslår att till förfogande stående vinstmedel disponeras enligt följande:</p>
+        <table style="width: 60%;">
+            <tr><td>Balanserat resultat</td><td style="text-align:right;">{{ resultatdisposition.balanserat_resultat | format_number }}</td></tr>
+            <tr><td>Årets resultat</td><td style="text-align:right;">{{ resultatdisposition.arets_resultat | format_number }}</td></tr>
+            <tr class="sub-total-row"><td>Till förfogande</td><td style="text-align:right;">{{ resultatdisposition.summa | format_number }}</td></tr>
+            <tr><td colspan="2" style="padding-top: 1em;">Styrelsen föreslår att medlen disponeras enligt följande:</td></tr>
+            <tr><td>Utdelning till aktieägare</td><td style="text-align:right;">{{ resultatdisposition.utdelning | format_number }}</td></tr>
+            <tr><td>Balanseras i ny räkning</td><td style="text-align:right;">{{ resultatdisposition.balanseras_i_ny_rakning | format_number }}</td></tr>
+            <tr class="total-row"><td>Summa</td><td style="text-align:right;">{{ resultatdisposition.summa | format_number }}</td></tr>
+        </table>
+        <p style="margin-top: 1cm;">Företagets resultat och ställning i övrigt framgår av efterföljande resultat- och balansräkning med noter.</p>
+    </div>
 
-    <div class="signatures">
-        <h2>Underskrifter</h2>
-        <p>Härmed intygas att resultaträkningen och balansräkningen har fastställts på årsstämma {{ signature_date.strftime('%Y-%m-%d') }}.</p>
-        <br>
-        <p>{{ signature_city }}, den {{ signature_date.strftime('%Y-%m-%d') }}</p>
-        
-        {% for rep in representatives %}
-        <div class="signature-block">
-            <div class="signature-line"></div>
-            <p>{{ rep.name }}<br>{{ rep.role }}</p>
-        </div>
+    <!-- Sida 3: Resultaträkning -->
+    <div class="page-break">
+        <h2>Resultaträkning</h2>
+        <table class="report-table">
+            <thead><tr><th></th><th class="col-note">Not</th><th class="col-amount">{{ end_date.strftime('%Y-%m-%d') }}</th><th class="col-amount">{{ (end_date.replace(year=end_date.year-1)).strftime('%Y-%m-%d') }}</th></tr></thead>
+            <tbody>
+                <tr><td colspan="4"><strong>Rörelsens intäkter</strong></td></tr>
+                <tr><td class="indent">Nettoomsättning</td><td>{{ k2_results.income_statement.net_sales.note_ref or '' }}</td><td class="col-amount">{{ k2_results.income_statement.net_sales.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.net_sales.previous | format_number }}</td></tr>
+                <tr class="sub-total-row"><td class="indent">Summa rörelseintäkter</td><td></td><td class="col-amount">{{ k2_results.income_statement.total_operating_income.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.total_operating_income.previous | format_number }}</td></tr>
+                <tr><td colspan="4" style="padding-top: 1em;"><strong>Rörelsekostnader</strong></td></tr>
+                <tr><td class="indent">Övriga externa kostnader</td><td>{{ k2_results.income_statement.other_external_costs.note_ref or '' }}</td><td class="col-amount">{{ k2_results.income_statement.other_external_costs.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.other_external_costs.previous | format_number }}</td></tr>
+                <tr><td class="indent">Personalkostnader</td><td>{{ k2_results.income_statement.personnel_costs.note_ref or '' }}</td><td class="col-amount">{{ k2_results.income_statement.personnel_costs.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.personnel_costs.previous | format_number }}</td></tr>
+                <tr><td class="indent">Av- och nedskrivningar</td><td>{{ k2_results.income_statement.depreciation.note_ref or '' }}</td><td class="col-amount">{{ k2_results.income_statement.depreciation.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.depreciation.previous | format_number }}</td></tr>
+                <tr class="sub-total-row"><td>Rörelseresultat</td><td></td><td class="col-amount">{{ k2_results.income_statement.operating_profit.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.operating_profit.previous | format_number }}</td></tr>
+                <tr><td colspan="4" style="padding-top: 1em;"><strong>Finansiella poster</strong></td></tr>
+                <tr><td class="indent">Resultat från finansiella poster</td><td></td><td class="col-amount">{{ (k2_results.income_statement.financial_income.current + k2_results.income_statement.financial_costs.current) | format_number }}</td><td class="col-amount">{{ (k2_results.income_statement.financial_income.previous + k2_results.income_statement.financial_costs.previous) | format_number }}</td></tr>
+                <tr class="sub-total-row"><td>Resultat efter finansiella poster</td><td></td><td class="col-amount">{{ k2_results.income_statement.profit_after_financial_items.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.profit_after_financial_items.previous | format_number }}</td></tr>
+                <tr><td>Skatt på årets resultat</td><td>{{ k2_results.income_statement.tax.note_ref or '' }}</td><td class="col-amount">{{ k2_results.income_statement.tax.current | format_number }}</td><td class="col-amount">{{ k2_results.income_statement.tax.previous | format_number }}</td></tr>
+                <tr class="total-row"><td>ÅRETS RESULTAT</td><td></td><td class="col-amount">{{ k2_results.profit_loss.current | format_number }}</td><td class="col-amount">{{ k2_results.profit_loss.previous | format_number }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sida 4: Balansräkning -->
+    <div class="page-break">
+        <h2>Balansräkning</h2>
+        <table class="report-table">
+            <thead><tr><th>TILLGÅNGAR</th><th class="col-note">Not</th><th class="col-amount">{{ end_date.strftime('%Y-%m-%d') }}</th><th class="col-amount">{{ (end_date.replace(year=end_date.year-1)).strftime('%Y-%m-%d') }}</th></tr></thead>
+            <tbody>
+                <tr><td colspan="4"><strong>Anläggningstillgångar</strong></td></tr>
+                <tr><td class="indent">Materiella anläggningstillgångar</td><td>{{ k2_results.balance_sheet.fixed_assets_tangible.note_ref or '' }}</td><td class="col-amount">{{ k2_results.balance_sheet.fixed_assets_tangible.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.fixed_assets_tangible.previous | format_number }}</td></tr>
+                <tr class="sub-total-row"><td>Summa anläggningstillgångar</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.total_fixed_assets.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.total_fixed_assets.previous | format_number }}</td></tr>
+                <tr><td colspan="4" style="padding-top: 1em;"><strong>Omsättningstillgångar</strong></td></tr>
+                <tr><td class="indent">Kortfristiga fordringar</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.current_receivables.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.current_receivables.previous | format_number }}</td></tr>
+                <tr><td class="indent">Kassa och bank</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.cash_and_bank.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.cash_and_bank.previous | format_number }}</td></tr>
+                <tr class="sub-total-row"><td>Summa omsättningstillgångar</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.total_current_assets.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.total_current_assets.previous | format_number }}</td></tr>
+                <tr class="total-row"><td>SUMMA TILLGÅNGAR</td><td></td><td class="col-amount">{{ k2_results.total_assets.current | format_number }}</td><td class="col-amount">{{ k2_results.total_assets.previous | format_number }}</td></tr>
+            </tbody>
+        </table>
+        <table class="report-table" style="margin-top: 2cm;">
+            <thead><tr><th>EGET KAPITAL OCH SKULDER</th><th class="col-note">Not</th><th class="col-amount">{{ end_date.strftime('%Y-%m-%d') }}</th><th class="col-amount">{{ (end_date.replace(year=end_date.year-1)).strftime('%Y-%m-%d') }}</th></tr></thead>
+            <tbody>
+                <tr><td colspan="4"><strong>Eget kapital</strong></td></tr>
+                <tr><td class="indent">Bundet eget kapital</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.restricted_equity.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.restricted_equity.previous | format_number }}</td></tr>
+                <tr><td class="indent">Balanserat resultat</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.free_equity_retained.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.free_equity_retained.previous | format_number }}</td></tr>
+                <tr><td class="indent">Årets resultat</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.profit_loss_for_equity.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.profit_loss_for_equity.previous | format_number }}</td></tr>
+                <tr class="sub-total-row"><td>Summa eget kapital</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.total_equity.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.total_equity.previous | format_number }}</td></tr>
+                <tr><td colspan="4" style="padding-top: 1em;"><strong>Långfristiga skulder</strong></td></tr>
+                <tr><td class="indent">Långfristiga skulder</td><td>{{ k2_results.balance_sheet.long_term_liabilities.note_ref or '' }}</td><td class="col-amount">{{ k2_results.balance_sheet.long_term_liabilities.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.long_term_liabilities.previous | format_number }}</td></tr>
+                <tr><td colspan="4" style="padding-top: 1em;"><strong>Kortfristiga skulder</strong></td></tr>
+                <tr><td class="indent">Kortfristiga skulder</td><td></td><td class="col-amount">{{ k2_results.balance_sheet.current_liabilities.current | format_number }}</td><td class="col-amount">{{ k2_results.balance_sheet.current_liabilities.previous | format_number }}</td></tr>
+                <tr class="total-row"><td>SUMMA EGET KAPITAL OCH SKULDER</td><td></td><td class="col-amount">{{ k2_results.total_equity_and_liabilities.current | format_number }}</td><td class="col-amount">{{ k2_results.total_equity_and_liabilities.previous | format_number }}</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sida 5: Noter -->
+    <div class="page-break">
+        <h2>Noter</h2>
+        {% for note_id, note_info in k2_results.active_notes.items() | sort(attribute='1.ref') %}
+            <div class="note-item">
+                <h3>Not {{ note_info.ref }} {{ note_info.title }}</h3>
+                {% set note_data = notes_data.get(note_id, {}) %}
+                {% if note_id == 'accounting_principles' %}
+                    <p>Årsredovisningen är upprättad i enlighet med årsredovisningslagen och Bokföringsnämndens allmänna råd BFNAR 2016:10 Årsredovisning i mindre företag (K2). De tillämpade redovisningsprinciperna är oförändrade jämfört med föregående år.</p>
+                    <h4>Värderingsprinciper m.m.</h4>
+                    <p>Tillgångar, avsättningar och skulder har värderats till anskaffningsvärden. Fordringar har upptagits till de belopp varmed de beräknas inflyta. Skulder har upptagits till nominellt belopp.</p>
+                {% elif note_id == 'average_employees' %}
+                    <table class="note-table"><thead><tr><th></th><th class="col-amount">{{ end_date.strftime('%Y-%m-%d') }}</th><th class="col-amount">{{ (end_date.replace(year=end_date.year-1)).strftime('%Y-%m-%d') }}</th></tr></thead><tbody><tr><td>Medelantalet anställda</td><td class="col-amount">{{ note_data.get('employees', 0) }}</td><td class="col-amount">{{ note_data.get('prev_employees', 0) }}</td></tr></tbody></table>
+                {% elif note_id == 'tangible_assets' %}
+                    <table class="note-table"><thead><tr><th>Inventarier, verktyg och installationer</th><th class="col-amount">{{ end_date.strftime('%Y-%m-%d') }}</th></tr></thead><tbody><tr><td>Ingående anskaffningsvärde</td><td class="col-amount">{{ note_data.get('ingAnsk', 0) | format_number }}</td></tr><tr><td>Årets inköp</td><td class="col-amount">{{ note_data.get('aretsKop', 0) | format_number }}</td></tr><tr class="sub-total-row"><td>Utgående ackumulerade anskaffningsvärden</td><td class="col-amount">{{ (note_data.get('ingAnsk', 0) + note_data.get('aretsKop', 0)) | format_number }}</td></tr><tr><td style="padding-top: 1em;">Ingående ackumulerade avskrivningar</td><td class="col-amount">{{ (note_data.get('ingAvsk', 0) * -1) | format_number }}</td></tr><tr><td>Årets avskrivningar enligt plan</td><td class="col-amount">{{ (note_data.get('aretsAvsk', 0) * -1) | format_number }}</td></tr><tr class="sub-total-row"><td>Utgående ackumulerade avskrivningar</td><td class="col-amount">{{ ((note_data.get('ingAvsk', 0) + note_data.get('aretsAvsk', 0)) * -1) | format_number }}</td></tr><tr class="total-row"><td>Utgående redovisat värde</td><td class="col-amount">{{ (note_data.get('ingAnsk', 0) + note_data.get('aretsKop', 0) - note_data.get('ingAvsk', 0) - note_data.get('aretsAvsk', 0)) | format_number }}</td></tr></tbody></table>
+                {% elif note_id == 'long_term_liabilities' %}
+                     <p>Avser skulder till kreditinstitut.</p>
+                {% endif %}
+            </div>
         {% endfor %}
+    </div>
+
+    <!-- Sida 6: Underskrifter -->
+    <div class="page-break">
+        <div class="signatures">
+            <p>{{ signature_city }}, den {{ signature_date.strftime('%Y-%m-%d') }}</p>
+            {% for rep in representatives %}
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <p>{{ rep.name }}<br>{{ rep.role }}</p>
+            </div>
+            {% endfor %}
+            <p style="margin-top: 3cm; font-size: 9pt; font-style: italic;">Min revisionsberättelse har lämnats den dag som framgår av min elektroniska underskrift.</p>
+        </div>
     </div>
 </body>
 </html>

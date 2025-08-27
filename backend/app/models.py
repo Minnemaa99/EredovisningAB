@@ -24,11 +24,13 @@ class AnnualReport(Base):
 
     # Lägg till detta nya fält
     accounts_data = Column(JSON)
-    
+    notes = Column(JSON, nullable=True) # NYTT FÄLT
     forvaltningsberattelse = Column(String, nullable=True)
     signature_city = Column(String, nullable=True)
     signature_date = Column(Date, nullable=True)
     representatives = Column(JSON, nullable=True)
+    # NYTT: Lägg till ett fält för föreslagen utdelning.
+    dividend = Column(Float, default=0.0)
 
     # --- Balance Sheet (Balansräkning) ---
     # Anläggningstillgångar
@@ -66,12 +68,3 @@ class AnnualReport(Base):
 
     # Relationships
     company = relationship("Company", back_populates="annual_reports")
-    notes = relationship("Note", back_populates="report")
-
-class Note(Base):
-    __tablename__ = "notes"
-    id = Column(Integer, primary_key=True, index=True)
-    report_id = Column(Integer, ForeignKey("annual_reports.id"))
-    note_type = Column(String)
-    content = Column(Text)
-    report = relationship("AnnualReport", back_populates="notes")
