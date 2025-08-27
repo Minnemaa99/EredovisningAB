@@ -104,12 +104,14 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
         
         calc['total_equity_and_liabilities'] = calc['total_equity'] + calc['untaxed_reserves'] + calc['total_liabilities']
         
-        # NYTT: Beräkna soliditet med felsäkring
+        # NYTT: Beräkna soliditet enligt branschpraxis (FAR/BFN)
         try:
-            adjusted_equity = calc.get('total_equity', 0) + (calc.get('untaxed_reserves', 0) * (1 - 0.206))
+            equity = calc.get('total_equity', 0)
+            untaxed_reserves = calc.get('untaxed_reserves', 0)
             total_assets = calc.get('total_assets', 0)
+            adjusted_equity = equity + untaxed_reserves * (1 - 0.206)
             if total_assets > 0:
-                calc['solvency_ratio'] = (adjusted_equity / total_assets) * 100
+                calc['solvency_ratio'] = round((adjusted_equity / total_assets) * 100, 1)
             else:
                 calc['solvency_ratio'] = 0.0
         except Exception:

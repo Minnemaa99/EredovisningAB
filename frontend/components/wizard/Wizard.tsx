@@ -40,6 +40,11 @@ export default function Wizard() {
     }
   }, [calculationResult, stepIndex]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Endast stepIndex som dependency!
+  }, [stepIndex]);
+
   const nextStep = () => { if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1); };
   const prevStep = () => { if (stepIndex > 0) setStepIndex(stepIndex - 1); };
 
@@ -118,7 +123,10 @@ export default function Wizard() {
       signature_date: signatureInfo.date,
       representatives: representatives,
       dividend: dividend,
+      notes_data: notesData,
     };
+
+    console.log("DEBUG: Payload som skickas till backend:", payload); // <-- Lägg till denna rad!
 
     try {
       const response = await axios.post(`${API_URL}/annual-reports/from-details`, payload);

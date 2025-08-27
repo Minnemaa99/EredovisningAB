@@ -41,6 +41,7 @@ def create_annual_report(db: Session, report: schemas.DetailedReportPayload, com
         signature_date=report.signature_date,
         # Säkerställ att listan med företrädare sparas korrekt.
         representatives=[rep.model_dump() for rep in report.representatives],
+        dividend=report.dividend,  # <-- Lägg till denna rad!
     )
     
     db.add(db_report)

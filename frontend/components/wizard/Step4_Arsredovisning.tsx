@@ -40,31 +40,23 @@ const Step4_Arsredovisning: React.FC<Props> = ({
   ];
 
   return (
-    <div className="p-8 max-w-6xl mx-auto bg-white rounded-2xl shadow-xl flex gap-8">
-      <aside className="w-1/4 border-r pr-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Årsredovisning</h3>
-        <nav>
-          <ul>
-            {menuItems.map((item) => (
-              <li key={item.id} className="mb-2">
-                <button
-                  onClick={() => setSubStep(item.id as any)}
-                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 ${
-                    subStep === item.id
-                      ? 'bg-blue-600 text-white font-bold shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {subStep === item.id ? <FiCheckCircle /> : <FiFileText />}
-                  {item.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
-
-      <main className="w-3/4">
+    <div className="p-8 max-w-5xl mx-auto bg-white rounded-2xl shadow-xl">
+      <nav className="flex gap-4 mb-8">
+        {menuItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => setSubStep(item.id as any)}
+            className={`px-6 py-3 rounded-t-lg font-semibold transition-all duration-200 border-b-2 ${
+              subStep === item.id
+                ? 'border-blue-600 text-blue-700 bg-blue-50'
+                : 'border-transparent text-gray-500 bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
+      <main className="w-full">
         {subStep === 'noter' && (
           <Step4_Noter
             k2Results={k2Results}

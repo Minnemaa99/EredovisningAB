@@ -32,7 +32,9 @@ const Layout = ({ children }: Props) => {
       </header>
 
       <main className="flex-grow">
-        {children}
+        <div className="w-full px-8 py-8 text-base">
+          {children}
+        </div>
       </main>
 
       <footer className="bg-gray-50">
