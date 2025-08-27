@@ -10,28 +10,6 @@ import Step7_LamnaIn from "./Step7_LamnaIn";
 
 const API_URL = "http://127.0.0.1:8000/api";
 
-// --- TRACEBACK STEG 4: Anpassad hook för att logga varje state-ändring ---
-const useStateWithLogger = (initialValue, name) => {
-  const [value, setValue] = useState(initialValue);
-
-  const setValueWithLogging = (newValue) => {
-    console.group(`--- TRACEBACK 4: State set for "${name}" ---`);
-    console.log("Nytt värde:", newValue);
-    // Kontrollera specifikt för den felande nyckeln
-    if (newValue && newValue.balance_sheet && newValue.balance_sheet.solvency_ratio !== undefined) {
-      console.log(`%c -> solvency_ratio FINNS`, 'color: green; font-weight: bold;');
-    } else {
-      console.log(`%c -> solvency_ratio SAKNAS`, 'color: red; font-weight: bold;');
-    }
-    console.trace("Anropades från:"); // Ger en stack trace för att se exakt varifrån anropet kom
-    console.groupEnd();
-    setValue(newValue);
-  };
-
-  return [value, setValueWithLogging];
-};
-
-
 export default function Wizard() {
   const steps = [
     "Räkenskapsår", "Resultaträkning", "Balansräkning", "Årsredovisning", "Företrädare", "Lämna in",
@@ -43,8 +21,7 @@ export default function Wizard() {
   const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
   const [accountsData, setAccountsData] = useState({ current_year: [], previous_year: [] });
   
-  // --- TRACEBACK STEG 4: Använd vår nya spion-hook istället för vanlig useState ---
-  const [calculationResult, setCalculationResult] = useStateWithLogger(null, "calculationResult");
+  const [calculationResult, setCalculationResult] = useState(null);
   
   const [isLoading, setIsLoading] = useState(false);
   const [notesData, setNotesData] = useState({});

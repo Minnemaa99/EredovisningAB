@@ -42,7 +42,6 @@ const Step1_Rakenskapsar: React.FC<Props> = ({
     formData.append('file', selectedFile);
 
     try {
-      console.log("TRACE 1: [Step1] Skickar SIE-fil till backend...");
       const response = await axios.post(
         'http://127.0.0.1:8000/api/annual-reports/upload-sie',
         formData,
@@ -52,9 +51,7 @@ const Step1_Rakenskapsar: React.FC<Props> = ({
           },
         }
       );
-      console.log("TRACE 2: [Step1] Mottaget svar från backend:", response.data);
       
-      console.log("TRACE 3: [Step1] Anropar onUploadSuccess med datan ovan.");
       onUploadSuccess(response.data);
     } catch (err: any) {
       console.error("Failed to upload and parse SIE file", err);

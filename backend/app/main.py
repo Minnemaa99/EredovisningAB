@@ -9,12 +9,10 @@ import traceback
 from datetime import datetime
 from io import BytesIO
 
-# Importerar från din befintliga mapp 'sie_parser'
 from .sie_parser.sie_parse import SieParser
-# Ta bort onödig import av SieData
 from . import crud, models, schemas, pdf_generator, k2_calculator, chart_of_accounts_data
 from .database import SessionLocal, engine
-import sys # Importera sys
+import sys
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -92,11 +90,6 @@ async def upload_sie_file(file: UploadFile = File(...), chart_of_accounts: dict 
 
         k2_results = k2_calculator.get_structured_k2_results(current_accounts, prev_accounts)
 
-        # --- TRACEBACK STEG 1: LOGGNING ---
-        print("\n--- TRACEBACK 1: Endpoint /upload-sie anropad ---", file=sys.stderr)
-        print(json.dumps(k2_results, indent=2, ensure_ascii=False), file=sys.stderr)
-        print("--- SLUT TRACEBACK 1 ---\n", file=sys.stderr)
-
         return schemas.FullCalculationPayload(
             company_info=schemas.CompanyBase(name=company_name, org_nr=org_nr),
             report_dates={
@@ -119,12 +112,6 @@ async def calculate_report_from_accounts(accounts_data: schemas.AccountsData):
         previous_year_dicts = [acc.model_dump() for acc in accounts_data.previous_year]
         
         structured_results = k2_calculator.get_structured_k2_results(current_year_dicts, previous_year_dicts)
-        
-        # --- TRACEBACK STEG 1: LOGGNING ---
-        print("\n--- TRACEBACK 1: Endpoint /calculate anropad ---", file=sys.stderr)
-        print(json.dumps(structured_results, indent=2, ensure_ascii=False), file=sys.stderr)
-        print("--- SLUT TRACEBACK 1 ---\n", file=sys.stderr)
-
         return structured_results
     except Exception as e:
         traceback.print_exc()
