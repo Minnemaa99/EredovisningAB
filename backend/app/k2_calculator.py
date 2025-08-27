@@ -23,11 +23,6 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
                 active_notes[note_id] = { "ref": note_counter, "title": note_details['title'] }
                 note_counter += 1
     
-    print("\n--- K2_CALCULATOR TRACE: Obligatoriska noter ---", file=sys.stderr)
-    print(json.dumps(active_notes, indent=2), file=sys.stderr)
-    print("-----------------------------------------------\n", file=sys.stderr)
-
-
     def sum_accounts(accounts, start, end):
         """Summerar balansen för konton inom ett visst intervall."""
         return sum(acc.get('balance', 0) for acc in accounts if start <= int(acc.get('account_number', 0)) <= end)
@@ -36,20 +31,15 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
         nonlocal note_counter
         note_ref = None
         
-        if note_trigger_key:
-            print(f"--- K2_CALCULATOR TRACE: Evaluerar not '{note_trigger_key}' med värde: {current_val}", file=sys.stderr)
-
         # Steg 2: Aktivera villkorliga noter.
         if note_trigger_key and current_val != 0:
             note_id = key_to_note_id_map.get(note_trigger_key)
             if note_id and note_id not in active_notes:
-                print(f"    -> AKTIVERAR NOT: '{note_id}' (ny ref: {note_counter})", file=sys.stderr)
                 active_notes[note_id] = { "ref": note_counter, "title": notes_map[note_id]['title'] }
                 note_counter += 1
             
             if note_id in active_notes:
                 note_ref = active_notes[note_id]['ref']
-                print(f"    -> Noten är aktiv. Tilldelar ref: {note_ref}", file=sys.stderr)
 
         return {"current": round(current_val), "previous": round(previous_val), "note_ref": note_ref}
 
@@ -187,8 +177,4 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
     sorted_active_notes = dict(sorted(active_notes.items(), key=lambda item: item[1]['ref']))
     result["active_notes"] = sorted_active_notes
     
-    print("\n--- K2_CALCULATOR TRACE: Slutgiltiga aktiva noter ---", file=sys.stderr)
-    print(json.dumps(sorted_active_notes, indent=2), file=sys.stderr)
-    print("---------------------------------------------------\n", file=sys.stderr)
-
     return result

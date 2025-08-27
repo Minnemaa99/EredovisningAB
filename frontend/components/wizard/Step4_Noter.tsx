@@ -24,11 +24,7 @@ const NoteItem = ({ noteInfo, children }) => {
 
 // Huvudkomponenten för not-steget
 const Step4_Noter = ({ k2Results, onNext, onBack, notesData, onNotesDataChange }) => {
-  // --- DEBUGGING: Kontrollera props i webbläsarens konsol (F12) ---
-  console.log("TRACE 7 (SLUTSTEG): [Step4_Noter] Rendering. Mottagen k2Results prop:", k2Results);
-
   const active_notes = k2Results?.active_notes || {};
-  console.log("TRACE 7.1: [Step4_Noter] Extraherade active_notes:", active_notes);
   const balance_sheet = k2Results?.balance_sheet;
 
   // Funktion som väljer rätt komponent baserat på notens ID

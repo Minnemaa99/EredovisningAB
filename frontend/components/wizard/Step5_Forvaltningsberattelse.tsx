@@ -34,21 +34,8 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({
   dividend,
   onDividendChange
 }) => {
-  // --- TRACEBACK STEG 3: Definitiv spårning av props vid varje rendering ---
-  console.log(`--- TRACEBACK 3: [Step5] Renderar. Mottagen k2Results:`, k2Results);
-
   // GARDERA MOT OFULLSTÄNDIG DATA: Kontrollera om k2Results och nödvändiga nycklar finns.
   if (!k2Results || !k2Results.balance_sheet || !k2Results.balance_sheet.solvency_ratio) {
-    // Logga exakt vad som misslyckades
-    console.error("--- TRACEBACK 3.1: [Step5] Guard clause misslyckades. Anledning:");
-    if (!k2Results) {
-        console.error(" -> k2Results är falsy (t.ex. null eller undefined).");
-    } else if (!k2Results.balance_sheet) {
-        console.error(" -> k2Results.balance_sheet är falsy.");
-    } else if (!k2Results.balance_sheet.solvency_ratio) {
-        console.error(" -> k2Results.balance_sheet.solvency_ratio är falsy.");
-    }
-    
     return (
       <div className="p-8 text-center text-red-600 bg-red-50 border border-red-200 rounded-lg">
         <h2 className="text-xl font-bold mb-2">Dataproblem</h2>
