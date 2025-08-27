@@ -1,122 +1,149 @@
-from typing import List, Dict
+import json
+from typing import List, Dict, Optional
+import sys # Importera sys för att kunna skriva till stderr
 
-def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_accounts: List[Dict], notes_config: Dict = None) -> Dict:
-    if notes_config is None:
-        notes_config = {}
+def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_accounts: List[Dict], notes_config_path: str = "app/notes_config.json") -> Dict:
+    """
+    Beräknar och strukturerar resultat- och balansräkning enligt K2-regelverket.
+    Hanterar not-aktivering baserat på obligatoriska regler och kontovärden.
+    """
+    with open(notes_config_path, 'r', encoding='utf-8') as f:
+        notes_config_data = json.load(f)
+    
+    notes_map = {note['id']: note for note in notes_config_data['notes']}
+    key_to_note_id_map = notes_config_data['key_to_note_id_map']
+    
+    active_notes = {}
+    note_counter = 1
+
+    # Steg 1: Lägg till obligatoriska noter först.
+    for note_id, note_details in notes_map.items():
+        if note_details.get('type') == 'obligatory':
+            if note_id not in active_notes:
+                active_notes[note_id] = { "ref": note_counter, "title": note_details['title'] }
+                note_counter += 1
+    
+    print("\n--- K2_CALCULATOR TRACE: Obligatoriska noter ---", file=sys.stderr)
+    print(json.dumps(active_notes, indent=2), file=sys.stderr)
+    print("-----------------------------------------------\n", file=sys.stderr)
+
 
     def sum_accounts(accounts, start, end):
-        # Denna funktion är nu korrekt och summerar bara positiva tal.
+        """Summerar balansen för konton inom ett visst intervall."""
         return sum(acc.get('balance', 0) for acc in accounts if start <= int(acc.get('account_number', 0)) <= end)
 
-    def create_item(current_val, previous_val, note_key=None):
-        note_ref = notes_config.get(note_key)
+    def create_item(current_val, previous_val, note_trigger_key=None):
+        nonlocal note_counter
+        note_ref = None
+        
+        if note_trigger_key:
+            print(f"--- K2_CALCULATOR TRACE: Evaluerar not '{note_trigger_key}' med värde: {current_val}", file=sys.stderr)
+
+        # Steg 2: Aktivera villkorliga noter.
+        if note_trigger_key and current_val != 0:
+            note_id = key_to_note_id_map.get(note_trigger_key)
+            if note_id and note_id not in active_notes:
+                print(f"    -> AKTIVERAR NOT: '{note_id}' (ny ref: {note_counter})", file=sys.stderr)
+                active_notes[note_id] = { "ref": note_counter, "title": notes_map[note_id]['title'] }
+                note_counter += 1
+            
+            if note_id in active_notes:
+                note_ref = active_notes[note_id]['ref']
+                print(f"    -> Noten är aktiv. Tilldelar ref: {note_ref}", file=sys.stderr)
+
         return {"current": round(current_val), "previous": round(previous_val), "note_ref": note_ref}
 
-    # --- 1. BERÄKNINGAR FÖR NUVARANDE ÅR ---
-    current_calc = {}
-    
-    # Resultaträkning
-    current_calc['net_sales'] = sum_accounts(current_year_accounts, 3000, 3799)
-    current_calc['other_operating_income'] = sum_accounts(current_year_accounts, 3800, 3999)
-    current_calc['total_operating_income'] = current_calc['net_sales'] + current_calc['other_operating_income']
-    
-    current_calc['raw_materials'] = sum_accounts(current_year_accounts, 4000, 4999)
-    current_calc['other_external_costs'] = sum_accounts(current_year_accounts, 5000, 6999)
-    current_calc['personnel_costs'] = sum_accounts(current_year_accounts, 7000, 7699)
-    current_calc['depreciation'] = sum_accounts(current_year_accounts, 7700, 7899)
-    current_calc['other_operating_expenses'] = sum_accounts(current_year_accounts, 7900, 7999)
-    current_calc['total_operating_expenses'] = current_calc['raw_materials'] + current_calc['other_external_costs'] + current_calc['personnel_costs'] + current_calc['depreciation'] + current_calc['other_operating_expenses']
-    
-    current_calc['operating_profit'] = current_calc['total_operating_income'] - current_calc['total_operating_expenses']
+    def calculate_for_year(accounts: List[Dict]) -> Dict:
+        """Kör alla beräkningar för ett givet räkenskapsår och returnerar en dictionary."""
+        calc = {}
+        
+        # --- Resultaträkning ---
+        # Intäkter är positiva, kostnader är negativa i SIE. Vi använder abs() för att visa kostnader som positiva.
+        calc['net_sales'] = sum_accounts(accounts, 3000, 3799)
+        calc['other_operating_income'] = sum_accounts(accounts, 3800, 3999)
+        calc['total_operating_income'] = calc['net_sales'] + calc['other_operating_income']
+        
+        calc['raw_materials'] = abs(sum_accounts(accounts, 4000, 4999))
+        calc['other_external_costs'] = abs(sum_accounts(accounts, 5000, 6999))
+        calc['personnel_costs'] = abs(sum_accounts(accounts, 7000, 7699))
+        calc['depreciation'] = abs(sum_accounts(accounts, 7700, 7899))
+        calc['other_operating_expenses'] = abs(sum_accounts(accounts, 7900, 7999))
+        calc['total_operating_expenses'] = calc['raw_materials'] + calc['other_external_costs'] + calc['personnel_costs'] + calc['depreciation'] + calc['other_operating_expenses']
+        calc['operating_profit'] = calc['total_operating_income'] - calc['total_operating_expenses']
 
-    current_calc['financial_income'] = sum_accounts(current_year_accounts, 8000, 8399)
-    current_calc['financial_costs'] = sum_accounts(current_year_accounts, 8400, 8799)
-    current_calc['profit_after_financial_items'] = current_calc['operating_profit'] + current_calc['financial_income'] - current_calc['financial_costs']
+        calc['financial_income'] = sum_accounts(accounts, 8000, 8399)
+        calc['financial_costs'] = abs(sum_accounts(accounts, 8400, 8799))
+        calc['profit_after_financial_items'] = calc['operating_profit'] + calc['financial_income'] - calc['financial_costs']
+        
+        calc['appropriations'] = sum_accounts(accounts, 8800, 8899)
+        calc['profit_before_tax'] = calc['profit_after_financial_items'] + calc['appropriations']
+        
+        calc['tax'] = abs(sum_accounts(accounts, 8900, 8999))
+        calc['profit_loss'] = calc['profit_before_tax'] - calc['tax']
 
-    current_calc['appropriations'] = sum_accounts(current_year_accounts, 8800, 8899)
-    current_calc['profit_before_tax'] = current_calc['profit_after_financial_items'] + current_calc['appropriations']
+        # --- Balansräkning ---
+        # Tillgångar är positiva. Eget kapital och skulder är negativa i SIE. Vi gör dem positiva.
+        calc['fixed_assets_tangible'] = sum_accounts(accounts, 1100, 1299)
+        calc['fixed_assets_financial'] = sum_accounts(accounts, 1300, 1399)
+        calc['total_fixed_assets'] = calc['fixed_assets_tangible'] + calc['fixed_assets_financial']
+        
+        calc['inventory'] = sum_accounts(accounts, 1400, 1499)
+        calc['current_receivables'] = sum_accounts(accounts, 1500, 1799)
+        calc['cash_and_bank'] = sum_accounts(accounts, 1900, 1999)
+        calc['total_current_assets'] = calc['inventory'] + calc['current_receivables'] + calc['cash_and_bank']
+        calc['total_assets'] = calc['total_fixed_assets'] + calc['total_current_assets']
+        
+        calc['restricted_equity'] = abs(sum_accounts(accounts, 2080, 2089))
+        # Fritt eget kapital inkluderar balanserat resultat (2091) och årets resultat (2099)
+        balanserat_resultat_fg_ar = abs(sum_accounts(accounts, 2091, 2098))
+        
+        # KORRIGERING: Använd det faktiska, beräknade resultatet från resultaträkningen.
+        # Värdet på konto 2099 är bara giltigt för föregående år, inte för det innevarande.
+        arets_resultat_rr = calc['profit_loss']
+        
+        calc['free_equity_retained'] = balanserat_resultat_fg_ar
+        calc['profit_loss_for_equity'] = arets_resultat_rr # Använd värdet från resultaträkningen
+        
+        # KORRIGERING: Totala egna kapitalet är summan av bundet och fritt (inkl. årets resultat från RR)
+        calc['total_equity'] = calc['restricted_equity'] + calc['free_equity_retained'] + calc['profit_loss_for_equity']
 
-    # SLUTGILTIG KORRIGERING: Skatt (konto 8910) är en kostnad och ska subtraheras.
-    # "Årets resultat" (konto 8999) är en summeringspost vi inte ska använda här.
-    current_calc['tax'] = sum_accounts(current_year_accounts, 8910, 8919)
-    current_calc['profit_loss'] = current_calc['profit_before_tax'] - current_calc['tax']
+        calc['untaxed_reserves'] = abs(sum_accounts(accounts, 2100, 2199))
+        calc['long_term_liabilities'] = abs(sum_accounts(accounts, 2300, 2399))
+        calc['current_liabilities'] = abs(sum_accounts(accounts, 2400, 2999))
+        calc['total_liabilities'] = calc['long_term_liabilities'] + calc['current_liabilities']
+        
+        calc['total_equity_and_liabilities'] = calc['total_equity'] + calc['untaxed_reserves'] + calc['total_liabilities']
+        
+        # NYTT: Beräkna soliditet med felsäkring
+        try:
+            adjusted_equity = calc.get('total_equity', 0) + (calc.get('untaxed_reserves', 0) * (1 - 0.206))
+            total_assets = calc.get('total_assets', 0)
+            if total_assets > 0:
+                calc['solvency_ratio'] = (adjusted_equity / total_assets) * 100
+            else:
+                calc['solvency_ratio'] = 0.0
+        except Exception:
+            calc['solvency_ratio'] = 0.0 # Sätt ett standardvärde om något går fel
 
-    # Balansräkning
-    current_calc['fixed_assets_tangible'] = sum_accounts(current_year_accounts, 1100, 1299)
-    current_calc['total_fixed_assets'] = current_calc['fixed_assets_tangible']
-    current_calc['inventory'] = sum_accounts(current_year_accounts, 1400, 1499)
-    current_calc['current_receivables'] = sum_accounts(current_year_accounts, 1500, 1799)
-    current_calc['cash_and_bank'] = sum_accounts(current_year_accounts, 1900, 1999)
-    current_calc['total_current_assets'] = current_calc['inventory'] + current_calc['current_receivables'] + current_calc['cash_and_bank']
-    current_calc['total_assets'] = current_calc['total_fixed_assets'] + current_calc['total_current_assets']
+        return calc
 
-    current_calc['restricted_equity'] = sum_accounts(current_year_accounts, 2080, 2089)
-    current_calc['free_equity_retained'] = sum_accounts(current_year_accounts, 2090, 2098)
-    current_calc['total_equity'] = current_calc['restricted_equity'] + current_calc['free_equity_retained'] + current_calc['profit_loss']
+    # Kör beräkningarna för båda åren
+    current_calc = calculate_for_year(current_year_accounts)
+    prev_calc = calculate_for_year(previous_year_accounts)
 
-    current_calc['untaxed_reserves'] = sum_accounts(current_year_accounts, 2100, 2199)
-    current_calc['long_term_liabilities'] = sum_accounts(current_year_accounts, 2300, 2399)
-    current_calc['current_liabilities'] = sum_accounts(current_year_accounts, 2400, 2999)
-    current_calc['total_liabilities'] = current_calc['long_term_liabilities'] + current_calc['current_liabilities']
-    current_calc['total_equity_and_liabilities'] = current_calc['total_equity'] + current_calc['untaxed_reserves'] + current_calc['total_liabilities']
+    # --- Strukturera slutgiltigt resultat ---
+    # Sortera aktiva noter efter deras referensnummer
+    # KORRIGERING: Ta bort den felaktiga, ofullständiga och dubblerade 'result'-definitionen.
+    # Den korrekta och fullständiga definitionen finns nedan.
 
-    # --- 2. BERÄKNINGAR FÖR FÖREGÅENDE ÅR ---
-    prev_calc = {}
-    
-    # Resultaträkning
-    prev_calc['net_sales'] = sum_accounts(previous_year_accounts, 3000, 3799)
-    prev_calc['other_operating_income'] = sum_accounts(previous_year_accounts, 3800, 3999)
-    prev_calc['total_operating_income'] = prev_calc['net_sales'] + prev_calc['other_operating_income']
-    
-    prev_calc['raw_materials'] = sum_accounts(previous_year_accounts, 4000, 4999)
-    prev_calc['other_external_costs'] = sum_accounts(previous_year_accounts, 5000, 6999)
-    prev_calc['personnel_costs'] = sum_accounts(previous_year_accounts, 7000, 7699)
-    prev_calc['depreciation'] = sum_accounts(previous_year_accounts, 7700, 7899)
-    prev_calc['other_operating_expenses'] = sum_accounts(previous_year_accounts, 7900, 7999)
-    prev_calc['total_operating_expenses'] = prev_calc['raw_materials'] + prev_calc['other_external_costs'] + prev_calc['personnel_costs'] + prev_calc['depreciation'] + prev_calc['other_operating_expenses']
-    
-    prev_calc['operating_profit'] = prev_calc['total_operating_income'] - prev_calc['total_operating_expenses']
-
-    prev_calc['financial_income'] = sum_accounts(previous_year_accounts, 8000, 8399)
-    prev_calc['financial_costs'] = sum_accounts(previous_year_accounts, 8400, 8799)
-    prev_calc['profit_after_financial_items'] = prev_calc['operating_profit'] + prev_calc['financial_income'] - prev_calc['financial_costs']
-
-    prev_calc['appropriations'] = sum_accounts(previous_year_accounts, 8800, 8899)
-    prev_calc['profit_before_tax'] = prev_calc['profit_after_financial_items'] + prev_calc['appropriations']
-
-    # SLUTGILTIG KORRIGERING: Samma korrigering för föregående år.
-    prev_calc['tax'] = sum_accounts(previous_year_accounts, 8910, 8919)
-    prev_calc['profit_loss'] = prev_calc['profit_before_tax'] - prev_calc['tax']
-
-    # Balansräkning
-    prev_calc['fixed_assets_tangible'] = sum_accounts(previous_year_accounts, 1100, 1299)
-    prev_calc['total_fixed_assets'] = prev_calc['fixed_assets_tangible']
-    prev_calc['inventory'] = sum_accounts(previous_year_accounts, 1400, 1499)
-    prev_calc['current_receivables'] = sum_accounts(previous_year_accounts, 1500, 1799)
-    prev_calc['cash_and_bank'] = sum_accounts(previous_year_accounts, 1900, 1999)
-    prev_calc['total_current_assets'] = prev_calc['inventory'] + prev_calc['current_receivables'] + prev_calc['cash_and_bank']
-    prev_calc['total_assets'] = prev_calc['total_fixed_assets'] + prev_calc['total_current_assets']
-
-    prev_calc['restricted_equity'] = sum_accounts(previous_year_accounts, 2080, 2089)
-    prev_calc['free_equity_retained'] = sum_accounts(previous_year_accounts, 2090, 2098)
-    prev_calc['total_equity'] = prev_calc['restricted_equity'] + prev_calc['free_equity_retained'] + prev_calc['profit_loss']
-
-    prev_calc['untaxed_reserves'] = sum_accounts(previous_year_accounts, 2100, 2199)
-    prev_calc['long_term_liabilities'] = sum_accounts(previous_year_accounts, 2300, 2399)
-    prev_calc['current_liabilities'] = sum_accounts(previous_year_accounts, 2400, 2999)
-    prev_calc['total_liabilities'] = prev_calc['long_term_liabilities'] + prev_calc['current_liabilities']
-    prev_calc['total_equity_and_liabilities'] = prev_calc['total_equity'] + prev_calc['untaxed_reserves'] + prev_calc['total_liabilities']
-    
-    # --- 3. BYGG SVARSSTRUKTUR ---
-    # (Inga ändringar behövs här)
-    return {
+    result = {
         "income_statement": {
             "net_sales": create_item(current_calc['net_sales'], prev_calc['net_sales']),
             "other_operating_income": create_item(current_calc['other_operating_income'], prev_calc['other_operating_income']),
             "total_operating_income": create_item(current_calc['total_operating_income'], prev_calc['total_operating_income']),
             "raw_materials": create_item(current_calc['raw_materials'], prev_calc['raw_materials']),
             "other_external_costs": create_item(current_calc['other_external_costs'], prev_calc['other_external_costs']),
-            "personnel_costs": create_item(current_calc['personnel_costs'], prev_calc['personnel_costs'], note_key='personnel'),
+            "personnel_costs": create_item(current_calc['personnel_costs'], prev_calc['personnel_costs'], note_trigger_key='personnel_costs'),
             "depreciation": create_item(current_calc['depreciation'], prev_calc['depreciation']),
             "other_operating_expenses": create_item(current_calc['other_operating_expenses'], prev_calc['other_operating_expenses']),
             "total_operating_expenses": create_item(current_calc['total_operating_expenses'], prev_calc['total_operating_expenses']),
@@ -129,7 +156,8 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
             "tax": create_item(current_calc['tax'], prev_calc['tax']),
         },
         "balance_sheet": {
-            "fixed_assets_tangible": create_item(current_calc['fixed_assets_tangible'], prev_calc['fixed_assets_tangible'], note_key='tangible_assets'),
+            "fixed_assets_tangible": create_item(current_calc['fixed_assets_tangible'], prev_calc['fixed_assets_tangible'], note_trigger_key='fixed_assets_tangible'),
+            "fixed_assets_financial": create_item(current_calc['fixed_assets_financial'], prev_calc['fixed_assets_financial']),
             "total_fixed_assets": create_item(current_calc['total_fixed_assets'], prev_calc['total_fixed_assets']),
             "inventory": create_item(current_calc['inventory'], prev_calc['inventory']),
             "current_receivables": create_item(current_calc['current_receivables'], prev_calc['current_receivables']),
@@ -137,18 +165,30 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
             "total_current_assets": create_item(current_calc['total_current_assets'], prev_calc['total_current_assets']),
             "restricted_equity": create_item(current_calc['restricted_equity'], prev_calc['restricted_equity']),
             "free_equity_retained": create_item(current_calc['free_equity_retained'], prev_calc['free_equity_retained']),
-            "profit_loss_for_equity": create_item(current_calc['profit_loss'], prev_calc['profit_loss']),
+            "profit_loss_for_equity": create_item(current_calc['profit_loss_for_equity'], prev_calc['profit_loss_for_equity']),
             "total_equity": create_item(current_calc['total_equity'], prev_calc['total_equity']),
             "untaxed_reserves": create_item(current_calc['untaxed_reserves'], prev_calc['untaxed_reserves']),
-            "long_term_liabilities": create_item(current_calc['long_term_liabilities'], prev_calc['long_term_liabilities'], note_key='long_term_liabilities'),
+            "long_term_liabilities": create_item(current_calc['long_term_liabilities'], prev_calc['long_term_liabilities'], note_trigger_key='long_term_liabilities'),
             "current_liabilities": create_item(current_calc['current_liabilities'], prev_calc['current_liabilities']),
             "total_liabilities": create_item(current_calc['total_liabilities'], prev_calc['total_liabilities']),
+            # KORRIGERING: Flytta in 'solvency_ratio' så att den blir en del av 'balance_sheet'.
+            "solvency_ratio": create_item(current_calc['solvency_ratio'], prev_calc['solvency_ratio']),
         },
         "profit_loss": create_item(current_calc['profit_loss'], prev_calc['profit_loss']),
         "total_assets": create_item(current_calc['total_assets'], prev_calc['total_assets']),
         "total_equity_and_liabilities": create_item(current_calc['total_equity_and_liabilities'], prev_calc['total_equity_and_liabilities']),
-        "balance_check": {
-            "current": round(current_calc['total_assets'] - current_calc['total_equity_and_liabilities']),
-            "previous": round(prev_calc['total_assets'] - prev_calc['total_equity_and_liabilities'])
-        }
+        "balance_check": create_item(current_calc['total_assets'] - current_calc['total_equity_and_liabilities'], prev_calc['total_assets'] - prev_calc['total_equity_and_liabilities']),
+        
+        # KORRIGERING: Ta bort denna rad. Det är en felplacerad dubblett av en nyckel
+        # som redan finns inuti "income_statement" och som förstör hela datastrukturen.
+        # "personnel_costs": create_item(current_calc['personnel_costs'], prev_calc['personnel_costs'], note_trigger_key='personnel_costs'),
     }
+
+    sorted_active_notes = dict(sorted(active_notes.items(), key=lambda item: item[1]['ref']))
+    result["active_notes"] = sorted_active_notes
+    
+    print("\n--- K2_CALCULATOR TRACE: Slutgiltiga aktiva noter ---", file=sys.stderr)
+    print(json.dumps(sorted_active_notes, indent=2), file=sys.stderr)
+    print("---------------------------------------------------\n", file=sys.stderr)
+
+    return result

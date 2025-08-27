@@ -1,0 +1,42 @@
+{
+  "notes": [
+    {
+      "id": "accounting_principles",
+      "title": "Redovisningsprinciper",
+      "type": "obligatory"
+    },
+    {
+      "id": "average_employees",
+      "title": "Medelantalet anställda",
+      "type": "conditional",
+      "trigger_key": "personnel_costs"
+    },
+    {
+      "id": "tangible_assets",
+      "title": "Materiella anläggningstillgångar",
+      "type": "conditional",
+      "trigger_key": "fixed_assets_tangible"
+    },
+    {
+      "id": "long_term_liabilities",
+      "title": "Långfristiga skulder",
+      "type": "conditional",
+      "trigger_key": "long_term_liabilities"
+    },
+    {
+      "id": "pledged_assets",
+      "title": "Ställda säkerheter och ansvarsförbindelser",
+      "type": "optional"
+    },
+    {
+      "id": "significant_events",
+      "title": "Väsentliga händelser efter räkenskapsårets slut",
+      "type": "optional"
+    }
+  ],
+  "key_to_note_id_map": {
+    "personnel_costs": "average_employees",
+    "fixed_assets_tangible": "tangible_assets",
+    "long_term_liabilities": "long_term_liabilities"
+  }
+}

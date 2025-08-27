@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Any
 from datetime import date
 
 # --- Grundläggande datamodeller ---
@@ -41,9 +41,12 @@ class DetailedReportPayload(BaseModel):
     end_date: date
     accounts_data: AccountsData
     forvaltningsberattelse: str
+    notes_data: Optional[dict[str, Any]] = None
     signature_city: str
     signature_date: date
     representatives: List[Representative]
+    # NYTT: Lägg till fält för utdelning i payloaden från frontend.
+    dividend: float = 0.0
 
 # --- NYA, KORREKTA SCHEMAN FÖR K2-RESULTAT ---
 # Dessa matchar nu exakt outputen från k2_calculator.py
@@ -76,6 +79,7 @@ class IncomeStatementSchema(BaseModel):
 class BalanceSheetSchema(BaseModel):
     """Struktur för Balansräkningen, speglar k2_calculator."""
     fixed_assets_tangible: ReportItem
+    fixed_assets_financial: ReportItem # Lade till denna tidigare, men den saknades här
     total_fixed_assets: ReportItem
     inventory: ReportItem
     current_receivables: ReportItem
@@ -89,6 +93,13 @@ class BalanceSheetSchema(BaseModel):
     long_term_liabilities: ReportItem
     current_liabilities: ReportItem
     total_liabilities: ReportItem
+    # SLUTGILTIG LÖSNING: Lägg till det saknade fältet.
+    solvency_ratio: ReportItem
+
+# NYTT: Definiera en modell för en enskild aktiv not.
+class ActiveNoteItem(BaseModel):
+    ref: int
+    title: str
 
 class K2CalculatedResult(BaseModel):
     """Det kompletta, nästlade resultatet från K2-kalkylatorn."""
@@ -98,6 +109,8 @@ class K2CalculatedResult(BaseModel):
     total_assets: ReportItem
     total_equity_and_liabilities: ReportItem
     balance_check: ReportItem # Används för balanskontroll i frontend
+    # KORRIGERING: Lägg till det saknade fältet för aktiva noter.
+    active_notes: dict[str, ActiveNoteItem]
 
 class FullCalculationPayload(BaseModel):
     """Det kompletta objekt som skickas från SIE-uppladdning till frontend."""
@@ -119,6 +132,8 @@ class AnnualReport(BaseModel):
     signature_city: str
     signature_date: date
     representatives: list # JSON-fält
+    # NYTT: Lägg till fältet för att kunna läsa det från databasen.
+    dividend: float
 
     class Config:
         from_attributes = True

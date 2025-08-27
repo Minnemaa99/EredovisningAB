@@ -4,96 +4,106 @@ import axios from "axios";
 import Step1_Rakenskapsar from "./Step1_Rakenskapsar";
 import Step2_Resultatrakning from "./Step2_Resultatrakning";
 import Step3_Balansrakning from "./Step3_Balansrakning";
-// NYTT: Importera den nya container-komponenten
 import Step4_Arsredovisning from "./Step4_Arsredovisning";
 import Step6_Foretradare from "./Step6_Foretradare";
 import Step7_LamnaIn from "./Step7_LamnaIn";
 
 const API_URL = "http://127.0.0.1:8000/api";
 
+// --- TRACEBACK STEG 4: Anpassad hook för att logga varje state-ändring ---
+const useStateWithLogger = (initialValue, name) => {
+  const [value, setValue] = useState(initialValue);
+
+  const setValueWithLogging = (newValue) => {
+    console.group(`--- TRACEBACK 4: State set for "${name}" ---`);
+    console.log("Nytt värde:", newValue);
+    // Kontrollera specifikt för den felande nyckeln
+    if (newValue && newValue.balance_sheet && newValue.balance_sheet.solvency_ratio !== undefined) {
+      console.log(`%c -> solvency_ratio FINNS`, 'color: green; font-weight: bold;');
+    } else {
+      console.log(`%c -> solvency_ratio SAKNAS`, 'color: red; font-weight: bold;');
+    }
+    console.trace("Anropades från:"); // Ger en stack trace för att se exakt varifrån anropet kom
+    console.groupEnd();
+    setValue(newValue);
+  };
+
+  return [value, setValueWithLogging];
+};
+
+
 export default function Wizard() {
-  // KORRIGERING: Uppdatera listan med steg
   const steps = [
-    "Räkenskapsår",
-    "Resultaträkning",
-    "Balansräkning",
-    "Årsredovisning", // Nytt samlat steg
-    "Företrädare",
-    "Lämna in",
+    "Räkenskapsår", "Resultaträkning", "Balansräkning", "Årsredovisning", "Företrädare", "Lämna in",
   ];
 
   const [stepIndex, setStepIndex] = useState(0);
   
-  // --- NY STATE-HANTERING ---
   const [companyInfo, setCompanyInfo] = useState({ name: "", org_nr: "" });
   const [reportDates, setReportDates] = useState({ start_date: "", end_date: "" });
-  // Rådata för konton, detta är vår "source of truth" för att kunna göra omberäkningar
   const [accountsData, setAccountsData] = useState({ current_year: [], previous_year: [] });
-  // Det färdigberäknade resultatet från backend
-  const [calculationResult, setCalculationResult] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Lägg till en loading state
-
+  
+  // --- TRACEBACK STEG 4: Använd vår nya spion-hook istället för vanlig useState ---
+  const [calculationResult, setCalculationResult] = useStateWithLogger(null, "calculationResult");
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [notesData, setNotesData] = useState({});
   const [forvaltningsberattelse, setForvaltningsberattelse] = useState("");
   const [representatives, setRepresentatives] = useState([]);
   const [signatureInfo, setSignatureInfo] = useState({ city: "", date: new Date().toISOString().split('T')[0] });
-  
+  const [dividend, setDividend] = useState(0);
   const [finalReportId, setFinalReportId] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => { setIsClient(true); }, []);
 
+  useEffect(() => {
+    if (calculationResult && stepIndex === 0) {
+      nextStep();
+    }
+  }, [calculationResult, stepIndex]);
+
   const nextStep = () => { if (stepIndex < steps.length - 1) setStepIndex(stepIndex + 1); };
   const prevStep = () => { if (stepIndex > 0) setStepIndex(stepIndex - 1); };
 
   const handleUploadSuccess = (fullPayload) => {
-    console.log("Full Payload Received in Wizard:", fullPayload);
     setCompanyInfo(fullPayload.company_info);
     setReportDates(fullPayload.report_dates);
     setAccountsData(fullPayload.accounts_data);
-    setCalculationResult(fullPayload.k2_results);
-    
-    nextStep();
+    setCalculationResult(fullPayload.k2_results); 
   };
 
-  // --- NY FUNKTION FÖR OMBERÄKNING ---
   const handleValueChange = async (accountRange: { start: number; end: number }, newValue: number, oldValue: number) => {
     const difference = newValue - oldValue;
-    if (difference === 0) return; // Ingen ändring, gör inget
+    if (difference === 0) return;
 
     setIsLoading(true);
 
-    // Skapa ett justeringskonto. Kontonummer baseras på intervallet.
-    // Intäkter (3xxx) och Skulder/EK (2xxx) har omvänt tecken i SIE.
     const isRevenueOrLiability = accountRange.start.toString().startsWith('2') || accountRange.start.toString().startsWith('3');
     const adjustmentBalance = isRevenueOrLiability ? -difference : difference;
 
     const adjustmentAccount = {
-      account_number: `${accountRange.end}`, // Använd sista kontot i intervallet för justering
+      account_number: `${accountRange.end}`,
       account_name: `Manuell justering - ${accountRange.start}`,
       balance: adjustmentBalance,
     };
 
-    // Skapa en ny, uppdaterad lista med konton
     const updatedAccounts = {
       ...accountsData,
       current_year: [...accountsData.current_year, adjustmentAccount],
     };
 
-    // Spara den nya rådatan
     setAccountsData(updatedAccounts);
 
     try {
-      // Anropa backend för att få ett nytt, beräknat resultat
       const response = await axios.post(`${API_URL}/annual-reports/calculate`, {
         current_year: updatedAccounts.current_year,
         previous_year: updatedAccounts.previous_year,
       });
-      // Uppdatera state med det nya resultatet från backend
       setCalculationResult(response.data);
     } catch (error) {
       console.error("Failed to recalculate report", error.response ? error.response.data : error);
       alert("Kunde inte räkna om rapporten. Återställer ändringen.");
-      // Om det misslyckas, återställ till föregående state (förenklad återställning)
       setAccountsData(accountsData);
     } finally {
       setIsLoading(false);
@@ -102,7 +112,7 @@ export default function Wizard() {
 
   const handleForvaltningsberattelseSave = (text) => {
     setForvaltningsberattelse(text);
-    nextStep(); // Gå vidare till nästa steg efter att texten sparats
+    nextStep();
   };
 
   const handleForetradareSave = (reps, sigInfo) => {
@@ -111,106 +121,69 @@ export default function Wizard() {
     nextStep();
   };
 
+  const handleNotesDataChange = (noteId, data) => {
+    setNotesData(prev => ({ ...prev, [noteId]: data }));
+  };
+
+  const handleDividendChange = (amount: number) => {
+    setDividend(amount);
+  };
+
   const handleSaveAndContinue = async () => {
     const payload = {
       company_name: companyInfo.name,
       org_nr: companyInfo.org_nr,
       start_date: reportDates.start_date,
       end_date: reportDates.end_date,
-      accounts_data: accountsData, // Skicka den sparade rådatan
+      accounts_data: accountsData,
       forvaltningsberattelse: forvaltningsberattelse,
       signature_city: signatureInfo.city,
       signature_date: signatureInfo.date,
       representatives: representatives,
+      dividend: dividend,
     };
-
-    console.log("Sending complete payload to backend:", payload);
 
     try {
       const response = await axios.post(`${API_URL}/annual-reports/from-details`, payload);
       setFinalReportId(response.data.id);
-      alert("Rapporten har sparats! ID: " + response.data.id + ". Du kan nu förhandsgranska.");
+      alert("Rapporten har sparats! ID: " + response.data.id);
     } catch (error) {
       console.error("Failed to save the report", error.response ? error.response.data : error);
-      alert("Kunde inte spara rapporten. Kontrollera konsolen för felmeddelanden.");
+      alert("Kunde inte spara rapporten.");
     }
   };
 
   const handlePreview = () => {
     if (!finalReportId) {
-      alert("Du måste spara rapporten först innan du kan förhandsgranska.");
+      alert("Du måste spara rapporten först.");
       return;
     }
     window.open(`${API_URL}/annual-reports/${finalReportId}/preview`, "_blank");
   };
 
   const renderStep = () => {
-    // Visa en laddningsindikator över hela wizarden vid omberäkning
     if (isLoading) {
         return <div className="text-center p-16">Räknar om...</div>;
     }
-    // Säkerställ att vi har data innan vi renderar stegen som behöver den
-    if (stepIndex > 0 && !calculationResult) {
-        return <div>Laddar data...</div>;
+
+    if (stepIndex > 0 && (!calculationResult || !calculationResult.balance_sheet)) {
+        return (
+            <div className="p-8 text-center text-red-600 bg-red-50 border border-red-200 rounded-lg">
+                <h2 className="text-xl font-bold mb-2">Data saknas</h2>
+                <p>Nödvändig beräkningsdata (`calculationResult`) är inte tillgänglig.</p>
+                <button onClick={() => setStepIndex(0)} className="mt-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg">Gå till start</button>
+            </div>
+        );
     }
 
-    // KORRIGERING: Uppdatera switch-satsen med de nya stegen
     switch (stepIndex) {
-      case 0:
-        return (
-          <Step1_Rakenskapsar
-            reportDates={reportDates}
-            setReportDates={setReportDates}
-            onUploadSuccess={handleUploadSuccess}
-            onBack={prevStep}
-          />
-        );
-      case 1:
-        return (
-          <Step2_Resultatrakning
-            k2Results={calculationResult}
-            onNext={nextStep}
-            onBack={prevStep}
-            onValueChange={handleValueChange}
-          />
-        );
-      case 2:
-        return (
-          <Step3_Balansrakning
-            k2Results={calculationResult}
-            onNext={nextStep}
-            onBack={prevStep}
-            onValueChange={handleValueChange}
-          />
-        );
-      case 3: // Det nya steget "Årsredovisning"
-        return (
-          <Step4_Arsredovisning
-            k2Results={calculationResult}
-            onBack={prevStep}
-            onNext={nextStep} // Denna kommer anropas när allt är klart
-            onForvaltningsberattelseSave={handleForvaltningsberattelseSave}
-          />
-        );
-      case 4: // Företrädare är nu steg 4
-        return <Step6_Foretradare onSave={handleForetradareSave} onBack={prevStep} />;
-      case 5: // Lämna in är nu steg 5
-        return (
-          <Step7_LamnaIn
-            onSave={handleSaveAndContinue}
-            onPreview={handlePreview}
-            onBack={prevStep}
-          />
-        );
-      default:
-        return (
-          <Step1_Rakenskapsar
-            reportDates={reportDates}
-            setReportDates={setReportDates}
-            onUploadSuccess={handleUploadSuccess}
-            onBack={prevStep}
-          />
-        );
+      case 0: return <Step1_Rakenskapsar reportDates={reportDates} setReportDates={setReportDates} onUploadSuccess={handleUploadSuccess} onBack={prevStep} />;
+      case 1: return <Step2_Resultatrakning k2Results={calculationResult} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
+      case 2: return <Step3_Balansrakning k2Results={calculationResult} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
+      case 3: return <Step4_Arsredovisning k2Results={calculationResult} onBack={prevStep} onNext={nextStep} onForvaltningsberattelseSave={handleForvaltningsberattelseSave} notesData={notesData} onNotesDataChange={handleNotesDataChange} dividend={dividend} onDividendChange={handleDividendChange} />;
+      case 4: return <Step6_Foretradare onSave={handleForetradareSave} onBack={prevStep} />;
+      case 5: return <Step7_LamnaIn onSave={handleSaveAndContinue} onPreview={handlePreview} onBack={prevStep} />;
+      default: return <Step1_Rakenskapsar reportDates={reportDates} setReportDates={setReportDates} onUploadSuccess={handleUploadSuccess} onBack={prevStep} />;
     }
   };
 

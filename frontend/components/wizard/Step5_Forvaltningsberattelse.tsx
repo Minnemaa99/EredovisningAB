@@ -3,9 +3,11 @@ import { FiFileText, FiTrendingUp, FiDollarSign, FiInfo } from 'react-icons/fi';
 
 // --- Typer och hjälpfunktioner ---
 interface Props {
-  k2Results: any; // Ta emot det färdigberäknade objektet
-  onSave: (text: string) => void; // Ändrad från onNext
+  k2Results: any;
+  onSave: (text: string) => void;
   onBack: () => void;
+  dividend: number;
+  onDividendChange: (amount: number) => void;
 }
 
 const formatNumber = (num: number, decimals = 0) => {
@@ -25,31 +27,78 @@ const ToggleSwitch = ({ label, enabled, setEnabled }) => (
 
 // --- Huvudkomponenten ---
 
-const Step5_Forvaltningsberattelse: React.FC<Props> = ({ k2Results, onSave, onBack }) => {
+const Step5_Forvaltningsberattelse: React.FC<Props> = ({ 
+  k2Results, 
+  onSave, 
+  onBack,
+  dividend,
+  onDividendChange
+}) => {
+  // --- TRACEBACK STEG 3: Definitiv spårning av props vid varje rendering ---
+  console.log(`--- TRACEBACK 3: [Step5] Renderar. Mottagen k2Results:`, k2Results);
+
+  // GARDERA MOT OFULLSTÄNDIG DATA: Kontrollera om k2Results och nödvändiga nycklar finns.
+  if (!k2Results || !k2Results.balance_sheet || !k2Results.balance_sheet.solvency_ratio) {
+    // Logga exakt vad som misslyckades
+    console.error("--- TRACEBACK 3.1: [Step5] Guard clause misslyckades. Anledning:");
+    if (!k2Results) {
+        console.error(" -> k2Results är falsy (t.ex. null eller undefined).");
+    } else if (!k2Results.balance_sheet) {
+        console.error(" -> k2Results.balance_sheet är falsy.");
+    } else if (!k2Results.balance_sheet.solvency_ratio) {
+        console.error(" -> k2Results.balance_sheet.solvency_ratio är falsy.");
+    }
+    
+    return (
+      <div className="p-8 text-center text-red-600 bg-red-50 border border-red-200 rounded-lg">
+        <h2 className="text-xl font-bold mb-2">Dataproblem</h2>
+        <p>Väsentlig data för förvaltningsberättelsen saknas.</p>
+        <p className="mt-4 text-sm text-gray-700">Teknisk info: `k2Results.balance_sheet.solvency_ratio` är inte tillgänglig.</p>
+      </div>
+    );
+  }
+
+  // --- State-hantering ---
+  // Befintliga states för textinmatning
   const [allmantText, setAllmantText] = useState('Bolaget har sitt säte i [STAD]. Verksamheten består av...');
   const [handelserText, setHandelserText] = useState('');
   const [kommentarFlerar, setKommentarFlerar] = useState('');
-  const [utdelning, setUtdelning] = useState(0);
+  // NYTT: State för textfältet "Förändringar i eget kapital"
+  const [kommentarForandringarEK, setKommentarForandringarEK] = useState('');
+
+  // Befintliga states för att visa/dölja sektioner
   const [showHandelser, setShowHandelser] = useState(false);
   const [showForandringarEK, setShowForandringarEK] = useState(false);
 
-  // Data hämtas nu direkt från k2Results, ingen useMemo behövs för beräkningar
+  // --- Databeräkningar ---
   const { income_statement, balance_sheet, total_assets, profit_loss } = k2Results;
   
-  // KORRIGERING: Hämta data från rätt plats i den nya nästlade strukturen.
-  // Detta löser kraschen.
   const balanseratResultat = balance_sheet.free_equity_retained.current;
   const aretsResultat = profit_loss.current;
   const tillDisposition = balanseratResultat + aretsResultat;
-  const balanserasNyRakning = tillDisposition - utdelning;
+  const balanserasNyRakning = tillDisposition - dividend;
 
+  // --- Spara-funktion ---
   const handleSaveAndContinue = () => {
-    // Bygg ihop den kompletta texten för förvaltningsberättelsen
-    let fullText = `<h3>Allmänt om verksamheten</h3><p>${allmantText}</p>`;
-    if (showHandelser && handelserText) {
-      fullText += `<h3>Väsentliga händelser</h3><p>${handelserText}</p>`;
+    const reportParts: string[] = [];
+
+    if (allmantText.trim()) {
+      reportParts.push(`<h3>Allmänt om verksamheten</h3><p>${allmantText.trim()}</p>`);
     }
-    // ... lägg till fler sektioner här ...
+
+    if (showHandelser && handelserText.trim()) {
+      reportParts.push(`<h3>Väsentliga händelser under räkenskapsåret</h3><p>${handelserText.trim()}</p>`);
+    }
+
+    if (kommentarFlerar.trim()) {
+        reportParts.push(`<h3>Flerårsöversikt</h3><p>${kommentarFlerar.trim()}</p>`);
+    }
+
+    if (showForandringarEK && kommentarForandringarEK.trim()) {
+        reportParts.push(`<h3>Förändringar i eget kapital</h3><p>${kommentarForandringarEK.trim()}</p>`);
+    }
+
+    const fullText = reportParts.join('\n');
     onSave(fullText);
   };
 
@@ -91,34 +140,59 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({ k2Results, onSave, onBa
             </tr>
             <tr>
               <td className="p-2">Soliditet</td>
-              <td className="p-2 text-right font-mono">{/* Soliditet behöver beräknas i backend */} %</td>
-              <td className="p-2 text-right font-mono text-gray-500">{/* Soliditet behöver beräknas i backend */} %</td>
+              <td className="p-2 text-right font-mono">{formatNumber(balance_sheet.solvency_ratio.current, 1)} %</td>
+              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(balance_sheet.solvency_ratio.previous, 1)} %</td>
             </tr>
           </tbody>
         </table>
         <label className="block mt-4 text-sm font-medium text-gray-700">Kommentar till flerårsöversikt</label>
-        <textarea value={kommentarFlerar} onChange={e => setKommentarFlerar(e.target.value)} rows={3} className="w-full p-2 border rounded-md mt-1" />
+        <textarea value={kommentarFlerar} onChange={e => setKommentarFlerar(e.target.value)} rows={3} className="w-full p-2 border rounded-md mt-1" placeholder="Kommentera eventuella avvikelser eller trender..."/>
       </SectionCard>
 
       <SectionCard icon={<FiDollarSign />} title="Resultatdisposition">
-        <p className="text-sm mb-4">Styrelsen föreslår att till förfogande stående vinstmedel disponeras enligt följande:</p>
-        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+        <p className="text-sm mb-4 text-gray-600">Här visas hur årets resultat föreslås fördelas. Ange eventuell utdelning nedan.</p>
+        
+        <div className="space-y-2 p-4 bg-gray-50 rounded-lg border">
             <DispositionRow label="Balanserat resultat" value={balanseratResultat} />
             <DispositionRow label="Årets resultat" value={aretsResultat} />
             <hr className="my-2"/>
-            <DispositionRow label="Till förfogande" value={tillDisposition} isTotal={true} />
+            <DispositionRow label="Summa till förfogande" value={tillDisposition} isTotal={true} />
         </div>
-        <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Utdelning till aktieägare</label>
-            <input type="number" value={utdelning} onChange={e => setUtdelning(Number(e.target.value))} className="w-full p-2 border rounded-md mt-1" />
+
+        <div className="mt-6">
+          <label htmlFor="dividend" className="block text-sm font-semibold text-gray-700 mb-1">
+            Föreslagen utdelning till aktieägare
+          </label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">SEK</span>
+            <input
+              type="number"
+              id="dividend"
+              name="dividend"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              value={dividend}
+              onChange={(e) => onDividendChange(parseFloat(e.target.value) || 0)}
+              placeholder="0"
+            />
+          </div>
         </div>
+
         <div className="mt-4 p-4 bg-blue-50 border-t-4 border-blue-500 rounded-b-lg">
             <DispositionRow label="Balanseras i ny räkning" value={balanserasNyRakning} isTotal={true} />
         </div>
       </SectionCard>
 
       <SectionCard icon={<FiFileText />} title="Förändringar i eget kapital">
-        <ToggleSwitch label="Visa not för förändringar i eget kapital" enabled={showForandringarEK} setEnabled={setShowForandringarEK} />
+        <ToggleSwitch label="Lägg till kommentar om förändringar i eget kapital" enabled={showForandringarEK} setEnabled={setShowForandringarEK} />
+        {showForandringarEK && (
+          <textarea 
+            value={kommentarForandringarEK} 
+            onChange={e => setKommentarForandringarEK(e.target.value)} 
+            rows={4} 
+            className="w-full p-2 border rounded-md mt-4" 
+            placeholder="Beskriv eventuella nyemissioner, fondemissioner eller andra händelser som påverkat det egna kapitalet..." 
+          />
+        )}
       </SectionCard>
 
       <div className="flex justify-between pt-6">
