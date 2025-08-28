@@ -43,10 +43,52 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
 
         return {"current": round(current_val), "previous": round(previous_val), "note_ref": note_ref}
 
-    def calculate_for_year(accounts: List[Dict]) -> Dict:
-        """Kör alla beräkningar för ett givet räkenskapsår och returnerar en dictionary."""
+    def calculate_for_year(accounts):
         calc = {}
         
+        # DEFAULTS: Sätt alla nycklar till 0 från början för att undvika KeyError
+        calc['net_sales'] = 0
+        calc['other_operating_income'] = 0
+        calc['total_operating_income'] = 0
+        calc['raw_materials'] = 0
+        calc['other_external_costs'] = 0
+        calc['personnel_costs'] = 0
+        calc['depreciation'] = 0
+        calc['other_operating_expenses'] = 0
+        calc['total_operating_expenses'] = 0
+        calc['operating_profit'] = 0
+        calc['financial_income'] = 0
+        calc['financial_costs'] = 0
+        calc['financial_total'] = 0
+        calc['profit_after_financial_items'] = 0
+        calc['appropriations'] = 0
+        calc['profit_before_tax'] = 0
+        calc['tax'] = 0
+        calc['profit_loss'] = 0
+        calc['fixed_assets_tangible'] = 0
+        calc['fixed_assets_financial'] = 0
+        calc['total_fixed_assets'] = 0
+        calc['inventory'] = 0
+        calc['current_receivables'] = 0
+        calc['cash_and_bank'] = 0
+        calc['total_current_assets'] = 0
+        calc['accounts_receivable'] = 0
+        calc['other_receivables'] = 0
+        calc['accrued_revenue'] = 0
+        calc['prepaid_expenses'] = 0
+        calc['restricted_equity'] = 0
+        calc['free_equity_retained'] = 0
+        calc['balanserat_resultat_fg_ar'] = 0
+        calc['profit_loss_for_equity'] = 0
+        calc['total_equity'] = 0
+        calc['untaxed_reserves'] = 0
+        calc['long_term_liabilities'] = 0
+        calc['current_liabilities'] = 0
+        calc['total_liabilities'] = 0
+        calc['total_equity_and_liabilities'] = 0
+        calc['solvency_ratio'] = 0
+        
+        # Nu gör beräkningarna (de skriver över defaults)
         # --- Resultaträkning ---
         # Intäkter är positiva, kostnader är negativa i SIE. Vi använder abs() för att visa kostnader som positiva.
         calc['net_sales'] = sum_accounts(accounts, 3000, 3799)
@@ -96,23 +138,48 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
         calc['total_current_assets'] = calc['inventory'] + calc['current_receivables'] + calc['cash_and_bank']
         calc['total_assets'] = calc['total_fixed_assets'] + calc['total_current_assets']
         
-        calc['restricted_equity'] = abs(sum_accounts(accounts, 2080, 2089))
-        # Fritt eget kapital inkluderar balanserat resultat (2091) och årets resultat (2099)
-        balanserat_resultat_fg_ar = abs(sum_accounts(accounts, 2091, 2098))
+        # NYTT: Uppdelade fordringar för bättre specificitet
+        calc['accounts_receivable'] = sum_accounts(accounts, 1500, 1519)  # Kundfordringar
+        calc['other_receivables'] = sum_accounts(accounts, 1600, 1699)  # Övriga fordringar
+        calc['accrued_revenue'] = sum_accounts(accounts, 1520, 1529)  # Upparbetad men ej fakturerad intäkt
+        calc['prepaid_expenses'] = sum_accounts(accounts, 1700, 1799)  # Förutbetalda kostnader och upplupna intäkter
         
+        # DEBUG för fordringar
+        print(f"DEBUG accounts_receivable: sum_accounts(1500, 1519) = {sum_accounts(accounts, 1500, 1519)}", file=sys.stderr)
+        print(f"DEBUG other_receivables: sum_accounts(1600, 1699) = {sum_accounts(accounts, 1600, 1699)}", file=sys.stderr)
+        print(f"DEBUG accrued_revenue: sum_accounts(1520, 1529) = {sum_accounts(accounts, 1520, 1529)}", file=sys.stderr)
+        print(f"DEBUG prepaid_expenses: sum_accounts(1700, 1799) = {sum_accounts(accounts, 1700, 1799)}", file=sys.stderr)
+        print(f"DEBUG current_receivables total: sum_accounts(1500, 1799) = {sum_accounts(accounts, 1500, 1799)}", file=sys.stderr)
+
         # KORRIGERING: Använd det faktiska, beräknade resultatet från resultaträkningen.
         # Värdet på konto 2099 är bara giltigt för föregående år, inte för det innevarande.
         arets_resultat_rr = calc['profit_loss']
         
-        calc['free_equity_retained'] = balanserat_resultat_fg_ar
-        calc['profit_loss_for_equity'] = arets_resultat_rr # Använd värdet från resultaträkningen
+        calc['free_equity_retained'] = sum_accounts(accounts, 2091, 2091)
+        calc['balanserat_resultat_fg_ar'] = calc['free_equity_retained']  # FIX: Definiera saknad variabel (alias för balanserat resultat)
+        calc['profit_loss_for_equity'] = calc['profit_loss']
         
-        # KORRIGERING: Totala egna kapitalet är summan av bundet och fritt (inkl. årets resultat från RR)
+        # FIX: Lägg till saknad beräkning för restricted_equity
+        calc['restricted_equity'] = sum_accounts(accounts, 2081, 2081)
+        
         calc['total_equity'] = calc['restricted_equity'] + calc['free_equity_retained'] + calc['profit_loss_for_equity']
 
         calc['untaxed_reserves'] = abs(sum_accounts(accounts, 2100, 2199))
+        # NYTT: Ackumulerade överavskrivningar (antagande konto 2110-2119)
+        calc['accumulated_depreciation'] = sum_accounts(accounts, 2110, 2119)
         calc['long_term_liabilities'] = abs(sum_accounts(accounts, 2300, 2399))
+        # NYTT: Uppdelade långfristiga skulder
+        calc['check_account_credit'] = abs(sum_accounts(accounts, 2300, 2309))
+        calc['other_liabilities_to_credit_institutions'] = abs(sum_accounts(accounts, 2310, 2319))
+        calc['other_long_term_liabilities'] = abs(sum_accounts(accounts, 2320, 2399))
         calc['current_liabilities'] = abs(sum_accounts(accounts, 2400, 2999))
+        # NYTT: Uppdelade kortfristiga skulder
+        calc['advances_from_customers'] = abs(sum_accounts(accounts, 2400, 2439))  # Ändra till bredare intervall eller rätt konto
+        calc['accounts_payable'] = abs(sum_accounts(accounts, 2440, 2449))
+        calc['tax_liabilities'] = abs(sum_accounts(accounts, 2500, 2599))
+        calc['other_liabilities'] = abs(sum_accounts(accounts, 2600, 2899))
+        calc['accrued_expenses'] = abs(sum_accounts(accounts, 2900, 2999))
+        
         calc['total_liabilities'] = calc['long_term_liabilities'] + calc['current_liabilities']
         
         calc['total_equity_and_liabilities'] = calc['total_equity'] + calc['untaxed_reserves'] + calc['total_liabilities']
@@ -167,32 +234,46 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
             "tax": create_item(current_calc['tax'], prev_calc['tax']),
         },
         "balance_sheet": {
-            "fixed_assets_tangible": create_item(current_calc['fixed_assets_tangible'], prev_calc['fixed_assets_tangible'], note_trigger_key='fixed_assets_tangible'),
-            "fixed_assets_financial": create_item(current_calc['fixed_assets_financial'], prev_calc['fixed_assets_financial']),
-            "total_fixed_assets": create_item(current_calc['total_fixed_assets'], prev_calc['total_fixed_assets']),
-            "inventory": create_item(current_calc['inventory'], prev_calc['inventory']),
-            "current_receivables": create_item(current_calc['current_receivables'], prev_calc['current_receivables']),
-            "cash_and_bank": create_item(current_calc['cash_and_bank'], prev_calc['cash_and_bank']),
-            "total_current_assets": create_item(current_calc['total_current_assets'], prev_calc['total_current_assets']),
-            "restricted_equity": create_item(current_calc['restricted_equity'], prev_calc['restricted_equity']),
-            "free_equity_retained": create_item(current_calc['free_equity_retained'], prev_calc['free_equity_retained']),
-            "profit_loss_for_equity": create_item(current_calc['profit_loss_for_equity'], prev_calc['profit_loss_for_equity']),
-            "total_equity": create_item(current_calc['total_equity'], prev_calc['total_equity']),
-            "untaxed_reserves": create_item(current_calc['untaxed_reserves'], prev_calc['untaxed_reserves']),
-            "long_term_liabilities": create_item(current_calc['long_term_liabilities'], prev_calc['long_term_liabilities'], note_trigger_key='long_term_liabilities'),
-            "current_liabilities": create_item(current_calc['current_liabilities'], prev_calc['current_liabilities']),
-            "total_liabilities": create_item(current_calc['total_liabilities'], prev_calc['total_liabilities']),
+            "fixed_assets_tangible": create_item(current_calc['fixed_assets_tangible'], prev_calc.get('fixed_assets_tangible', 0), note_trigger_key='fixed_assets_tangible'),
+            "fixed_assets_financial": create_item(current_calc['fixed_assets_financial'], prev_calc.get('fixed_assets_financial', 0)),
+            "total_fixed_assets": create_item(current_calc['total_fixed_assets'], prev_calc.get('total_fixed_assets', 0)),
+            "inventory": create_item(current_calc['inventory'], prev_calc.get('inventory', 0)),
+            "current_receivables": create_item(current_calc['current_receivables'], prev_calc.get('current_receivables', 0)),
+            "cash_and_bank": create_item(current_calc['cash_and_bank'], prev_calc.get('cash_and_bank', 0)),
+            "total_current_assets": create_item(current_calc['total_current_assets'], prev_calc.get('total_current_assets', 0)),
+            # NYTT: Lägg till nya fält i balance_sheet
+            "accounts_receivable": create_item(current_calc.get('accounts_receivable', 0), prev_calc.get('accounts_receivable', 0)),
+            "other_receivables": create_item(current_calc.get('other_receivables', 0), prev_calc.get('other_receivables', 0)),
+            "accrued_revenue": create_item(current_calc.get('accrued_revenue', 0), prev_calc.get('accrued_revenue', 0)),
+            "prepaid_expenses": create_item(current_calc.get('prepaid_expenses', 0), prev_calc.get('prepaid_expenses', 0)),
+            "restricted_equity": create_item(current_calc['restricted_equity'], prev_calc.get('restricted_equity', 0)),
+            "free_equity_retained": create_item(current_calc['free_equity_retained'], prev_calc.get('free_equity_retained', 0)),
+            "profit_loss_for_equity": create_item(current_calc['profit_loss_for_equity'], prev_calc.get('profit_loss_for_equity', 0)),
+            "total_equity": create_item(current_calc['total_equity'], prev_calc.get('total_equity', 0)),
+            "untaxed_reserves": create_item(current_calc['untaxed_reserves'], prev_calc.get('untaxed_reserves', 0)),
+            # NYTT: Ackumulerade överavskrivningar
+            "accumulated_depreciation": create_item(current_calc.get('accumulated_depreciation', 0), prev_calc.get('accumulated_depreciation', 0)),
+            "long_term_liabilities": create_item(current_calc['long_term_liabilities'], prev_calc.get('long_term_liabilities', 0), note_trigger_key='long_term_liabilities'),
+            # NYTT: Uppdelade långfristiga skulder
+            "check_account_credit": create_item(current_calc.get('check_account_credit', 0), prev_calc.get('check_account_credit', 0)),
+            "other_liabilities_to_credit_institutions": create_item(current_calc.get('other_liabilities_to_credit_institutions', 0), prev_calc.get('other_liabilities_to_credit_institutions', 0)),
+            "other_long_term_liabilities": create_item(current_calc.get('other_long_term_liabilities', 0), prev_calc.get('other_long_term_liabilities', 0)),
+            "current_liabilities": create_item(current_calc['current_liabilities'], prev_calc.get('current_liabilities', 0)),
+            # NYTT: Uppdelade kortfristiga skulder
+            "advances_from_customers": create_item(current_calc.get('advances_from_customers', 0), prev_calc.get('advances_from_customers', 0)),
+            "accounts_payable": create_item(current_calc.get('accounts_payable', 0), prev_calc.get('accounts_payable', 0)),
+            "tax_liabilities": create_item(current_calc.get('tax_liabilities', 0), prev_calc.get('tax_liabilities', 0)),
+            "other_liabilities": create_item(current_calc.get('other_liabilities', 0), prev_calc.get('other_liabilities', 0)),
+            "accrued_expenses": create_item(current_calc.get('accrued_expenses', 0), prev_calc.get('accrued_expenses', 0)),
+            "total_liabilities": create_item(current_calc['total_liabilities'], prev_calc.get('total_liabilities', 0)),
             # KORRIGERING: Flytta in 'solvency_ratio' så att den blir en del av 'balance_sheet'.
-            "solvency_ratio": create_item(current_calc['solvency_ratio'], prev_calc['solvency_ratio']),
+            "solvency_ratio": create_item(current_calc['solvency_ratio'], prev_calc.get('solvency_ratio', 0)),
         },
+        
         "profit_loss": create_item(current_calc['profit_loss'], prev_calc['profit_loss']),
         "total_assets": create_item(current_calc['total_assets'], prev_calc['total_assets']),
         "total_equity_and_liabilities": create_item(current_calc['total_equity_and_liabilities'], prev_calc['total_equity_and_liabilities']),
         "balance_check": create_item(current_calc['total_assets'] - current_calc['total_equity_and_liabilities'], prev_calc['total_assets'] - prev_calc['total_equity_and_liabilities']),
-        
-        # KORRIGERING: Ta bort denna rad. Det är en felplacerad dubblett av en nyckel
-        # som redan finns inuti "income_statement" och som förstör hela datastrukturen.
-        # "personnel_costs": create_item(current_calc['personnel_costs'], prev_calc['personnel_costs'], note_trigger_key='personnel_costs'),
     }
 
     # DEBUG: skriv ut income_statement som skickas till frontend

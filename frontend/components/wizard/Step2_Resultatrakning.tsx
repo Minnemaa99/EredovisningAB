@@ -83,7 +83,7 @@ const Step2_Resultatrakning = ({ k2Results, reportDates, onNext, onBack, onValue
     { type: 'grand-total', label: 'Resultat före skatt', values: income_statement?.profit_before_tax, highlight: true },
 
     // Skatt-sektion med debug och ny post
-    { type: 'sub', label: 'Skatt på årets resultat', values: income_statement?.tax || { current: 0, previous: 0 }, accountRange: { start: 8910, end: 8919 } },
+    { type: 'sub', label: 'Skatt på årets resultat', values: income_statement?.tax || { current: 0, previous: 0 }, accountRange: { start: 8910, end: 8919 }, displayNegative: true },
     { type: 'sub', label: 'Övriga skatter', values: income_statement?.other_taxes || { current: 0, previous: 0 }, accountRange: { start: 8920, end: 8929 } },
     { type: 'grand-total', label: 'Årets resultat', values: profit_loss || { current: 0, previous: 0 }, highlight: true },
   ];
