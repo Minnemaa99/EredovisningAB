@@ -35,7 +35,8 @@ def create_annual_report_pdf(report_data, k2_results, is_preview: bool = False):
         balanserat_resultat = k2_results['balance_sheet']['free_equity_retained']['current']
         arets_resultat = k2_results['profit_loss']['current']
         # NYTT: Hämta utdelning från report_data
-        utdelning = report_data.dividend if hasattr(report_data, 'dividend') else 0
+        utdelning = getattr(report_data, 'dividend', 0) or 0
+        print("DEBUG: Utdelning i PDF-generatorn:", utdelning)
         balanseras_i_ny_rakning = balanserat_resultat + arets_resultat - utdelning
 
         resultatdisposition = {

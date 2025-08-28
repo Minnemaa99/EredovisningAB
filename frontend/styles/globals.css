@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  font-size: 15px; /* Sänk från 18px till 15px eller 16px för en mer normal känsla */
+}
+
+body {
+  line-height: 1.6;
+  background-color: #f9fafb;
+}

@@ -30,7 +30,7 @@ class AnnualReport(Base):
     signature_date = Column(Date, nullable=True)
     representatives = Column(JSON, nullable=True)
     # NYTT: Lägg till ett fält för föreslagen utdelning.
-    dividend = Column(Float, default=0.0)
+    dividend = Column(Float, default=0.0)  # <-- Lägg till denna rad!
 
     # --- Balance Sheet (Balansräkning) ---
     # Anläggningstillgångar
