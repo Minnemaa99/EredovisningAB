@@ -21,7 +21,7 @@ export default function Home() {
             <Link href="/arsredovisning/ny" className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 text-lg">
               Årsredovisning
             </Link>
-            <Link href="#" className="ml-4 bg-gray-200 text-gray-800 font-bold py-4 px-8 rounded-full hover:bg-gray-300 text-lg">
+            <Link href="/inkomstdeklaration/ny" className="ml-4 bg-gray-200 text-gray-800 font-bold py-4 px-8 rounded-full hover:bg-gray-300 text-lg">
               Inkomstdeklaration
             </Link>
           </div>

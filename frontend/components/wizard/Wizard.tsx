@@ -83,6 +83,7 @@ export default function Wizard() {
         previous_year: updatedAccounts.previous_year,
       });
       setCalculationResult(response.data);
+      console.log('DEBUG Wizard - calculationResult set:', response.data); // <-- Lägg till denna rad!
     } catch (error) {
       console.error("Failed to recalculate report", error.response ? error.response.data : error);
       alert("Kunde inte räkna om rapporten. Återställer ändringen.");
@@ -146,6 +147,7 @@ export default function Wizard() {
     window.open(`${API_URL}/annual-reports/${finalReportId}/preview`, "_blank");
   };
 
+  // i renderStep: skicka reportDates till Step2
   const renderStep = () => {
     if (isLoading) {
         return <div className="text-center p-16">Räknar om...</div>;
@@ -163,7 +165,7 @@ export default function Wizard() {
 
     switch (stepIndex) {
       case 0: return <Step1_Rakenskapsar reportDates={reportDates} setReportDates={setReportDates} onUploadSuccess={handleUploadSuccess} onBack={prevStep} />;
-      case 1: return <Step2_Resultatrakning k2Results={calculationResult} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
+      case 1: return <Step2_Resultatrakning k2Results={calculationResult} reportDates={reportDates} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
       case 2: return <Step3_Balansrakning k2Results={calculationResult} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
       case 3: return <Step4_Arsredovisning k2Results={calculationResult} onBack={prevStep} onNext={nextStep} onForvaltningsberattelseSave={handleForvaltningsberattelseSave} notesData={notesData} onNotesDataChange={handleNotesDataChange} dividend={dividend} onDividendChange={handleDividendChange} />;
       case 4: return <Step6_Foretradare onSave={handleForetradareSave} onBack={prevStep} />;
