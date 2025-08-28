@@ -63,12 +63,25 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
 
         calc['financial_income'] = sum_accounts(accounts, 8000, 8399)
         calc['financial_costs'] = abs(sum_accounts(accounts, 8400, 8799))
+        # NETTO för finansiella poster (intäkter minus kostnader)
+        calc['financial_total'] = calc['financial_income'] - calc['financial_costs']
         calc['profit_after_financial_items'] = calc['operating_profit'] + calc['financial_income'] - calc['financial_costs']
         
         calc['appropriations'] = sum_accounts(accounts, 8800, 8899)
         calc['profit_before_tax'] = calc['profit_after_financial_items'] + calc['appropriations']
         
-        calc['tax'] = abs(sum_accounts(accounts, 8900, 8999))
+        # NYTT: Beräkningar för nya bokslutsdispositioner och skatter
+        calc['received_group_contributions'] = sum_accounts(accounts, 8810, 8819)  # Erhållna koncernbidrag
+        calc['given_group_contributions'] = abs(sum_accounts(accounts, 8820, 8829))  # Lämnade koncernbidrag (kostnad)
+        calc['change_over_depreciations'] = sum_accounts(accounts, 8830, 8839)  # Förändring av överavskrivningar
+        calc['other_taxes'] = abs(sum_accounts(accounts, 8920, 8929))  # Övriga skatter (kostnad)
+        
+        # RÄTTA: Skatt-intervall till 8910-8919 (matchar din SIE och tidigare debug)
+        calc['tax'] = abs(sum_accounts(accounts, 8910, 8919))
+        
+        # DEBUG för skatt
+        print(f"DEBUG tax calculation: sum_accounts(8910, 8919) = {sum_accounts(accounts, 8910, 8919)}, abs = {calc['tax']}", file=sys.stderr)
+        
         calc['profit_loss'] = calc['profit_before_tax'] - calc['tax']
 
         # --- Balansräkning ---
@@ -142,8 +155,14 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
             "operating_profit": create_item(current_calc['operating_profit'], prev_calc['operating_profit']),
             "financial_income": create_item(current_calc['financial_income'], prev_calc['financial_income']),
             "financial_costs": create_item(current_calc['financial_costs'], prev_calc['financial_costs']),
+            "financial_total": create_item(current_calc.get('financial_total', 0), prev_calc.get('financial_total', 0)),
             "profit_after_financial_items": create_item(current_calc['profit_after_financial_items'], prev_calc['profit_after_financial_items']),
             "appropriations": create_item(current_calc['appropriations'], prev_calc['appropriations']),
+            # NYTT: Lägg till nya fält i income_statement
+            "received_group_contributions": create_item(current_calc.get('received_group_contributions', 0), prev_calc.get('received_group_contributions', 0)),
+            "given_group_contributions": create_item(current_calc.get('given_group_contributions', 0), prev_calc.get('given_group_contributions', 0)),
+            "change_over_depreciations": create_item(current_calc.get('change_over_depreciations', 0), prev_calc.get('change_over_depreciations', 0)),
+            "other_taxes": create_item(current_calc.get('other_taxes', 0), prev_calc.get('other_taxes', 0)),
             "profit_before_tax": create_item(current_calc['profit_before_tax'], prev_calc['profit_before_tax']),
             "tax": create_item(current_calc['tax'], prev_calc['tax']),
         },
@@ -175,6 +194,12 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
         # som redan finns inuti "income_statement" och som förstör hela datastrukturen.
         # "personnel_costs": create_item(current_calc['personnel_costs'], prev_calc['personnel_costs'], note_trigger_key='personnel_costs'),
     }
+
+    # DEBUG: skriv ut income_statement som skickas till frontend
+    try:
+        print("DEBUG income_statement:", json.dumps(result["income_statement"], ensure_ascii=False))
+    except Exception as e:
+        print("DEBUG income_statement dump failed:", str(e))
 
     sorted_active_notes = dict(sorted(active_notes.items(), key=lambda item: item[1]['ref']))
     result["active_notes"] = sorted_active_notes
