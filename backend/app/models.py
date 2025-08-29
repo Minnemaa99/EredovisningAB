@@ -31,6 +31,8 @@ class AnnualReport(Base):
     representatives = Column(JSON, nullable=True)
     # NYTT: Lägg till ett fält för föreslagen utdelning.
     dividend = Column(Float, default=0.0)  # <-- Lägg till denna rad!
+    # NYTT: Lägg till flerarsOversikt
+    flerarsOversikt = Column(JSON, nullable=True)  # <-- Lägg till denna rad!
 
     # --- Balance Sheet (Balansräkning) ---
     # Anläggningstillgångar

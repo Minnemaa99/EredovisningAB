@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { FiFileText, FiTrendingUp, FiDollarSign, FiInfo } from 'react-icons/fi';
+import { FiFileText, FiTrendingUp, FiDollarSign, FiInfo, FiPlus, FiTrash } from 'react-icons/fi';
 
 // --- Typer och hjälpfunktioner ---
 interface Props {
   k2Results: any;
-  onSave: (text: string) => void;
+  onSave: (text: string, flerarsData: any[]) => void; // NYTT: Uppdaterad för flerarsData
   onBack: () => void;
   dividend: number;
   onDividendChange: (amount: number) => void;
+  flerarsOversikt: any[]; // NYTT: Från Wizard
+  setFlerarsOversikt: (data: any[]) => void; // NYTT: Från Wizard
 }
 
 const formatNumber = (num: number, decimals = 0) => {
@@ -32,7 +34,9 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({
   onSave, 
   onBack,
   dividend,
-  onDividendChange
+  onDividendChange,
+  flerarsOversikt, // NYTT: Från props
+  setFlerarsOversikt // NYTT: Från props
 }) => {
   // GARDERA MOT OFULLSTÄNDIG DATA: Kontrollera om k2Results och nödvändiga nycklar finns.
   if (!k2Results || !k2Results.balance_sheet || !k2Results.balance_sheet.solvency_ratio) {
@@ -65,6 +69,61 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({
   const tillDisposition = balanseratResultat + aretsResultat;
   const balanserasNyRakning = tillDisposition - dividend;
 
+  // NYTT: Uppdatera flerarsOversikt från k2Results om data ändras (för SIE-år)
+  useEffect(() => {
+    const updatedFlerars = flerarsOversikt.map(item => {
+      if (item.isFromSie) {
+        if (item.year === new Date().getFullYear()) {
+          return {
+            ...item,
+            nettoomsattning: income_statement?.net_sales?.current || 0,
+            resultatEfterFinansiella: income_statement?.profit_after_financial_items?.current || 0,
+            soliditet: balance_sheet?.solvency_ratio?.current || 0
+          };
+        } else if (item.year === new Date().getFullYear() - 1) {
+          return {
+            ...item,
+            nettoomsattning: income_statement?.net_sales?.previous || 0,
+            resultatEfterFinansiella: income_statement?.profit_after_financial_items?.previous || 0,
+            soliditet: balance_sheet?.solvency_ratio?.previous || 0
+          };
+        }
+      }
+      return item;
+    });
+    setFlerarsOversikt(updatedFlerars);
+  }, [k2Results, income_statement, balance_sheet]);
+
+  // NYTT: Funktion för att lägga till nytt år (året innan det äldsta året automatiskt)
+  const addYear = () => {
+    const oldestYear = Math.min(...flerarsOversikt.map(item => item.year));
+    const newYear = oldestYear - 1;
+    const yearExists = flerarsOversikt.some(item => item.year === newYear);
+    if (yearExists) {
+      alert(`Året ${newYear} finns redan!`);
+      return;
+    }
+    setFlerarsOversikt(prev => [...prev, {
+      year: newYear,
+      nettoomsattning: 0,
+      resultatEfterFinansiella: 0,
+      soliditet: 0,
+      isFromSie: false
+    }]);
+  };
+
+  // NYTT: Funktion för att ta bort år (bara manuella, inte från SIE)
+  const removeYear = (year: number) => {
+    setFlerarsOversikt(prev => prev.filter(item => item.year !== year || item.isFromSie));
+  };
+
+  // NYTT: Funktion för att uppdatera värden i ett år
+  const updateYearValue = (year: number, field: string, value: number) => {
+    setFlerarsOversikt(prev => prev.map(item =>
+      item.year === year ? { ...item, [field]: value } : item
+    ));
+  };
+
   // --- Spara-funktion ---
   const handleSaveAndContinue = () => {
     const reportParts: string[] = [];
@@ -86,7 +145,7 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({
     }
 
     const fullText = reportParts.join('\n');
-    onSave(fullText);
+    onSave(fullText, flerarsOversikt); // NYTT: Skicka flerarsOversikt
   };
 
   return (
@@ -106,32 +165,98 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({
       </SectionCard>
 
       <SectionCard icon={<FiTrendingUp />} title="Flerårsöversikt">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b-2 border-gray-200">
-              <th className="p-2">Nyckeltal</th>
-              <th className="p-2 text-right">Aktuellt år</th>
-              <th className="p-2 text-right">Föregående år</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-gray-100">
-              <td className="p-2">Nettoomsättning</td>
-              <td className="p-2 text-right font-mono">{formatNumber(income_statement.net_sales.current)} kr</td>
-              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(income_statement.net_sales.previous)} kr</td>
-            </tr>
-            <tr className="border-b border-gray-100 bg-gray-50">
-              <td className="p-2">Resultat efter finansiella poster</td>
-              <td className="p-2 text-right font-mono">{formatNumber(income_statement.profit_after_financial_items.current)} kr</td>
-              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(income_statement.profit_after_financial_items.previous)} kr</td>
-            </tr>
-            <tr>
-              <td className="p-2">Soliditet</td>
-              <td className="p-2 text-right font-mono">{formatNumber(balance_sheet.solvency_ratio.current, 1)} %</td>
-              <td className="p-2 text-right font-mono text-gray-500">{formatNumber(balance_sheet.solvency_ratio.previous, 1)} %</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b-2 border-gray-200">
+                <th className="p-2">Nyckeltal</th>
+                {flerarsOversikt.sort((a, b) => b.year - a.year).map((item, index) => (
+                  <th key={index} className="p-2 text-right">
+                    {item.year}
+                    {!item.isFromSie && (
+                      <button
+                        onClick={() => removeYear(item.year)}
+                        className="ml-2 text-red-500 hover:text-red-700 transition-colors"
+                        title="Ta bort år"
+                      >
+                        <FiTrash size={14} />
+                      </button>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-gray-100">
+                <td className="p-2 font-semibold">Nettoomsättning (kr)</td>
+                {flerarsOversikt.sort((a, b) => b.year - a.year).map((item, index) => (
+                  <td key={index} className="p-2 text-right">
+                    {item.isFromSie ? (
+                      <span className="font-mono">{formatNumber(item.nettoomsattning)} kr</span>
+                    ) : (
+                      <input
+                        type="number"
+                        value={item.nettoomsattning}
+                        onChange={(e) => updateYearValue(item.year, 'nettoomsattning', parseFloat(e.target.value) || 0)}
+                        className="w-full p-1 border border-gray-300 rounded text-right font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                        placeholder="0"
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <td className="p-2 font-semibold">Resultat efter finansiella poster (kr)</td>
+                {flerarsOversikt.sort((a, b) => b.year - a.year).map((item, index) => (
+                  <td key={index} className="p-2 text-right">
+                    {item.isFromSie ? (
+                      <span className="font-mono">{formatNumber(item.resultatEfterFinansiella)} kr</span>
+                    ) : (
+                      <input
+                        type="number"
+                        value={item.resultatEfterFinansiella}
+                        onChange={(e) => updateYearValue(item.year, 'resultatEfterFinansiella', parseFloat(e.target.value) || 0)}
+                        className="w-full p-1 border border-gray-300 rounded text-right font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                        placeholder="0"
+                      />
+                    )}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td className="p-2 font-semibold">Soliditet (%)</td>
+                {flerarsOversikt.sort((a, b) => b.year - a.year).map((item, index) => (
+                  <td key={index} className="p-2 text-right">
+                    {item.isFromSie ? (
+                      <span className="font-mono">{formatNumber(item.soliditet, 1)} %</span>
+                    ) : (
+                      <div className="flex items-center justify-end gap-1">
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={item.soliditet}
+                          onChange={(e) => updateYearValue(item.year, 'soliditet', parseFloat(e.target.value) || 0)}
+                          className="w-full p-1 border border-gray-300 rounded text-right font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+                          placeholder="0.0"
+                        />
+                        <span className="text-sm text-gray-600">%</span>
+                      </div>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-4 flex items-center gap-4">
+          <button
+            onClick={addYear}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <FiPlus /> Lägg till nytt år
+          </button>
+          <span className="text-sm text-gray-500">Lägger automatiskt till året innan det äldsta året.</span>
+        </div>
         <label className="block mt-4 text-sm font-medium text-gray-700">Kommentar till flerårsöversikt</label>
         <textarea value={kommentarFlerar} onChange={e => setKommentarFlerar(e.target.value)} rows={3} className="w-full p-2 border rounded-md mt-1" placeholder="Kommentera eventuella avvikelser eller trender..."/>
       </SectionCard>
@@ -156,7 +281,7 @@ const Step5_Forvaltningsberattelse: React.FC<Props> = ({
               type="number"
               id="dividend"
               name="dividend"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
               value={dividend}
               onChange={(e) => onDividendChange(parseFloat(e.target.value) || 0)}
               placeholder="0"
