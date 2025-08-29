@@ -13,6 +13,8 @@ interface Props {
   onNotesDataChange: (noteId: string, data: any) => void;
   dividend: number;
   onDividendChange: (amount: number) => void;
+  flerarsOversikt: any;
+  setFlerarsOversikt: (data: any) => void;
 }
 
 const Step4_Arsredovisning: React.FC<Props> = ({
@@ -23,7 +25,9 @@ const Step4_Arsredovisning: React.FC<Props> = ({
   notesData,
   onNotesDataChange,
   dividend,
-  onDividendChange
+  onDividendChange,
+  flerarsOversikt,
+  setFlerarsOversikt
 }) => {
   const [subStep, setSubStep] = useState<'noter' | 'forvaltningsberattelse'>('noter');
 
@@ -69,10 +73,12 @@ const Step4_Arsredovisning: React.FC<Props> = ({
         {subStep === 'forvaltningsberattelse' && (
           <Step5_Forvaltningsberattelse
             k2Results={k2Results}
-            onSave={handleSaveAndGoToNextMainStep}
+            onSave={(text, flerarsData) => onForvaltningsberattelseSave(text, flerarsData)}
             onBack={handleForvaltningsberattelseBack}
             dividend={dividend}
             onDividendChange={onDividendChange}
+            flerarsOversikt={flerarsOversikt}
+            setFlerarsOversikt={setFlerarsOversikt}
           />
         )}
       </main>

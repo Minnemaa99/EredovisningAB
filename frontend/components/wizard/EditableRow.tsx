@@ -43,7 +43,8 @@ export const EditableRow: React.FC<EditableRowProps> = ({ label, values, type = 
   // value-klass: gör värdet mörkare/fetare när highlight är true
   const valueClass = highlight ? 'pr-2 font-semibold text-gray-900' : (type === 'grand-total' ? 'pr-2 font-extrabold text-gray-900' : 'pr-2 text-gray-700');
 
-  const inputClass = "w-28 px-2 py-1 text-right border border-gray-200 rounded-md bg-white text-sm font-mono";
+  // NYTT: CSS för att dölja spinner-arrows i number-input
+  const inputClass = "w-28 px-2 py-1 text-right border border-gray-200 rounded-md bg-white text-sm font-mono [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]";
 
   const formatCell = (num?: number | null, negativeFlag = false) => {
     if (num === undefined || num === null) return '';

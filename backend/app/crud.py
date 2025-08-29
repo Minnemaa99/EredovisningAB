@@ -42,6 +42,8 @@ def create_annual_report(db: Session, report: schemas.DetailedReportPayload, com
         # Säkerställ att listan med företrädare sparas korrekt.
         representatives=[rep.model_dump() for rep in report.representatives],
         dividend=report.dividend,  # <-- Lägg till denna rad!
+        # NYTT: Spara flerarsOversikt (säkerställ att det är en lista av dicts)
+        flerarsOversikt=[year.model_dump() for year in report.flerarsOversikt] if report.flerarsOversikt else [],
     )
     
     db.add(db_report)

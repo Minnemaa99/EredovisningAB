@@ -276,6 +276,20 @@ def get_structured_k2_results(current_year_accounts: List[Dict], previous_year_a
         "balance_check": create_item(current_calc['total_assets'] - current_calc['total_equity_and_liabilities'], prev_calc['total_assets'] - prev_calc['total_equity_and_liabilities']),
     }
 
+    # Lägg till notes_data i resultatet
+    result["notes_data"] = {
+        'tangible_assets': {
+            'ingAnsk': current_calc['fixed_assets_tangible'],  # Ingående anskaffningsvärden (från balansräkning)
+            'aretsKop': 0,  # Årets inköp (antagande, sätt till rätt värde om du har data)
+            'ingAvsk': 0,  # Ingående ackumulerade avskrivningar (antagande)
+            'aretsAvsk': current_calc['depreciation']  # Årets avskrivningar
+        },
+        'average_employees': {
+            'employees': 5,  # Medelantal anställda innevarande år (sätt till rätt värde)
+            'prev_employees': 4  # Föregående år
+        }
+    }
+
     # DEBUG: skriv ut income_statement som skickas till frontend
     try:
         print("DEBUG income_statement:", json.dumps(result["income_statement"], ensure_ascii=False))

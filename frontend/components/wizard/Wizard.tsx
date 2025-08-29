@@ -32,7 +32,35 @@ export default function Wizard() {
   const [finalReportId, setFinalReportId] = useState(null);
   const [isClient, setIsClient] = useState(false);
 
+  // NYTT: State för flerårsöversikt
+  const [flerarsOversikt, setFlerarsOversikt] = useState([]);
+
   useEffect(() => { setIsClient(true); }, []);
+
+  // NYTT: Initiera flerarsOversikt med SIE-data när calculationResult sätts
+  useEffect(() => {
+    if (calculationResult && calculationResult.income_statement && calculationResult.balance_sheet) {
+      const currentYear = new Date().getFullYear();
+      const previousYear = currentYear - 1;
+      const initialFlerars = [
+        {
+          year: currentYear,
+          nettoomsattning: calculationResult.income_statement.net_sales?.current || 0,
+          resultatEfterFinansiella: calculationResult.income_statement.profit_after_financial_items?.current || 0,
+          soliditet: calculationResult.balance_sheet.solvency_ratio?.current || 0,
+          isFromSie: true
+        },
+        {
+          year: previousYear,
+          nettoomsattning: calculationResult.income_statement.net_sales?.previous || 0,
+          resultatEfterFinansiella: calculationResult.income_statement.profit_after_financial_items?.previous || 0,
+          soliditet: calculationResult.balance_sheet.solvency_ratio?.previous || 0,
+          isFromSie: true
+        }
+      ];
+      setFlerarsOversikt(initialFlerars);
+    }
+  }, [calculationResult]);
 
   useEffect(() => {
     if (calculationResult && stepIndex === 0) {
@@ -93,8 +121,10 @@ export default function Wizard() {
     }
   };
 
-  const handleForvaltningsberattelseSave = (text) => {
+  // NYTT: Uppdaterad för att ta emot flerarsOversikt från Step5
+  const handleForvaltningsberattelseSave = (text, flerarsData) => {
     setForvaltningsberattelse(text);
+    setFlerarsOversikt(flerarsData); // Spara flerarsOversikt
     nextStep();
   };
 
@@ -125,6 +155,8 @@ export default function Wizard() {
       representatives: representatives,
       dividend: dividend,
       notes_data: notesData,
+      // NYTT: Inkludera flerarsOversikt i payload
+      flerarsOversikt: flerarsOversikt,
     };
 
     console.log("DEBUG: Payload som skickas till backend:", payload); // <-- Lägg till denna rad!
@@ -147,7 +179,7 @@ export default function Wizard() {
     window.open(`${API_URL}/annual-reports/${finalReportId}/preview`, "_blank");
   };
 
-  // i renderStep: skicka reportDates till Step2
+  // i renderStep: skicka flerarsOversikt till Step4 (som innehåller Step5)
   const renderStep = () => {
     if (isLoading) {
         return <div className="text-center p-16">Räknar om...</div>;
@@ -167,7 +199,7 @@ export default function Wizard() {
       case 0: return <Step1_Rakenskapsar reportDates={reportDates} setReportDates={setReportDates} onUploadSuccess={handleUploadSuccess} onBack={prevStep} />;
       case 1: return <Step2_Resultatrakning k2Results={calculationResult} reportDates={reportDates} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
       case 2: return <Step3_Balansrakning k2Results={calculationResult} onNext={nextStep} onBack={prevStep} onValueChange={handleValueChange} />;
-      case 3: return <Step4_Arsredovisning k2Results={calculationResult} onBack={prevStep} onNext={nextStep} onForvaltningsberattelseSave={handleForvaltningsberattelseSave} notesData={notesData} onNotesDataChange={handleNotesDataChange} dividend={dividend} onDividendChange={handleDividendChange} />;
+      case 3: return <Step4_Arsredovisning k2Results={calculationResult} onBack={prevStep} onNext={nextStep} onForvaltningsberattelseSave={handleForvaltningsberattelseSave} notesData={notesData} onNotesDataChange={handleNotesDataChange} dividend={dividend} onDividendChange={handleDividendChange} flerarsOversikt={flerarsOversikt} setFlerarsOversikt={setFlerarsOversikt} />;
       case 4: return <Step6_Foretradare onSave={handleForetradareSave} onBack={prevStep} />;
       case 5: return <Step7_LamnaIn onSave={handleSaveAndContinue} onPreview={handlePreview} onBack={prevStep} />;
       default: return <Step1_Rakenskapsar reportDates={reportDates} setReportDates={setReportDates} onUploadSuccess={handleUploadSuccess} onBack={prevStep} />;

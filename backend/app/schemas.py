@@ -30,6 +30,14 @@ class Representative(BaseModel):
     name: str
     role: str
 
+# NYTT: Schema för ett år i flerårsöversikten
+class FlerarsYear(BaseModel):
+    year: int
+    nettoomsattning: float
+    resultatEfterFinansiella: float
+    soliditet: float
+    isFromSie: bool
+
 # --- Scheman för API-kommunikation ---
 
 class DetailedReportPayload(BaseModel):
@@ -47,6 +55,8 @@ class DetailedReportPayload(BaseModel):
     representatives: List[Representative]
     # NYTT: Lägg till fält för utdelning i payloaden från frontend.
     dividend: float = 0.0
+    # NYTT: Lägg till flerarsOversikt
+    flerarsOversikt: List[FlerarsYear] = []
 
 # --- NYA, KORREKTA SCHEMAN FÖR K2-RESULTAT ---
 # Dessa matchar nu exakt outputen från k2_calculator.py
@@ -150,6 +160,8 @@ class AnnualReport(BaseModel):
     representatives: list # JSON-fält
     # NYTT: Lägg till fältet för att kunna läsa det från databasen.
     dividend: float
+    # NYTT: Lägg till flerarsOversikt för läsning
+    flerarsOversikt: List[FlerarsYear] = []
 
     class Config:
         from_attributes = True
