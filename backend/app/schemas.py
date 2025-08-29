@@ -79,21 +79,37 @@ class IncomeStatementSchema(BaseModel):
 class BalanceSheetSchema(BaseModel):
     """Struktur för Balansräkningen, speglar k2_calculator."""
     fixed_assets_tangible: ReportItem
-    fixed_assets_financial: ReportItem # Lade till denna tidigare, men den saknades här
+    fixed_assets_financial: ReportItem
     total_fixed_assets: ReportItem
     inventory: ReportItem
     current_receivables: ReportItem
     cash_and_bank: ReportItem
     total_current_assets: ReportItem
+    # NYTT: Lägg till saknade fält för fordringar
+    accounts_receivable: ReportItem
+    other_receivables: ReportItem
+    accrued_revenue: ReportItem
+    prepaid_expenses: ReportItem
     restricted_equity: ReportItem
     free_equity_retained: ReportItem
     profit_loss_for_equity: ReportItem
     total_equity: ReportItem
     untaxed_reserves: ReportItem
+    # NYTT: Ackumulerade överavskrivningar
+    accumulated_depreciation: ReportItem
     long_term_liabilities: ReportItem
+    # NYTT: Uppdelade långfristiga skulder
+    check_account_credit: ReportItem
+    other_liabilities_to_credit_institutions: ReportItem
+    other_long_term_liabilities: ReportItem
     current_liabilities: ReportItem
+    # NYTT: Uppdelade kortfristiga skulder
+    advances_from_customers: ReportItem
+    accounts_payable: ReportItem
+    tax_liabilities: ReportItem
+    other_liabilities: ReportItem
+    accrued_expenses: ReportItem
     total_liabilities: ReportItem
-    # SLUTGILTIG LÖSNING: Lägg till det saknade fältet.
     solvency_ratio: ReportItem
 
 # NYTT: Definiera en modell för en enskild aktiv not.
